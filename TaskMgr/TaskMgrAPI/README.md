@@ -1,0 +1,1 @@
+scaffold-dbcontext "Server=localhost; Port=5433; Database=taskmgr; Integrated Security=false; User Id=postgres; Password=postgres" Npgsql.EntityFrameworkCore.PostgreSQL

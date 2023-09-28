@@ -9,12 +9,14 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
+    depends_on:
+      - taskmgr_db
     volumes:
       - pgadmin-data:/var/lib/pgadmin
     networks:
       - taskmgr_network
 
-  postgres:
+  taskmgr_db:
     image: postgres
     volumes:
       - db_volume:/var/lib/postgresql/data
@@ -30,6 +32,23 @@ services:
       interval: 2s
       timeout: 2s
       retries: 20
+    networks:
+      - taskmgr_network
+
+  taskmgr_api:
+    image: taskmgr/api
+    build:
+      context: .
+      dockerfile: TaskMgrAPI/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      DB_CONNECTION_STRING: "host=taskmgr_db;port=5432;database=taskmgr;username=postgres;password=postgres"
+    depends_on:
+      taskmgr_db:
+        condition: service_healthy
+    ports:
+      - '8000:80'
+      - '443:443'
     networks:
       - taskmgr_network
 
