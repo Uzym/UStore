@@ -1,0 +1,42 @@
+version: '3.7'
+
+services:
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - taskmgr_network
+
+  postgres:
+    image: postgres
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+      - ./TaskMgrDB/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "taskmgr"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d taskmgr" ]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+    networks:
+      - taskmgr_network
+
+volumes:
+  db_volume:
+  pgadmin-data:
+
+networks:
+  taskmgr_network:
+    driver: bridge
