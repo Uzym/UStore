@@ -1,4 +1,4 @@
-import './globals.css'
+import './globals.scss'
 import type { Metadata } from 'next'
 import Providers from '@/providers/Providers'
 import { roboto } from '@/theme/fonts'
