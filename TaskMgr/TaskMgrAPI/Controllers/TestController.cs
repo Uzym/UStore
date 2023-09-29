@@ -18,11 +18,14 @@ namespace TaskMgrAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Role>> GetRoles()
+        public async Task<ActionResult<long>> GetRoles()
         {
-            var res = await _context.Roles
-                .FirstOrDefaultAsync();
-            return Ok(res);
+            //var res = await _context.Roles
+            //    .FirstOrDefaultAsync();
+            var id = await _context.Database
+                .SqlQuery<long>($"SELECT role_id FROM public.role")
+                .ToListAsync();
+            return Ok(id[0]);
         }
     }
 }
