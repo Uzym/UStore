@@ -22,6 +22,10 @@ public partial class TaskmgrContext : DbContext
 
     public virtual DbSet<Project> Projects { get; set; }
 
+    public virtual DbSet<Right> Rights { get; set; }
+
+    public virtual DbSet<RightRole> RightRoles { get; set; }
+
     public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<Section> Sections { get; set; }
@@ -38,8 +42,6 @@ public partial class TaskmgrContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasPostgresEnum("taskmgr_rights", new[] { "view_project", "update_project", "delete_project", "view_section", "update_section", "delete_section", "add_section", "view_card", "update_card", "update_card_complete", "delete_card", "add_card", "add_comment", "view_comment", "delete_comment", "add_user", "delete_user", "view_user" });
-
         modelBuilder.Entity<Card>(entity =>
         {
             entity.HasKey(e => e.CardId).HasName("card_pk");
@@ -111,6 +113,41 @@ public partial class TaskmgrContext : DbContext
             entity.Property(e => e.Title)
                 .HasColumnType("character varying")
                 .HasColumnName("title");
+        });
+
+        modelBuilder.Entity<Right>(entity =>
+        {
+            entity.HasKey(e => e.RightId).HasName("right_pk");
+
+            entity.ToTable("right");
+
+            entity.Property(e => e.RightId)
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("right_id");
+            entity.Property(e => e.Title)
+                .HasColumnType("character varying")
+                .HasColumnName("title");
+        });
+
+        modelBuilder.Entity<RightRole>(entity =>
+        {
+            entity.HasKey(e => e.RightRoleId).HasName("right_role_pk");
+
+            entity.ToTable("right_role");
+
+            entity.Property(e => e.RightRoleId)
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("right_role_id");
+            entity.Property(e => e.RightId).HasColumnName("right_id");
+            entity.Property(e => e.RoleId).HasColumnName("role_id");
+
+            entity.HasOne(d => d.Right).WithMany(p => p.RightRoles)
+                .HasForeignKey(d => d.RightId)
+                .HasConstraintName("right_role_fk");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.RightRoles)
+                .HasForeignKey(d => d.RoleId)
+                .HasConstraintName("right_role_fk_1");
         });
 
         modelBuilder.Entity<Role>(entity =>

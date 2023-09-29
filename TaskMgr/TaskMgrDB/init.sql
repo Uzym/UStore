@@ -36,33 +36,69 @@ CREATE TABLE public."user" (
 );
 CREATE UNIQUE INDEX user_user_id_idx ON public."user" USING btree (user_id);
 
-CREATE TYPE public."taskmgr_rights" AS ENUM (
-	'view_project',
-	'update_project',
-	'delete_project',
-	'view_section',
-	'update_section',
-	'delete_section',
-	'add_section',
-	'view_card',
-	'update_card',
-	'update_card_complete',
-	'delete_card',
-	'add_card',
-	'add_comment',
-	'view_comment',
-	'delete_comment',
-	'add_user',
-	'delete_user',
-	'view_user');
+-- CREATE TYPE public."taskmgr_rights" AS ENUM (
+-- 	'view_project',
+-- 	'update_project',
+-- 	'delete_project',
+-- 	'view_section',
+-- 	'update_section',
+-- 	'delete_section',
+-- 	'add_section',
+-- 	'view_card',
+-- 	'update_card',
+-- 	'update_card_complete',
+-- 	'delete_card',
+-- 	'add_card',
+-- 	'add_comment',
+-- 	'view_comment',
+-- 	'delete_comment',
+-- 	'add_user',
+-- 	'delete_user',
+-- 	'view_user');
+
+CREATE TABLE public."right" (
+	right_id int8 NOT NULL GENERATED ALWAYS AS IDENTITY,
+	title varchar NOT NULL,
+	CONSTRAINT right_pk PRIMARY KEY (right_id)
+);
+
+INSERT INTO public."right" (title)
+VALUES
+	('view_project'),
+	('update_project'),
+	('delete_project'),
+	('view_section'),
+	('update_section'),
+	('delete_section'),
+	('add_section'),
+	('view_card'),
+	('update_card'),
+	('update_card_complete'),
+	('delete_card'),
+	('add_card'),
+	('add_comment'),
+	('view_comment'),
+	('delete_comment'),
+	('add_user'),
+	('delete_user'),
+	('view_user');
 
 CREATE TABLE public."role" (
 	role_id int8 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1 NO CYCLE),
 	title varchar NOT NULL,
 	description varchar NULL,
 	allow_tables _varchar NOT NULL,
-	rights public."_taskmgr_rights" NULL,
+	-- rights public."_taskmgr_rights" NULL,
 	CONSTRAINT role_pk PRIMARY KEY (role_id)
+);
+
+CREATE TABLE public.right_role (
+	right_role_id int8 NOT NULL GENERATED ALWAYS AS IDENTITY,
+	right_id int8 NOT NULL,
+	role_id int8 NOT NULL,
+	CONSTRAINT right_role_pk PRIMARY KEY (right_role_id),
+	CONSTRAINT right_role_fk FOREIGN KEY (right_id) REFERENCES public."right"(right_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT right_role_fk_1 FOREIGN KEY (role_id) REFERENCES public."role"(role_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE public."comment" (

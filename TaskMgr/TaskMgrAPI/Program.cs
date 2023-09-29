@@ -23,7 +23,7 @@ namespace TaskMgrAPI
             var connectionString = "host=taskmgr_db;port=5432;database=taskmgr;username=postgres;password=postgres";
             builder.Services.AddDbContext<TaskmgrContext>(options =>
                 options.UseNpgsql(
-                    connectionString
+                     connectionString
                 )
             );
 

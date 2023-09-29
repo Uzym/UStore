@@ -13,6 +13,8 @@ public partial class Role
 
     public string[] AllowTables { get; set; } = null!;
 
+    public virtual ICollection<RightRole> RightRoles { get; set; } = new List<RightRole>();
+
     public virtual ICollection<UserCard> UserCards { get; set; } = new List<UserCard>();
 
     public virtual ICollection<UserProject> UserProjects { get; set; } = new List<UserProject>();
