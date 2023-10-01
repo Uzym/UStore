@@ -1,0 +1,45 @@
+version: '3.7'
+
+services:
+  store_db:
+    image: postgres
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+      - ./storeDB/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "store"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d store" ]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+    networks:
+      - store_network
+
+  # store_api:
+  #   image: store/api
+  #   build:
+  #     context: .
+  #     dockerfile: storeAPI/Dockerfile
+  #   environment:
+  #     ASPNETCORE_ENVIRONMENT: "Development"
+  #     DB_CONNECTION_STRING: "host=store_db;port=5432;database=store;username=postgres;password=postgres"
+  #   depends_on:
+  #     store_db:
+  #       condition: service_healthy
+  #   ports:
+  #     - '8000:80'
+  #     - '443:443'
+  #   networks:
+  #     - store_network
+
+volumes:
+  db_volume:
+
+networks:
+  store_network:
+    driver: bridge
