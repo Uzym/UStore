@@ -1,0 +1,37 @@
+version: '3.7'
+
+services:
+
+  minio:
+    container_name: minio
+    image: minio/minio
+    volumes:
+      - minio_volume:/data
+    ports:
+      - "9000:9000"
+    command: server /data
+    networks:
+      - s3_network
+    restart: on-failure
+
+  s3_api:
+    image: s3/api
+    build:
+      context: .
+      dockerfile: S3API/Dockerfile
+    depends_on:
+      - minio
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    ports:
+      - '8002:80'
+      - '443:443'
+    networks:
+      - s3_network
+
+volumes:
+  minio_volume:
+
+networks:
+  s3_network:
+    driver: bridge
