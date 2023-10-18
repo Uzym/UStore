@@ -17,6 +17,13 @@ namespace TaskMgrAPI.Controllers
             _context = context;
         }
 
+        [Route("test")]
+        [HttpGet]
+        public async Task<ActionResult<string>> Test()
+        {
+            return Ok("12345");
+        }
+
         [HttpGet]
         public async Task<ActionResult<long>> GetRoles()
         {

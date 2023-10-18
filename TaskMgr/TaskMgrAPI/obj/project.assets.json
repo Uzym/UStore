@@ -1377,26 +1377,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ggame\\.nuget\\packages\\": {}
+    "C:\\Users\\Ilya Lyutoev\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\projects\\SemenStore\\TaskMgr\\TaskMgrAPI\\TaskMgrAPI.csproj",
+      "projectUniqueName": "F:\\Users\\Ilya Lyutoev\\source\\repos\\UStore\\TaskMgr\\TaskMgrAPI\\TaskMgrAPI.csproj",
       "projectName": "TaskMgrAPI",
-      "projectPath": "D:\\projects\\SemenStore\\TaskMgr\\TaskMgrAPI\\TaskMgrAPI.csproj",
-      "packagesPath": "C:\\Users\\ggame\\.nuget\\packages\\",
-      "outputPath": "D:\\projects\\SemenStore\\TaskMgr\\TaskMgrAPI\\obj\\",
+      "projectPath": "F:\\Users\\Ilya Lyutoev\\source\\repos\\UStore\\TaskMgr\\TaskMgrAPI\\TaskMgrAPI.csproj",
+      "packagesPath": "C:\\Users\\Ilya Lyutoev\\.nuget\\packages\\",
+      "outputPath": "F:\\Users\\Ilya Lyutoev\\source\\repos\\UStore\\TaskMgr\\TaskMgrAPI\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\ggame\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\Ilya Lyutoev\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -1445,6 +1443,24 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[6.0.23, 6.0.23]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[6.0.23, 6.0.23]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[6.0.23, 6.0.23]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[6.0.23, 6.0.23]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -1453,7 +1469,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.200\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.402\\RuntimeIdentifierGraph.json"
       }
     }
   }
