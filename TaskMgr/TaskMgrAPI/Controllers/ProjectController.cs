@@ -7,6 +7,7 @@ using TaskMgrAPI.Models;
 
 using TaskMgrAPI.Dtos.Role;
 using TaskMgrAPI.Dtos.Project;
+using TaskMgrAPI.Dtos.Section;
 
 namespace TaskMgrAPI.Controllers
 {
@@ -123,7 +124,7 @@ namespace TaskMgrAPI.Controllers
 
         [Route("{project_id}/section")]
         [HttpPost]
-        public async Task<ActionResult<ProjectDto>> AddSection(long project_id, RequestAddSection data)
+        public async Task<ActionResult<ProjectDto>> AddSection(long project_id, RequestCreateSectionDto data)
         {
             var id = await _context.Database
                 .SqlQuery<long>(
