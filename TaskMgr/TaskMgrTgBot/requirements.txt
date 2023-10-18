@@ -1,0 +1,4 @@
+nest-asyncio==1.5.5
+aiogram==3.0.0b7
+requests==2.28.1
+emoji==2.2.0

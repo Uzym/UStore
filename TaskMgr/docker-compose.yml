@@ -1,21 +1,6 @@
 version: '3.7'
 
 services:
-  # pgadmin:
-  #   image: dpage/pgadmin4
-  #   restart: always
-  #   ports:
-  #     - "5050:80"
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
-  #     PGADMIN_DEFAULT_PASSWORD: admin
-  #   depends_on:
-  #     - taskmgr_db
-  #   volumes:
-  #     - pgadmin-data:/var/lib/pgadmin
-  #   networks:
-  #     - taskmgr_network
-
   taskmgr_db:
     image: postgres
     volumes:
@@ -49,6 +34,21 @@ services:
     ports:
       - '8000:80'
       - '443:443'
+    networks:
+      - taskmgr_network
+
+  taskmgr_tgbot:
+    image: taskmgr/tgbot
+    restart: always
+    build:
+      context: .
+      dockerfile: TaskMgrTgBot/Dockerfile
+    # environment:  //TODO: сделать .env файл
+    #   - TOKEN=${TOKEN}
+    #   - API_URL=${API_URL}
+    depends_on:
+      taskmgr_api:
+        condition: service_healthy
     networks:
       - taskmgr_network
 

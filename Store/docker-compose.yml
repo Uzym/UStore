@@ -20,22 +20,22 @@ services:
     networks:
       - store_network
 
-  # store_api:
-  #   image: store/api
-  #   build:
-  #     context: .
-  #     dockerfile: storeAPI/Dockerfile
-  #   environment:
-  #     ASPNETCORE_ENVIRONMENT: "Development"
-  #     DB_CONNECTION_STRING: "host=store_db;port=5432;database=store;username=postgres;password=postgres"
-  #   depends_on:
-  #     store_db:
-  #       condition: service_healthy
-  #   ports:
-  #     - '8000:80'
-  #     - '443:443'
-  #   networks:
-  #     - store_network
+  store_api:
+    image: store/api
+    build:
+      context: .
+      dockerfile: storeAPI/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      DB_CONNECTION_STRING: "host=store_db;port=5432;database=store;username=postgres;password=postgres"
+    depends_on:
+      store_db:
+        condition: service_healthy
+    ports:
+      - '8000:80'
+      - '443:443'
+    networks:
+      - store_network
 
 volumes:
   db_volume:

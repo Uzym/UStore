@@ -10,7 +10,7 @@ CREATE TABLE public.series (
 	series_id int8 NOT NULL GENERATED ALWAYS AS IDENTITY,
 	title varchar NOT NULL,
 	description varchar NULL,
-	firm_id int4 NOT NULL,
+	firm_id int8 NOT NULL,
 	discount numeric NOT NULL,
 	CONSTRAINT series_pk PRIMARY KEY (series_id),
 	CONSTRAINT series_fk FOREIGN KEY (firm_id) REFERENCES public.firm(firm_id)
@@ -21,7 +21,7 @@ CREATE TABLE public.category (
 	title varchar NOT NULL,
 	description varchar NULL,
 	discount numeric NOT NULL,
-	CONSTRAINT category_pk PRIMARY KEY (product_id)
+	CONSTRAINT category_pk PRIMARY KEY (category_id)
 );
 
 CREATE TABLE public.product (
@@ -34,7 +34,7 @@ CREATE TABLE public.product (
 	delivery_time interval NOT NULL,
 	discount numeric NOT NULL,
 	CONSTRAINT product_pk PRIMARY KEY (product_id),
-	CONSTRAINT product_fk FOREIGN KEY (product_id) REFERENCES public.category(product_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT product_fk FOREIGN KEY (category_id) REFERENCES public.category(category_id) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT product_fk_1 FOREIGN KEY (series_id) REFERENCES public.series(series_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -47,7 +47,7 @@ CREATE TABLE public.photo (
 	"name" varchar NOT NULL,
 	CONSTRAINT photo_pk PRIMARY KEY (photo_id),
 	CONSTRAINT photo_fk FOREIGN KEY (product_id) REFERENCES public.product(product_id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT photo_fk_1 FOREIGN KEY (product_id) REFERENCES public.category(product_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT photo_fk_1 FOREIGN KEY (category_id) REFERENCES public.category(category_id) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT photo_fk_2 FOREIGN KEY (series_id) REFERENCES public.series(series_id) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT photo_fk_3 FOREIGN KEY (firm_id) REFERENCES public.firm(firm_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
