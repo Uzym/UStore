@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using TaskMgrAPI.Models;
 using TaskMgrAPI.Dtos.Role;
 using TaskMgrAPI.Dtos.Project;
 using TaskMgrAPI.Dtos.Section;
+using TaskMgrAPI.Attributes;
 
 namespace TaskMgrAPI.Controllers
 {
@@ -16,27 +18,61 @@ namespace TaskMgrAPI.Controllers
     public class ProjectController : ControllerBase
     {
         private readonly TaskmgrContext _context;
+        private LinkGenerator _linkGenerator;
 
-        public ProjectController(TaskmgrContext context)
+        public ProjectController(TaskmgrContext context, LinkGenerator linkGenerator)
         {
             _context = context;
+            _linkGenerator = linkGenerator;
         }
-        
-        private async Task<List<string>> UserAction(long user_id, long project_id)
-        { // TODO: ввести свой декоратор в котором мы указываем право, которым должен владеть человек чтобы использовать этот эндпоинт
+
+        private IEnumerable<Link> CreateProjectLink(long project_id, List<string> rights)
+        {
+            var links = new List<Link>();
+            
+            foreach (var method in typeof(ProjectController).GetMethods())
+            {
+                var attrs = (RightTaskMgr[]) method.GetCustomAttributes(typeof(RightTaskMgr), false);
+                foreach (var attr in attrs)
+                {
+                    var methodHttp = "";
+                    if (method.GetCustomAttributes(typeof(HttpGetAttribute), false).Count() != 0)
+                        methodHttp = "GET";
+                    else if (method.GetCustomAttributes(typeof(HttpPostAttribute), false).Count() != 0)
+                        methodHttp = "POST";
+                    else if (method.GetCustomAttributes(typeof(HttpPatchAttribute), false).Count() != 0)
+                        methodHttp = "PATCH";
+                    else if (method.GetCustomAttributes(typeof(HttpPutAttribute), false).Count() != 0)
+                        methodHttp = "PUT";
+
+                    links.Add(
+                        new Link()
+                        {
+                            Href = _linkGenerator.GetUriByAction(HttpContext, method.Name, values: new { project_id }) ?? "",
+                            Rel = "self",
+                            Method = methodHttp
+                        }
+                    );
+                }
+            }
+            
+            return links;
+        }
+        private async Task<List<Link>> UserAction(string telegram_id, long project_id)
+        {
+            var userId = await _context.Users.Where(u => u.TelegramId == telegram_id).Select(u => u.UserId).FirstAsync();
             var rights = await _context.Database
                 .SqlQuery<string>(
-                    $"select r2.title from public.user_project as up join public.role r on up.role_id = r.role_id join public.right_role rr on r.role_id = rr.role_id join public.\"right\" r2 on rr.right_id = r2.right_id where up.user_id = {user_id} and project_id = {project_id}"
+                    $"select r2.title from public.user_project as up join public.role r on up.role_id = r.role_id join public.right_role rr on r.role_id = rr.role_id join public.\"right\" r2 on rr.right_id = r2.right_id where up.user_id = {userId} and project_id = {project_id}"
                 )
                 .ToListAsync();
-            // TODO: теперь нужно сделать параметры для функций которые будут говорить о том какое действие может делать человек
+
+            var userLinks = CreateProjectLink(project_id, rights);
             
-            return rights;
+            return userLinks.ToList();
         }
         
-        [Route("{project_id}")]
-        [HttpGet]
-        public async Task<ActionResult<ProjectDto>> Index(long project_id)
+        private async Task<ProjectDto?> GetProjectDto(long project_id)
         {
             var project = await _context.Projects
                 .FromSql($"SELECT * FROM public.project WHERE project_id = {project_id} LIMIT 1")
@@ -44,7 +80,7 @@ namespace TaskMgrAPI.Controllers
             
             if (project.Count == 0)
             {
-                return NotFound();
+                return null;
             }
 
             var projectDto = new ProjectDto
@@ -53,10 +89,27 @@ namespace TaskMgrAPI.Controllers
                 title = project[0].Title,
                 description = project[0].Description ?? ""
             };
+            
+            return projectDto;
+        }
+        
+        [Route("{project_id}")]
+        [HttpGet]
+        public async Task<ActionResult<ResponseGetProjectDto>> GetById([FromHeader(Name = "Telegram-Id")] string telegramId, long project_id)
+        {
+            var projectDto = await GetProjectDto(project_id);
+            if (projectDto is null)
+            {
+                return NotFound();
+            }
 
-            // TODO: сделать логику обработки ролей и прав
+            var response = new ResponseGetProjectDto()
+            {
+                project = projectDto,
+                links = await UserAction(telegramId, project_id)
+            };
 
-            return Ok(projectDto);
+            return Ok(response);
         }
         
         [HttpPost]
@@ -68,7 +121,7 @@ namespace TaskMgrAPI.Controllers
                 )
                 .ToListAsync();
 
-            return await Index(id[0]);
+            return await GetProjectDto(id[0]);
         }
 
         [HttpGet]
@@ -83,6 +136,7 @@ namespace TaskMgrAPI.Controllers
         
         [Route("{project_id}")]
         [HttpPut]
+        [RightTaskMgr("update_project")]
         public async Task<ActionResult<ProjectDto>> Update(long project_id, RequestCreateProjectDto data)
         {
             var id = await _context.Database
@@ -91,11 +145,12 @@ namespace TaskMgrAPI.Controllers
                 )
                 .ToListAsync();
 
-            return await Index(project_id);
+            return await GetProjectDto(project_id);
         }
 
         [Route("{project_id}/user")]
         [HttpPost]
+        [RightTaskMgr("update_project", "add_user")]
         public async Task<ActionResult<ProjectDto>> AddUser(long project_id, RequestAddUser data)
         {
             var id = await _context.Database
@@ -103,11 +158,12 @@ namespace TaskMgrAPI.Controllers
                     $"insert into public.user_project (user_id, project_id, role_id) values ({data.user_id}, {project_id}, {data.role_id})"
                 )
                 .ToListAsync();
-            return await Index(project_id);
+            return await GetProjectDto(project_id);
         }
-
+        
         [Route("{project_id}/user")]
         [HttpGet]
+        [RightTaskMgr("view_project")]
         public async Task<ActionResult<List<UserRoleDto>>> GetUsers(long project_id)
         {
             var user_roles = await _context.UserProjects
@@ -124,6 +180,7 @@ namespace TaskMgrAPI.Controllers
 
         [Route("{project_id}/section")]
         [HttpPost]
+        [RightTaskMgr("update_project", "add_section")]
         public async Task<ActionResult<ProjectDto>> AddSection(long project_id, RequestCreateSectionDto data)
         {
             var id = await _context.Database
@@ -132,11 +189,12 @@ namespace TaskMgrAPI.Controllers
                 )
                 .ToListAsync();
 
-            return await Index(project_id);
+            return await GetProjectDto(project_id);
         }
         
         [Route("{project_id}/section")]
         [HttpGet]
+        [RightTaskMgr("view_project")]
         public async Task<ActionResult<List<long>>> GetSections(long project_id)
         {
             var ids = await _context.Sections
@@ -149,6 +207,7 @@ namespace TaskMgrAPI.Controllers
 
         [Route("{project_id}/role")]
         [HttpGet]
+        [RightTaskMgr("view_project")]
         public async Task<ActionResult<List<long>>> GetRoles(long project_id)
         {
             var roles = await _context.Roles
