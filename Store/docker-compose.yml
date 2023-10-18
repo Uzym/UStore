@@ -37,6 +37,18 @@ services:
     networks:
       - store_network
 
+  store_frontend:
+    image: store/frontend
+    build:
+      context: StoreFrontend
+    # environment:
+    ports:
+      - "5173:5173"
+    networks:
+      - store_network
+    depends_on:
+      - store_api
+
 volumes:
   db_volume:
 
