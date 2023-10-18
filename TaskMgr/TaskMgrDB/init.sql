@@ -36,26 +36,6 @@ CREATE TABLE public."user" (
 );
 CREATE UNIQUE INDEX user_user_id_idx ON public."user" USING btree (user_id);
 
--- CREATE TYPE public."taskmgr_rights" AS ENUM (
--- 	'view_project',
--- 	'update_project',
--- 	'delete_project',
--- 	'view_section',
--- 	'update_section',
--- 	'delete_section',
--- 	'add_section',
--- 	'view_card',
--- 	'update_card',
--- 	'update_card_complete',
--- 	'delete_card',
--- 	'add_card',
--- 	'add_comment',
--- 	'view_comment',
--- 	'delete_comment',
--- 	'add_user',
--- 	'delete_user',
--- 	'view_user');
-
 CREATE TABLE public."right" (
 	right_id int8 NOT NULL GENERATED ALWAYS AS IDENTITY,
 	title varchar NOT NULL,
@@ -88,7 +68,6 @@ CREATE TABLE public."role" (
 	title varchar NOT NULL,
 	description varchar NULL,
 	allow_tables _varchar NOT NULL,
-	-- rights public."_taskmgr_rights" NULL,
 	CONSTRAINT role_pk PRIMARY KEY (role_id)
 );
 

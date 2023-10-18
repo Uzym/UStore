@@ -17,7 +17,7 @@ CREATE TABLE public.series (
 );
 
 CREATE TABLE public.category (
-	product_id int8 NOT NULL GENERATED ALWAYS AS IDENTITY,
+	category_id int8 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1 NO CYCLE),
 	title varchar NOT NULL,
 	description varchar NULL,
 	discount numeric NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE public.photo (
 );
 
 CREATE TABLE public."user" (
-	user_id int8 NOT NULL GENERATED ALWAYS AS IDENTITY,
+	user_id int8 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1 NO CYCLE),
 	tg_id varchar NOT NULL,
 	"name" varchar NOT NULL,
 	adress varchar NULL,
@@ -65,12 +65,13 @@ CREATE TABLE public."user" (
 );
 
 CREATE TABLE public."order" (
-	user_id bigint NOT NULL,
-	card_id bigint NOT NULL,
+	user_id int8 NOT NULL,
+	card_id int8 NOT NULL,
 	finished bool NOT NULL,
-	order_id bigint NOT NULL GENERATED ALWAYS AS IDENTITY,
+	order_id int8 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1 NO CYCLE),
 	price money NOT NULL,
-	CONSTRAINT order_pk PRIMARY KEY (order_id)
+	CONSTRAINT order_pk PRIMARY KEY (order_id),
+	CONSTRAINT order_fk FOREIGN KEY (user_id) REFERENCES public."user"(user_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE public.order_product (
