@@ -46,8 +46,7 @@ services:
       - TOKEN=${TOKEN}
       - API_URL=${API_URL}
     depends_on:
-      taskmgr_api:
-        condition: service_healthy
+      - taskmgr_api
     networks:
       - taskmgr_network
 
