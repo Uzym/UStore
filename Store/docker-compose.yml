@@ -37,20 +37,45 @@ services:
     networks:
       - store_network
 
-  store_frontend:
-    image: store/frontend
-    build:
-      context: StoreFrontend
-    # environment:
-    ports:
-      - "5173:5173"
-    networks:
-      - store_network
-    depends_on:
-      - store_api
+  # store_frontend:
+  #   image: store/frontend
+  #   build:
+  #     context: StoreFrontend
+  #   # environment:
+  #   ports:
+  #     - "5173:5173"
+  #   networks:
+  #     - store_network
+  #   depends_on:
+  #     - store_api
+
+  # minio:
+  #   container_name: minio
+  #   image: minio/minio
+  #   volumes:
+  #     - minio_volume:/data
+  #   ports:
+  #     - "9000:9000"
+  #   command: server /data
+  #   networks:
+  #     - store_network
+  #   restart: on-failure
+
+  # s3_api:
+  #   image: s3/api
+  #   depends_on:
+  #     - minio
+  #   environment:
+  #     ASPNETCORE_ENVIRONMENT: "Development"
+  #   ports:
+  #     - '8002:80'
+  #     - '443:443'
+  #   networks:
+  #     - store_network
 
 volumes:
   db_volume:
+  minio_volume:
 
 networks:
   store_network:
