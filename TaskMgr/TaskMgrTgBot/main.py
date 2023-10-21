@@ -1,35 +1,37 @@
-from aiogram import Bot, Dispatcher, types
-from aiogram.fsm.strategy import FSMStrategy
-from aiogram.fsm.storage.memory import MemoryStorage
-import logging
 import asyncio
-import os
+import logging
 
-# from app.handlers import common, consume, manage
-# from app.config import config
+from aiogram import Bot, Dispatcher
 
-# logger = logging.getLogger(__name__)
+from config import Config, load_config
+from src.handlers import echo
 
-# async def main() -> None:
 
-#     asyncio.set_event_loop(config.loop)
+logger = logging.getLogger(__name__)
 
-#     logging.basicConfig(
-#         level=logging.INFO,
-#         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-#     )
-#     logger.info("Starting bot")
 
-#     dp = Dispatcher(storage=MemoryStorage(), fsm_strategy=FSMStrategy.USER_IN_CHAT)
+async def main():
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(filename)s:%(lineno)d #%(levelname)-8s "
+        "[%(asctime)s] - %(name)s - %(message)s",
+    )
 
-#     dp.include_router(manage.router)
-#     dp.include_router(common.router)
-#     dp.include_router(consume.router)
+    logger.info("Starting bot")
 
-#     try:
-#         await dp.start_polling(config.bot, allowed_updates=dp.resolve_used_update_types())
-#     finally:
-#         await config.bot.session.close()
+    config: Config = load_config()
 
-# if __name__ == '__main__':
-#     config.loop.run_until_complete(main())
+    bot: Bot = Bot(token=config.tg_bot.token, parse_mode="HTML")
+    dp: Dispatcher = Dispatcher()
+
+    dp.include_router(echo.router)
+
+    await bot.delete_webhook(drop_pending_updates=True)
+    await dp.start_polling(bot)
+
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except (KeyboardInterrupt, SystemExit):
+        logger.info("Bot stopped")

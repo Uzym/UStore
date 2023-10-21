@@ -27,7 +27,7 @@ services:
       dockerfile: TaskMgrAPI/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
-      DB_CONNECTION_STRING: "host=taskmgr_db;port=5432;database=taskmgr;username=postgres;password=postgres"
+      DB_CONNECTION_STRING: ${DB_CONNECTION_STRING}
     depends_on:
       taskmgr_db:
         condition: service_healthy
@@ -41,11 +41,10 @@ services:
     image: taskmgr/tgbot
     restart: always
     build:
-      context: .
-      dockerfile: TaskMgrTgBot/Dockerfile
-    # environment:  //TODO: сделать .env файл
-    #   - TOKEN=${TOKEN}
-    #   - API_URL=${API_URL}
+      context: ./TaskMgrTgBot
+    environment:
+      - TOKEN=${TOKEN}
+      - API_URL=${API_URL}
     depends_on:
       taskmgr_api:
         condition: service_healthy
