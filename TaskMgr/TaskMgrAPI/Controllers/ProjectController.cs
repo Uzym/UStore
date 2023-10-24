@@ -19,11 +19,17 @@ namespace TaskMgrAPI.Controllers
     {
         private readonly TaskmgrContext _context;
         private LinkGenerator _linkGenerator;
-
+        
         public ProjectController(TaskmgrContext context, LinkGenerator linkGenerator)
         {
             _context = context;
             _linkGenerator = linkGenerator;
+        }
+
+        private async Task<long> AuthUser(string telegramId)
+        {
+            var userId = await _context.Users.Where(u => u.TelegramId == telegramId).Select(u => u.UserId).FirstAsync();
+            return userId;
         }
 
         private IEnumerable<Link> CreateProjectLink(long project_id, List<string> rights)
@@ -35,6 +41,9 @@ namespace TaskMgrAPI.Controllers
                 var attrs = (RightTaskMgr[]) method.GetCustomAttributes(typeof(RightTaskMgr), false);
                 foreach (var attr in attrs)
                 {
+                    if (attr.Right.Intersect(rights).Count() == 0)
+                        continue;
+                    
                     var methodHttp = "";
                     if (method.GetCustomAttributes(typeof(HttpGetAttribute), false).Count() != 0)
                         methodHttp = "GET";
@@ -44,6 +53,8 @@ namespace TaskMgrAPI.Controllers
                         methodHttp = "PATCH";
                     else if (method.GetCustomAttributes(typeof(HttpPutAttribute), false).Count() != 0)
                         methodHttp = "PUT";
+                    else if (method.GetCustomAttributes(typeof(HttpDeleteAttribute), false).Count() != 0)
+                        methodHttp = "DELETE";
 
                     links.Add(
                         new Link()
@@ -60,10 +71,10 @@ namespace TaskMgrAPI.Controllers
         }
         private async Task<List<Link>> UserAction(string telegram_id, long project_id)
         {
-            var userId = await _context.Users.Where(u => u.TelegramId == telegram_id).Select(u => u.UserId).FirstAsync();
+            var userId = await AuthUser(telegram_id);
             var rights = await _context.Database
                 .SqlQuery<string>(
-                    $"select r2.title from public.user_project as up join public.role r on up.role_id = r.role_id join public.right_role rr on r.role_id = rr.role_id join public.\"right\" r2 on rr.right_id = r2.right_id where up.user_id = {userId} and project_id = {project_id}"
+                    $"select distinct(r2.title) from public.user_project as up join public.role r on up.role_id = r.role_id join public.right_role rr on r.role_id = rr.role_id join public.\"right\" r2 on rr.right_id = r2.right_id where up.user_id = {userId} and project_id = {project_id}"
                 )
                 .ToListAsync();
 
@@ -117,21 +128,35 @@ namespace TaskMgrAPI.Controllers
         {
             var id = await _context.Database
                 .SqlQuery<long>(
-                    $"INSERT INTO public.project (title, description) VALUES ({data.title}, {data.description}) RETURNING user_id"
+                    $"INSERT INTO public.project (title, description) VALUES ({data.title}, {data.description}) RETURNING project_id"
                 )
                 .ToListAsync();
-
+            
             return await GetProjectDto(id[0]);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<long>>> Get()
+        public async Task<ActionResult<List<ProjectDto>>> Get([FromHeader(Name = "Telegram-Id")] string? telegramId)
         {
-            var projects = await _context.Projects
-                .Select(u => u.ProjectId)
+            long? userId = null;
+            if (telegramId != null)
+            {
+                userId = await AuthUser(telegramId);
+            }
+            
+            var allowProjects = await _context.UserProjects
+                .Where(up => up.UserId == (userId ?? up.UserId))
+                .Include(up => up.Project)
+                .Select(up => new ProjectDto()
+                {
+                    project_id = up.Project.ProjectId,
+                    title = up.Project.Title,
+                    description = up.Project.Description ?? ""
+                })
                 .ToListAsync();
+            allowProjects = allowProjects.DistinctBy(p => p.project_id).ToList();
 
-            return Ok(projects);
+            return Ok(allowProjects);
         }
         
         [Route("{project_id}")]

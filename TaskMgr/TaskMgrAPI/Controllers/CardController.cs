@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TaskMgrAPI.Attributes;
 using TaskMgrAPI.Context;
 using TaskMgrAPI.Models;
 
@@ -16,37 +17,119 @@ namespace TaskMgrAPI.Controllers
     public class CardController : ControllerBase
     {
         private readonly TaskmgrContext _context;
+        private LinkGenerator _linkGenerator;
 
-        public CardController(TaskmgrContext context)
+        public CardController(TaskmgrContext context, LinkGenerator linkGenerator)
         {
             _context = context;
+            _linkGenerator = linkGenerator;
+        }
+        
+        private async Task<long> AuthUser(string telegramId)
+        {
+            var userId = await _context.Users.Where(u => u.TelegramId == telegramId).Select(u => u.UserId).FirstAsync();
+            return userId;
+        }
+        
+        private IEnumerable<Link> CreateProjectLink(long cardId, List<string> rights)
+        {
+            var links = new List<Link>();
+            
+            foreach (var method in typeof(CardController).GetMethods())
+            {
+                var attrs = (RightTaskMgr[]) method.GetCustomAttributes(typeof(RightTaskMgr), false);
+                foreach (var attr in attrs)
+                {
+                    if (attr.Right.Intersect(rights).Count() == 0)
+                        continue;
+                    
+                    var methodHttp = "";
+                    if (method.GetCustomAttributes(typeof(HttpGetAttribute), false).Count() != 0)
+                        methodHttp = "GET";
+                    else if (method.GetCustomAttributes(typeof(HttpPostAttribute), false).Count() != 0)
+                        methodHttp = "POST";
+                    else if (method.GetCustomAttributes(typeof(HttpPatchAttribute), false).Count() != 0)
+                        methodHttp = "PATCH";
+                    else if (method.GetCustomAttributes(typeof(HttpPutAttribute), false).Count() != 0)
+                        methodHttp = "PUT";
+                    else if (method.GetCustomAttributes(typeof(HttpDeleteAttribute), false).Count() != 0)
+                        methodHttp = "DELETE";
+
+                    links.Add(
+                        new Link()
+                        {
+                            Href = _linkGenerator.GetUriByAction(HttpContext, method.Name, values: new { cardId }) ?? "", // _linkGenerator.GetUriByAction(HttpContext, method.Name, values: new { cardId }) ?? "",
+                            Rel = "self",
+                            Method = methodHttp
+                        }
+                    );
+                }
+            }
+            
+            return links;
+        }
+        private async Task<List<Link>> UserAction(string telegram_id, long cardId)
+        {
+            var userId = await AuthUser(telegram_id);
+            var rights = await _context.Database
+                .SqlQuery<string>(
+                    $"select distinct(r2.title) from public.user_card as uc join public.card c on c.card_id = uc.card_id join public.section s on s.section_id = c.section_id join public.project p on p.project_id = s.project_id join public.user_project up on p.project_id = up.project_id join public.role r on (r.role_id = up.role_id) or (r.role_id = uc.role_id) join public.right_role rr on r.role_id = rr.role_id join public.\"right\" r2 on r2.right_id = rr.right_id where uc.user_id = {userId} and uc.card_id = {cardId}"
+                )
+                .ToListAsync();
+
+            var userLinks = CreateProjectLink(cardId, rights);
+            
+            return userLinks.ToList();
+        }
+        
+        private async Task<CardDto?> GetCardDto(long card_id)
+        {
+            var card = await _context.Cards
+                .FromSql($"SELECT * FROM public.card WHERE card_id = {card_id} LIMIT 1")
+                .ToListAsync();
+            
+            if (card.Count == 0)
+            {
+                return null;
+            }
+
+            var cardDto = new CardDto()
+            {
+                card_id = card[0].CardId,
+                description = card[0].Description ?? "",
+                complete = card[0].Complete,
+                title = card[0].Title,
+                created = card[0].Created,
+                due = card[0].Due,
+                section_id = card[0].SectionId,
+                tags = (card[0].Tags ?? new string[] {}).ToList()
+            };
+            
+            return cardDto;
         }
 
         [Route("{card_id}")]
         [HttpGet]
-        public async Task<ActionResult<CardDto>> Index(long card_id)
+        public async Task<ActionResult<ResponseGetCardDto>> GetById([FromHeader(Name = "Telegram-Id")] string telegramId, long card_id)
         {
-            var card = await _context.Cards
-                .Where(c => c.CardId == card_id)
-                .FirstAsync();
-
-            var cardDto = new CardDto()
+            var cardDto = await GetCardDto(card_id);
+            if (cardDto is null)
             {
-                card_id = card.CardId,
-                description = card.Description ?? "",
-                complete = card.Complete,
-                title = card.Title,
-                created = card.Created,
-                due = card.Due,
-                section_id = card.SectionId,
-                tags = (card.Tags ?? new string[] {}).ToList()
+                return NotFound();
+            }
+            
+            var response = new ResponseGetCardDto()
+            {
+                card = cardDto,
+                links = await UserAction(telegramId, card_id)
             };
             
-            return Ok(cardDto);
+            return Ok(response);
         }
-
+        
         [Route("{card_id}")]
         [HttpPut]
+        [RightTaskMgr("update_card")]
         public async Task<ActionResult<CardDto>> Update(long card_id, RequestCreateCardDto data)
         {
             var card = await _context.Cards
@@ -59,11 +142,12 @@ namespace TaskMgrAPI.Controllers
             card.Tags = data.tags.ToArray();
 
             await _context.SaveChangesAsync();
-            return await Index(card_id);
+            return Ok(await GetCardDto(card_id));
         }
 
         [Route("{card_id}/comment")]
         [HttpGet]
+        [RightTaskMgr("view_card")]
         public async Task<ActionResult<List<long>>> GetComments(long card_id)
         {
             var ids = await _context.Comments
@@ -76,6 +160,7 @@ namespace TaskMgrAPI.Controllers
 
         [Route("{card_id}/comment")]
         [HttpPost]
+        [RightTaskMgr("add_comment")]
         public async Task<ActionResult<CardDto>> AddComment(long card_id, RequestCreateCommentDto data)
         {
             var id = await _context.Database
@@ -84,11 +169,12 @@ namespace TaskMgrAPI.Controllers
                 )
                 .ToListAsync();
 
-            return await Index(card_id);
+            return Ok(await GetCardDto(card_id));
         }
 
         [Route("{card_id}/user")]
         [HttpGet]
+        [RightTaskMgr("view_card")]
         public async Task<ActionResult<List<long>>> GetUsers(long card_id)
         {
             var user_roles = await _context.UserCards
@@ -105,6 +191,7 @@ namespace TaskMgrAPI.Controllers
 
         [Route("{card_id}/user")]
         [HttpPost]
+        [RightTaskMgr("add_comment")]
         public async Task<ActionResult<CardDto>> AddUser(long card_id, RequestAddUser data)
         {
             var id = await _context.Database
@@ -112,11 +199,12 @@ namespace TaskMgrAPI.Controllers
                     $"insert into public.user_card (user_id, card_id, role_id) values ({data.user_id}, {card_id}, {data.role_id})"
                 )
                 .ToListAsync();
-            return await Index(card_id);
+            return Ok(await GetCardDto(card_id));
         }
 
         [Route("{card_id}/role")]
         [HttpGet]
+        [RightTaskMgr("view_card")]
         public async Task<ActionResult<List<long>>> GetRoles()
         {
             var roles = await _context.Roles
@@ -129,6 +217,7 @@ namespace TaskMgrAPI.Controllers
 
         [Route("{card_id}/complete")]
         [HttpPatch]
+        [RightTaskMgr("update_card", "update_card_complete")]
         public async Task<ActionResult<CardDto>> CompleteCard(long card_id)
         {
             var card = await _context.Cards
@@ -138,11 +227,12 @@ namespace TaskMgrAPI.Controllers
             card.Complete = DateTime.Now;
 
             await _context.SaveChangesAsync();
-            return await Index(card_id);
+            return Ok(await GetCardDto(card_id));
         }
         
         [Route("{card_id}/uncomplete")]
         [HttpPatch]
+        [RightTaskMgr("update_card", "update_card_complete")]
         public async Task<ActionResult<CardDto>> UnCompleteCard(long card_id)
         {
             var card = await _context.Cards
@@ -152,7 +242,7 @@ namespace TaskMgrAPI.Controllers
             card.Complete = null;
 
             await _context.SaveChangesAsync();
-            return await Index(card_id);
+            return Ok(await GetCardDto(card_id));
         }
     }
 }
