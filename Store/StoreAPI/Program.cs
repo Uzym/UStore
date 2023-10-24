@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using StoreAPI.Clients;
 using StoreAPI.Context;
 
 namespace StoreAPI
@@ -14,6 +15,7 @@ namespace StoreAPI
 
             // Add services to the container.
 
+            builder.Services.AddHttpClient<ITaskMgrClient, TaskMgrClient>();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -22,7 +24,7 @@ namespace StoreAPI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Store", Version = "v1" });
             });
 
-            var connectionString = "host=store_db;port=5432;database=taskmgr;username=postgres;password=postgres";
+            var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
             builder.Services.AddDbContext<StoreContext>(options =>
                 options.UseNpgsql(
                      connectionString

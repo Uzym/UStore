@@ -78,16 +78,11 @@ namespace TaskMgrAPI.Controllers
                         routeUri = delets.Where(d => d.Template != null).Select(d => d.Template.Substring(9)).FirstOrDefault();
                     }
 
-                    //Console.WriteLine(method.Name);
-                    //Console.WriteLine(method.GetCustomAttributes(typeof(Route), false).Length);
-                    //Console.WriteLine(cardId);
-                    //Console.WriteLine(_linkGenerator.GetUriByAction(method.Name, "Card", null, HttpContext.Request.Scheme, HttpContext.Request.Host));
-                    //Console.WriteLine(_linkGenerator.GetUriByAction(method.Name, "card", null, HttpContext.Request.Scheme, HttpContext.Request.Host));
                     Console.WriteLine(_linkGenerator.GetUriByAction(HttpContext) + routeUri);
                     links.Add(
                         new Link()
                         {
-                            Href = _linkGenerator.GetUriByAction(HttpContext) != null ? _linkGenerator.GetUriByAction(HttpContext) + routeUri : "", // _linkGenerator.GetUriByAction(HttpContext, method.Name, values: new { cardId }) ?? "",
+                            Href = _linkGenerator.GetUriByAction(HttpContext) != null ? _linkGenerator.GetUriByAction(HttpContext) + routeUri : "",
                             Rel = method.Name,
                             Method = methodHttp
                         }

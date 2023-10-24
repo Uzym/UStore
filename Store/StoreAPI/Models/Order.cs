@@ -5,13 +5,13 @@ namespace StoreAPI.Models;
 
 public partial class Order
 {
+    public long OrderId { get; set; }
+
     public long UserId { get; set; }
 
     public long CardId { get; set; }
 
     public bool Finished { get; set; }
-
-    public long OrderId { get; set; }
 
     public decimal Price { get; set; }
 
