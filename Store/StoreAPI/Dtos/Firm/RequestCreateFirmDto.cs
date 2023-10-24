@@ -1,6 +1,6 @@
-﻿namespace StoreAPI.Dtos.Category
+﻿namespace StoreAPI.Dtos.Firm
 {
-    public class RequestCreateCategoryDto
+    public class RequestCreateFirmDto
     {
         public string? title { get; set; }
 

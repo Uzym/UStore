@@ -2,7 +2,7 @@
 {
     public class RequestCreatePhotoDto
     {
-        public string name { get; set; }
+        public string? name { get; set; }
 
         public long? product_id { get; set; }
 

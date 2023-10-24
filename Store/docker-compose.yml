@@ -37,17 +37,19 @@ services:
     networks:
       - store_network
 
-  # store_frontend:
-  #   image: store/frontend
-  #   build:
-  #     context: StoreFrontend
-  #   # environment:
-  #   ports:
-  #     - "5173:5173"
-  #   networks:
-  #     - store_network
-  #   depends_on:
-  #     - store_api
+  store_frontend:
+    image: store/frontend
+    build:
+      context: StoreFrontend
+    # environment:
+    ports:
+      - "5173:5173"
+    volumes:
+      - staticbuild:/app/out
+    networks:
+      - store_network
+    depends_on:
+      - store_api
 
   # minio:
   #   container_name: minio
@@ -76,6 +78,7 @@ services:
 volumes:
   db_volume:
   minio_volume:
+  staticbuild:
 
 networks:
   store_network:

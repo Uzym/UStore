@@ -2,9 +2,9 @@
 {
     public class RequestCreateUserDto
     {
-        public string tg_id { get; set; }
+        public string? tg_id { get; set; }
 
-        public string name { get; set; }
+        public string? name { get; set; }
 
         public string? adress { get; set; }
 
@@ -14,6 +14,6 @@
 
         public string? tg_ref { get; set; }
 
-        public bool admin { get; set; }
+        public bool? admin { get; set; }
     }
 }

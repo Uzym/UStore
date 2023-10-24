@@ -18,9 +18,10 @@ namespace StoreAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<UserDto>>> GetAll()
+        public async Task<ActionResult<List<UserDto>>> Get(string? tg_id)
         {
             var users = await _context.Users
+                .Where(u => (tg_id == null || u.TgId == tg_id))
                 .Select(u => new UserDto
                 {
                     user_id = u.UserId,
@@ -36,7 +37,7 @@ namespace StoreAPI.Controllers
         }
 
         [HttpGet("{user_id}")]
-        public async Task<ActionResult<UserDto>> GetOne(long user_id)
+        public async Task<ActionResult<UserDto>> Index(long user_id)
         {
             var user = await _context.Users
                 .FromSql($"SELECT * FROM public.user WHERE user_id = {user_id} LIMIT 1")
@@ -69,19 +70,13 @@ namespace StoreAPI.Controllers
                 )
                 .ToListAsync();
             
-            return await GetOne(id[0]);
+            return await Index(id[0]);
         }
 
         [HttpPut("{user_id}/update")]
         public async Task<ActionResult<UserDto>> Update(
             long user_id,
-            string? tg_id,
-            string? name,
-            string? adress,
-            string? telephone,
-            string? email,
-            string? tg_ref,
-            bool? admin
+            RequestCreateUserDto data
             )
         {
             var user = await _context.Users
@@ -93,17 +88,17 @@ namespace StoreAPI.Controllers
                 return NotFound();
             }
 
-            user.TgId = tg_id ?? user.TgId;
-            user.Name = name ?? user.Name;
-            user.Adress = adress ?? user.Adress;
-            user.Telephone = telephone ?? user.Telephone;
-            user.Email = email ?? user.Email;
-            user.TgRef = tg_ref ?? user.TgRef;
-            user.Admin = admin ?? user.Admin;
+            user.TgId = data.tg_id ?? user.TgId;
+            user.Name = data.name ?? user.Name;
+            user.Adress = data.adress ?? user.Adress;
+            user.Telephone = data.telephone ?? user.Telephone;
+            user.Email = data.email ?? user.Email;
+            user.TgRef = data.tg_ref ?? user.TgRef;
+            user.Admin = data.admin ?? user.Admin;
 
             await _context.SaveChangesAsync();
 
-            return await GetOne(user_id);
+            return await Index(user_id);
         }
     }
 }

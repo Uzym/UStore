@@ -11,7 +11,5 @@ namespace StoreAPI.Dtos.Firm
         public string? description { get; set; }
 
         public decimal discount { get; set; }
-
-        public List<string> tags { get;}
     }
 }

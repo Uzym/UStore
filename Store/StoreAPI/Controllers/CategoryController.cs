@@ -28,13 +28,13 @@ namespace StoreAPI.Controllers
                 return NotFound();
             }
 
-            return new CategoryDto
+            return Ok(new CategoryDto
             {
                 category_id = category.CategoryId,
                 title = category.Title,
                 discount = category.Discount,
                 description = category.Description,
-            };
+            });
         }
 
         [HttpPost]
@@ -52,9 +52,7 @@ namespace StoreAPI.Controllers
         [HttpPut("{category_id}/update")]
         public async Task<ActionResult<CategoryDto>> UpdateCategory(
             long category_id,
-            string? title,
-            string? description,
-            decimal? discount
+            RequestCreateCategoryDto data
             )
         {
             var category = await _context.Categories
@@ -65,9 +63,9 @@ namespace StoreAPI.Controllers
                 return NotFound();
             }
 
-            category.Title = title ?? category.Title;
-            category.Description = description ?? category.Description;
-            category.Discount = discount ?? category.Discount;
+            category.Title = data.title ?? category.Title;
+            category.Description = data.description ?? category.Description;
+            category.Discount = data.discount ?? category.Discount;
 
             await _context.SaveChangesAsync();
 
