@@ -22,7 +22,7 @@ namespace TaskMgrAPI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TaskMgr", Version = "v1" });
             });
 
-            var connectionString = "host=taskmgr_db;port=5432;database=taskmgr;username=postgres;password=postgres";
+            var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
             builder.Services.AddDbContext<TaskmgrContext>(options =>
                 options.UseNpgsql(
                      connectionString

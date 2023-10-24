@@ -27,7 +27,7 @@ services:
       dockerfile: storeAPI/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
-      DB_CONNECTION_STRING: "host=store_db;port=5432;database=store;username=postgres;password=postgres"
+      DB_CONNECTION_STRING: ${STORE_DB_CONNECTION_STRING}
     depends_on:
       store_db:
         condition: service_healthy
