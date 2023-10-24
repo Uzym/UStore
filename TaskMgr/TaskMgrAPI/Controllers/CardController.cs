@@ -9,6 +9,7 @@ using TaskMgrAPI.Dtos.Card;
 using TaskMgrAPI.Dtos.Comment;
 using TaskMgrAPI.Dtos.Project;
 using TaskMgrAPI.Dtos.User;
+using System.Collections.Generic;
 
 namespace TaskMgrAPI.Controllers
 {
@@ -43,23 +44,51 @@ namespace TaskMgrAPI.Controllers
                     if (attr.Right.Intersect(rights).Count() == 0)
                         continue;
                     
+                    var gets = (HttpGetAttribute[]) method.GetCustomAttributes(typeof(HttpGetAttribute), false);
+                    var posts = (HttpPostAttribute[]) method.GetCustomAttributes(typeof(HttpPostAttribute), false);
+                    var patches = (HttpPatchAttribute[]) method.GetCustomAttributes(typeof(HttpPatchAttribute), false);
+                    var puts = (HttpPutAttribute[]) method.GetCustomAttributes(typeof(HttpPutAttribute), false);
+                    var delets = (HttpDeleteAttribute[]) method.GetCustomAttributes(typeof(HttpDeleteAttribute), false);
                     var methodHttp = "";
-                    if (method.GetCustomAttributes(typeof(HttpGetAttribute), false).Count() != 0)
+                    var routeUri = "";
+                 
+                    if (gets.Count() != 0)
+                    {
                         methodHttp = "GET";
-                    else if (method.GetCustomAttributes(typeof(HttpPostAttribute), false).Count() != 0)
+                        routeUri = gets.Where(g => g.Template != null).Select(g => g.Template.Substring(9)).FirstOrDefault();
+                    }
+                    else if (posts.Count() != 0)
+                    {
                         methodHttp = "POST";
-                    else if (method.GetCustomAttributes(typeof(HttpPatchAttribute), false).Count() != 0)
+                        routeUri = posts.Where(p => p.Template != null).Select(p => p.Template.Substring(9)).FirstOrDefault();
+                    }
+                    else if (patches.Count() != 0)
+                    {
                         methodHttp = "PATCH";
-                    else if (method.GetCustomAttributes(typeof(HttpPutAttribute), false).Count() != 0)
+                        routeUri = patches.Where(p => p.Template != null).Select(p => p.Template.Substring(9)).FirstOrDefault();
+                    }
+                    else if (puts.Count() != 0)
+                    {
                         methodHttp = "PUT";
-                    else if (method.GetCustomAttributes(typeof(HttpDeleteAttribute), false).Count() != 0)
+                        routeUri = puts.Where(p => p.Template != null).Select(p => p.Template.Substring(9)).FirstOrDefault();
+                    }
+                    else if (delets.Count() != 0)
+                    {
                         methodHttp = "DELETE";
+                        routeUri = delets.Where(d => d.Template != null).Select(d => d.Template.Substring(9)).FirstOrDefault();
+                    }
 
+                    //Console.WriteLine(method.Name);
+                    //Console.WriteLine(method.GetCustomAttributes(typeof(Route), false).Length);
+                    //Console.WriteLine(cardId);
+                    //Console.WriteLine(_linkGenerator.GetUriByAction(method.Name, "Card", null, HttpContext.Request.Scheme, HttpContext.Request.Host));
+                    //Console.WriteLine(_linkGenerator.GetUriByAction(method.Name, "card", null, HttpContext.Request.Scheme, HttpContext.Request.Host));
+                    Console.WriteLine(_linkGenerator.GetUriByAction(HttpContext) + routeUri);
                     links.Add(
                         new Link()
                         {
-                            Href = _linkGenerator.GetUriByAction(HttpContext, method.Name, values: new { cardId }) ?? "", // _linkGenerator.GetUriByAction(HttpContext, method.Name, values: new { cardId }) ?? "",
-                            Rel = "self",
+                            Href = _linkGenerator.GetUriByAction(HttpContext) != null ? _linkGenerator.GetUriByAction(HttpContext) + routeUri : "", // _linkGenerator.GetUriByAction(HttpContext, method.Name, values: new { cardId }) ?? "",
+                            Rel = method.Name,
                             Method = methodHttp
                         }
                     );
@@ -108,8 +137,8 @@ namespace TaskMgrAPI.Controllers
             return cardDto;
         }
 
-        [Route("{card_id}")]
-        [HttpGet]
+        //[Route("{card_id}")]
+        [HttpGet("{card_id}")]
         public async Task<ActionResult<ResponseGetCardDto>> GetById([FromHeader(Name = "Telegram-Id")] string telegramId, long card_id)
         {
             var cardDto = await GetCardDto(card_id);
@@ -127,8 +156,8 @@ namespace TaskMgrAPI.Controllers
             return Ok(response);
         }
         
-        [Route("{card_id}")]
-        [HttpPut]
+        //[Route("{card_id}")]
+        [HttpPut("{card_id}")]
         [RightTaskMgr("update_card")]
         public async Task<ActionResult<CardDto>> Update(long card_id, RequestCreateCardDto data)
         {
@@ -145,8 +174,7 @@ namespace TaskMgrAPI.Controllers
             return Ok(await GetCardDto(card_id));
         }
 
-        [Route("{card_id}/comment")]
-        [HttpGet]
+        [HttpGet("{card_id}/comment")]
         [RightTaskMgr("view_card")]
         public async Task<ActionResult<List<long>>> GetComments(long card_id)
         {
@@ -158,8 +186,8 @@ namespace TaskMgrAPI.Controllers
             return Ok(ids);
         }
 
-        [Route("{card_id}/comment")]
-        [HttpPost]
+        //[Route("{card_id}/comment")]
+        [HttpPost("{card_id}/comment")]
         [RightTaskMgr("add_comment")]
         public async Task<ActionResult<CardDto>> AddComment(long card_id, RequestCreateCommentDto data)
         {
@@ -172,8 +200,7 @@ namespace TaskMgrAPI.Controllers
             return Ok(await GetCardDto(card_id));
         }
 
-        [Route("{card_id}/user")]
-        [HttpGet]
+        [HttpGet("{card_id}/user")]
         [RightTaskMgr("view_card")]
         public async Task<ActionResult<List<long>>> GetUsers(long card_id)
         {
@@ -189,8 +216,8 @@ namespace TaskMgrAPI.Controllers
             return Ok(user_roles);
         }
 
-        [Route("{card_id}/user")]
-        [HttpPost]
+        //[Route("{card_id}/user")]
+        [HttpPost("{card_id}/user")]
         [RightTaskMgr("add_comment")]
         public async Task<ActionResult<CardDto>> AddUser(long card_id, RequestAddUser data)
         {
@@ -202,8 +229,8 @@ namespace TaskMgrAPI.Controllers
             return Ok(await GetCardDto(card_id));
         }
 
-        [Route("{card_id}/role")]
-        [HttpGet]
+        //[Route("{card_id}/role")]
+        [HttpGet("{card_id}/role")]
         [RightTaskMgr("view_card")]
         public async Task<ActionResult<List<long>>> GetRoles()
         {
@@ -215,8 +242,8 @@ namespace TaskMgrAPI.Controllers
             return Ok(roles);
         }
 
-        [Route("{card_id}/complete")]
-        [HttpPatch]
+        //[Route("{card_id}/complete")]
+        [HttpPatch("{card_id}/complete")]
         [RightTaskMgr("update_card", "update_card_complete")]
         public async Task<ActionResult<CardDto>> CompleteCard(long card_id)
         {
@@ -230,8 +257,8 @@ namespace TaskMgrAPI.Controllers
             return Ok(await GetCardDto(card_id));
         }
         
-        [Route("{card_id}/uncomplete")]
-        [HttpPatch]
+        //[Route("{card_id}/uncomplete")]
+        [HttpPatch("{card_id}/uncomplete")]
         [RightTaskMgr("update_card", "update_card_complete")]
         public async Task<ActionResult<CardDto>> UnCompleteCard(long card_id)
         {

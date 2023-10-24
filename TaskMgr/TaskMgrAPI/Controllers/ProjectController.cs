@@ -56,6 +56,11 @@ namespace TaskMgrAPI.Controllers
                     else if (method.GetCustomAttributes(typeof(HttpDeleteAttribute), false).Count() != 0)
                         methodHttp = "DELETE";
 
+                    Console.WriteLine(method.GetCustomAttributes(typeof(Route), false).Length);
+                    Console.WriteLine(method.Name);
+                    Console.WriteLine(project_id);
+                    Console.WriteLine(_linkGenerator.GetUriByAction(HttpContext, method.Name, values: new { project_id }));
+
                     links.Add(
                         new Link()
                         {
