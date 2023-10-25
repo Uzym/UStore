@@ -150,6 +150,20 @@ namespace TaskMgrAPI.Controllers
             
             return Ok(response);
         }
+
+        // [HttpGet]
+        // public async Task<ActionResult<ResponseGetCardDto>> Get([FromHeader(Name = "Telegram-Id")] string telegramId, string? title)
+        // {
+            
+
+        //     var response = new ResponseGetCardDto()
+        //     {
+        //         card = cardDto,
+        //         links = await UserAction(telegramId, card_id)
+        //     };
+            
+        //     return Ok(response);
+        // }
         
         //[Route("{card_id}")]
         [HttpPut("{card_id}")]

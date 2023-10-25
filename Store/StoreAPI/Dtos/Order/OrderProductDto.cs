@@ -2,7 +2,7 @@
 {
     public class OrderProductDto
     {
-        public long productId { get; set; }
-        public long quantity { get; set; }
+        public long product_id { get; set; }
+        public int quantity { get; set; }
     }
 }
