@@ -24,7 +24,7 @@ async def main():
     bot: Bot = Bot(token=config.tg_bot.token, parse_mode="HTML")
     dp: Dispatcher = Dispatcher()
 
-    task_mgr_api = TaskMgrApiService()
+    task_mgr_api = TaskMgrApiService(config.api_key)
     dp["task_mgr_api"] = task_mgr_api
 
     dp.include_router(common_router)

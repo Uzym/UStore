@@ -10,6 +10,12 @@ using TaskMgrAPI.Dtos.Comment;
 using TaskMgrAPI.Dtos.Project;
 using TaskMgrAPI.Dtos.User;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using TaskMgrAPI.Exceptions;
+using TaskMgrAPI.Services.Card;
+using TaskMgrAPI.Services.Comment;
+using TaskMgrAPI.Services.Role;
+using TaskMgrAPI.Services.User;
 
 namespace TaskMgrAPI.Controllers
 {
@@ -17,19 +23,18 @@ namespace TaskMgrAPI.Controllers
     [ApiController]
     public class CardController : ControllerBase
     {
-        private readonly TaskmgrContext _context;
         private LinkGenerator _linkGenerator;
+        private readonly ICardService _cardService;
+        private readonly IUserService _userService;
+        private readonly ICommentService _commentService;
 
-        public CardController(TaskmgrContext context, LinkGenerator linkGenerator)
+        public CardController(ICardService cardService, IUserService userService, ICommentService commentService, 
+            LinkGenerator linkGenerator)
         {
-            _context = context;
+            _cardService = cardService;
             _linkGenerator = linkGenerator;
-        }
-        
-        private async Task<long> AuthUser(string telegramId)
-        {
-            var userId = await _context.Users.Where(u => u.TelegramId == telegramId).Select(u => u.UserId).FirstAsync();
-            return userId;
+            _userService = userService;
+            _commentService = commentService;
         }
         
         private IEnumerable<Link> CreateProjectLink(long cardId, List<string> rights)
@@ -92,193 +97,187 @@ namespace TaskMgrAPI.Controllers
             
             return links;
         }
-        private async Task<List<Link>> UserAction(string telegram_id, long cardId)
+        private async Task<List<Link>> UserAction(string telegramId, long cardId)
         {
-            var userId = await AuthUser(telegram_id);
-            var rights = await _context.Database
-                .SqlQuery<string>(
-                    $"select distinct(r2.title) from public.user_card as uc join public.card c on c.card_id = uc.card_id join public.section s on s.section_id = c.section_id join public.project p on p.project_id = s.project_id join public.user_project up on p.project_id = up.project_id join public.role r on (r.role_id = up.role_id) or (r.role_id = uc.role_id) join public.right_role rr on r.role_id = rr.role_id join public.\"right\" r2 on r2.right_id = rr.right_id where uc.user_id = {userId} and uc.card_id = {cardId}"
-                )
-                .ToListAsync();
+            var rights = await _cardService.UserRights(telegramId, cardId);
 
             var userLinks = CreateProjectLink(cardId, rights);
             
             return userLinks.ToList();
         }
-        
-        private async Task<CardDto?> GetCardDto(long card_id)
+
+        [HttpGet("{cardId:long}")]
+        public async Task<ActionResult<ResponseGetCardDto>> GetById([FromHeader(Name = "Telegram-Id")] string telegramId, long cardId)
         {
-            var card = await _context.Cards
-                .FromSql($"SELECT * FROM public.card WHERE card_id = {card_id} LIMIT 1")
-                .ToListAsync();
-            
-            if (card.Count == 0)
+            try
             {
-                return null;
+                var cardDto = (await _cardService.Get(cardId)).First();
+
+                var response = new ResponseGetCardDto()
+                {
+                    card = cardDto,
+                    links = await UserAction(telegramId, cardId)
+                };
+
+                return Ok(response);
             }
-
-            var cardDto = new CardDto()
+            catch (NotFoundException ex)
             {
-                card_id = card[0].CardId,
-                description = card[0].Description ?? "",
-                complete = card[0].Complete,
-                title = card[0].Title,
-                created = card[0].Created,
-                due = card[0].Due,
-                section_id = card[0].SectionId,
-                tags = (card[0].Tags ?? new string[] {}).ToList()
-            };
-            
-            return cardDto;
-        }
-
-        //[Route("{card_id}")]
-        [HttpGet("{card_id}")]
-        public async Task<ActionResult<ResponseGetCardDto>> GetById([FromHeader(Name = "Telegram-Id")] string telegramId, long card_id)
-        {
-            var cardDto = await GetCardDto(card_id);
-            if (cardDto is null)
-            {
-                return NotFound();
+                return NotFound(ex.Message);
             }
-            
-            var response = new ResponseGetCardDto()
+            catch (Exception ex)
             {
-                card = cardDto,
-                links = await UserAction(telegramId, card_id)
-            };
-            
-            return Ok(response);
+                return BadRequest(ex.Message);
+            }
         }
-
-        // [HttpGet]
-        // public async Task<ActionResult<ResponseGetCardDto>> Get([FromHeader(Name = "Telegram-Id")] string telegramId, string? title)
-        // {
-            
-
-        //     var response = new ResponseGetCardDto()
-        //     {
-        //         card = cardDto,
-        //         links = await UserAction(telegramId, card_id)
-        //     };
-            
-        //     return Ok(response);
-        // }
         
-        //[Route("{card_id}")]
-        [HttpPut("{card_id}")]
+        [HttpPut("{cardId:long}")]
         [RightTaskMgr("update_card")]
-        public async Task<ActionResult<CardDto>> Update(long card_id, RequestCreateCardDto data)
+        public async Task<ActionResult<CardDto>> Update(long cardId, RequestCreateCardDto data)
         {
-            var card = await _context.Cards
-                .Where(c => c.CardId == card_id)
-                .FirstAsync();
-
-            card.Title = data.title;
-            card.Description = data.description;
-            card.Due = data.due;
-            card.Tags = data.tags.ToArray();
-
-            await _context.SaveChangesAsync();
-            return Ok(await GetCardDto(card_id));
+            try
+            {
+                var card = await _cardService.Update(cardId,
+                    title: data.title,
+                    description: data.description,
+                    sectionId: data.section_id,
+                    due: data.due,
+                    tags: data.tags);
+                return Ok(card);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        [HttpGet("{card_id}/comment")]
+        [HttpGet("{cardId:long}/comment")]
         [RightTaskMgr("view_card")]
-        public async Task<ActionResult<List<long>>> GetComments(long card_id)
+        public async Task<ActionResult<List<long>>> GetComments(long cardId)
         {
-            var ids = await _context.Comments
-                .Where(u => u.CardId == card_id)
-                .Select(u => u.CommentId)
-                .ToListAsync();
-
-            return Ok(ids);
+            try
+            {
+                var comments = await _commentService.Get(cardId: cardId);
+                return Ok(comments);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         //[Route("{card_id}/comment")]
-        [HttpPost("{card_id}/comment")]
+        [HttpPost("{cardId:long}/comment")]
         [RightTaskMgr("add_comment")]
-        public async Task<ActionResult<CardDto>> AddComment(long card_id, RequestCreateCommentDto data)
+        public async Task<ActionResult<CardDto>> AddComment([FromHeader(Name = "Telegram-Id")] string telegramId, long cardId, RequestCreateCommentDto data)
         {
-            var id = await _context.Database
-                .SqlQuery<long>(
-                    $"insert into public.comment (description, user_id, card_id) VALUES ({data.description}, {data.user_id}, {card_id})"
-                )
-                .ToListAsync();
-
-            return Ok(await GetCardDto(card_id));
-        }
-
-        [HttpGet("{card_id}/user")]
-        [RightTaskMgr("view_card")]
-        public async Task<ActionResult<List<long>>> GetUsers(long card_id)
-        {
-            var user_roles = await _context.UserCards
-                .FromSql($"select * from public.user_card as up where up.card_id = {card_id}")
-                .Select(ur => new UserRoleDto()
+            try
+            {
+                var user = (await _userService.Get(telegramId: telegramId)).FirstOrDefault();
+                if (user is null)
                 {
-                    role_id = ur.RoleId,
-                    user_id = ur.UserId
-                })
-                .ToListAsync();
-
-            return Ok(user_roles);
+                    return NotFound();
+                }
+                var comments = await _commentService.Create(user.user_id, cardId, data.description);
+                return Ok(comments);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        //[Route("{card_id}/user")]
-        [HttpPost("{card_id}/user")]
-        [RightTaskMgr("add_comment")]
-        public async Task<ActionResult<CardDto>> AddUser(long card_id, RequestAddUser data)
-        {
-            var id = await _context.Database
-                .SqlQuery<long>(
-                    $"insert into public.user_card (user_id, card_id, role_id) values ({data.user_id}, {card_id}, {data.role_id})"
-                )
-                .ToListAsync();
-            return Ok(await GetCardDto(card_id));
-        }
-
-        //[Route("{card_id}/role")]
-        [HttpGet("{card_id}/role")]
+        [HttpGet("{cardId:long}/user")]
         [RightTaskMgr("view_card")]
-        public async Task<ActionResult<List<long>>> GetRoles()
+        public async Task<ActionResult<List<UserRoleDto>>> GetUsers(long cardId)
         {
-            var roles = await _context.Roles
-                .FromSql($"select r.role_id from public.role as r where 'card' = any(r.allow_tables::text[])")
-                .Select(r => r.RoleId)
-                .ToListAsync();
-
-            return Ok(roles);
+            try
+            {
+                var userRoles = await _cardService.UserCard(cardId);
+                return Ok(userRoles);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        //[Route("{card_id}/complete")]
-        [HttpPatch("{card_id}/complete")]
-        [RightTaskMgr("update_card", "update_card_complete")]
-        public async Task<ActionResult<CardDto>> CompleteCard(long card_id)
+        [HttpPost("{cardId:long}/user")]
+        [RightTaskMgr("add_comment")]
+        public async Task<ActionResult<List<UserRoleDto>>> AddUser(long cardId, RequestAddUser data)
         {
-            var card = await _context.Cards
-                .Where(c => c.CardId == card_id)
-                .FirstAsync();
+            try
+            {
+                var userRoles = await _cardService.AddUser(data.user_id, cardId, data.role_id);
+                return Ok(userRoles);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
-            card.Complete = DateTime.Now;
-
-            await _context.SaveChangesAsync();
-            return Ok(await GetCardDto(card_id));
+        [HttpPatch("{cardId:long}/complete")]
+        [RightTaskMgr("update_card", "update_card_complete")]
+        public async Task<ActionResult<CardDto>> CompleteCard(long cardId)
+        {
+            try
+            {
+                var card = await _cardService.Update(cardId,
+                    complete: DateTime.Now
+                    );
+                return Ok(card);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         
-        //[Route("{card_id}/uncomplete")]
-        [HttpPatch("{card_id}/uncomplete")]
+        [HttpPatch("{cardId:long}/uncomplete")]
         [RightTaskMgr("update_card", "update_card_complete")]
-        public async Task<ActionResult<CardDto>> UnCompleteCard(long card_id)
+        public async Task<ActionResult<CardDto>> UnCompleteCard(long cardId)
         {
-            var card = await _context.Cards
-                .Where(c => c.CardId == card_id)
-                .FirstAsync();
-
-            card.Complete = null;
-
-            await _context.SaveChangesAsync();
-            return Ok(await GetCardDto(card_id));
+            try
+            {
+                var card = await _cardService.Update(cardId,
+                    complete: null,
+                    nullableComplete: true
+                );
+                return Ok(card);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

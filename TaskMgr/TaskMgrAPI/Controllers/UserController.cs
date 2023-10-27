@@ -6,6 +6,7 @@ using TaskMgrAPI.Context;
 using TaskMgrAPI.Models;
 
 using TaskMgrAPI.Dtos.User;
+using TaskMgrAPI.Services.User;
 
 namespace TaskMgrAPI.Controllers
 {
@@ -13,60 +14,60 @@ namespace TaskMgrAPI.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly TaskmgrContext _context;
+        private readonly IUserService _userService;
 
-        public UserController(TaskmgrContext context)
+        public UserController(IUserService userService)
         {
-            _context = context;
+            _userService = userService;
         }
 
-        [Route("{user_id}")]
+        [Route("{userId:long}")]
         [HttpGet]
-        public async Task<ActionResult<UserDto>> GetOne(long user_id)
+        public async Task<ActionResult<UserDto>> GetOne(long userId)
         {
-            var user = await _context.Users
-                .FromSql($"SELECT * FROM public.user WHERE user_id = {user_id} LIMIT 1")
-                .ToListAsync();
-
-            if (user.Count == 0)
+            try
             {
-                return NotFound();
+                var user = await _userService.Get(id: userId);
+                if (user.Count == 0)
+                {
+                    return NotFound();
+                }
+
+                return Ok(user[0]);
             }
-
-            var userDto = new UserDto
+            catch (Exception ex)
             {
-                user_id = user[0].UserId,
-                name = user[0].Name ?? "",
-                telegram_id = user[0].TelegramId
-            };
-
-            return Ok(userDto);
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult<UserDto>> Create(RequestCreateUserDto data)
         {
-            var id = await _context.Database
-                .SqlQuery<long>(
-                    $"INSERT INTO public.user (name, telegram_id) VALUES ({data.name}, {data.telegram_id}) RETURNING user_id"
-                )
-                .ToListAsync();
-
-            return await GetOne(id[0]);
+            try
+            {
+                var user = await _userService.Create(data.telegram_id, data.name);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpGet]
-        public async Task<ActionResult<List<UserDto>>> GetAll()
+        public async Task<ActionResult<List<UserDto>>> GetAll(
+            [FromQuery(Name="telegram_id")] string? telegramId, 
+            [FromQuery(Name="name")] string? name)
         {
-            var users = await _context.Users
-                .Select(u => new UserDto
-                {
-                    user_id = u.UserId,
-                    name = u.Name ?? "",
-                    telegram_id = u.TelegramId
-                })
-                .ToListAsync();
-
-            return Ok(users);
+            try
+            {
+                var user = await _userService.Get(telegramId: telegramId, name: name);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
