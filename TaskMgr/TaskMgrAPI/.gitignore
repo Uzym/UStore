@@ -1,3 +1,7 @@
 /bin
 /obj
 /.vs
+/.vs/*
+/.idea/*
+.vs
+.vscode
