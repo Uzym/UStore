@@ -206,7 +206,7 @@ namespace StoreAPI.Controllers
         }
 
         [HttpPatch("{order_id}/confirm")]
-        public async Task<ActionResult<RequestCreateCardDto>> ConfirmOrder(
+        public async Task<ActionResult<ResponseGetCardDto>> ConfirmOrder(
             long order_id, 
             long section_id,
             [FromHeader(Name = "Telegram-Id")] string tg_id)
@@ -277,7 +277,7 @@ namespace StoreAPI.Controllers
             description += "Адрес: " + user?.Adress ?? "";
             description += "Телефон: " + user?.Telephone ?? "" + "\n";
 
-            var card = new RequestCreateCardDto
+            var cardRequest = new RequestCreateCardDto
             {
                 title = user?.Name ?? "" + order_id.ToString(),
                 description = description,
@@ -285,25 +285,34 @@ namespace StoreAPI.Controllers
                 tags = { "order" }
             };
 
-            await _taskMgrClient.CreateCard(
+
+            var cardResponse = await _taskMgrClient.CreateCard(
                 section_id,
                 tg_id,
-                card
+                cardRequest
             );
 
-            return Ok(card);
+            order.CardId = cardResponse.card_id;
+            await _context.SaveChangesAsync();
+                
+            return Ok(cardResponse);
         }
 
-        //[HttpGet("{order_id}/card")]
-        //public async Task<ActionResult<ResponseGetCardDto>> GetTaskMgrCard(
-        //    [FromHeader(Name = "Telegram-Id")] string tg_id,
-        //    long order_id)
-        //{
-        //    var userId = await AuthUser(tg_id);
-        //    var user = await _context.Users
-        //        .FindAsync(userId);
+        [HttpGet("{order_id}/card")]
+        public async Task<ActionResult<ResponseGetCardDto>> GetTaskMgrCard(
+            [FromHeader(Name = "Telegram-Id")] string tg_id,
+            long order_id)
+        {
+            var userId = await AuthUser(tg_id);
+            var user = await _context.Users
+                .FindAsync(userId);
 
-        //    return await _taskMgrClient.GetCardById(tg_id, )
-        //}
+            var cardId = await _context.Orders
+                .Where(o => o.OrderId == order_id)
+                .Select(o => o.CardId)
+                .FirstOrDefaultAsync();
+
+            return await _taskMgrClient.GetCardById(tg_id, cardId);
+        }
     }
 }

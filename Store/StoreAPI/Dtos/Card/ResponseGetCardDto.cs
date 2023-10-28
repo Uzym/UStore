@@ -1,7 +1,10 @@
-﻿namespace StoreAPI.Dtos.Card
+﻿using StoreAPI.Models;
+
+namespace StoreAPI.Dtos.Card
 {
     public class ResponseGetCardDto
     {
-        
+        public CardDto card { get; set; }
+        public List<Link> links { get; set; }
     }
 }
