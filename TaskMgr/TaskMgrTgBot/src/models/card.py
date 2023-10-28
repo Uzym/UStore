@@ -1,13 +1,14 @@
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 from .domain import Link, Card
 
 
 class RequestCreateCard(BaseModel):
-    title: str
-    description: str
-    due: str
-    tags: List[str]
+    title: Optional[str]
+    description: Optional[str]
+    due: Optional[str]
+    tags: Optional[List[str]]
+    section_id: Optional[int]
 
 
 class ResponseGetCard(BaseModel):

@@ -5,7 +5,7 @@ from aiogram import Bot, Dispatcher
 
 from config import Config, load_config
 from src.handlers import common_router
-from src.services import UserService
+from src.services import UserService, SectionService, CardService
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +24,10 @@ async def main():
     bot: Bot = Bot(token=config.tg_bot.token, parse_mode="HTML")
     dp: Dispatcher = Dispatcher()
 
+    card_service = CardService(api_key=config.api_key)
+    dp["card_service"] = card_service
+    section_service = SectionService(api_key=config.api_key, card_service=card_service, logger=logger)
+    dp["section_service"] = section_service
     user_service = UserService(api_key=config.api_key)
     dp["user_service"] = user_service
     dp["logger"] = logger

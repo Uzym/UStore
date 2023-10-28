@@ -4,7 +4,8 @@ from .domain import Link, Section
 
 
 class RequestCreateSection(BaseModel):
-    title: str
+    title: str | None
+    project_id: int | None
 
 
 class ResponseGetSection(BaseModel):

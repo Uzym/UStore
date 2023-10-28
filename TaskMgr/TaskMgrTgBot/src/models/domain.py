@@ -1,17 +1,17 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
 
 class Card(BaseModel):
-    card_id: int
-    title: str
-    description: str
-    due: str
-    complete: str
-    tags: List[str]
-    created: str
-    section_id: int
+    card_id: Optional[int]
+    title: Optional[str]
+    description: Optional[str]
+    due: Optional[str]
+    complete: Optional[str]
+    tags: Optional[List[str]]
+    created: Optional[str]
+    section_id: Optional[int]
 
 
 class Link(BaseModel):
@@ -35,6 +35,9 @@ class User(BaseModel):
     user_id: int
     name: str
     telegram_id: str
+
+    def __str__(self):
+        return f"Имя в системе: {self.name}\nID: {self.user_id}\nTelegramID: {self.telegram_id}"
 
 
 class Project(BaseModel):
