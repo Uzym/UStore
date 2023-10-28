@@ -1,35 +1,49 @@
 {
-    "version": "0.2.0",
-    "configurations": [
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": ".NET Core Launch (web)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/TaskMgr/TaskMgrAPI/bin/Debug/net6.0/TaskMgrAPI.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/TaskMgr/TaskMgrAPI",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "sourceFileMap": {
+        "/Views": "${workspaceFolder}/Views"
+      }
+    },
+    {
+      "name": ".NET Core Attach",
+      "type": "coreclr",
+      "request": "attach"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": true,
+      "cwd": "d:/diskran/l1",
+      "program": "d:/diskran/l1/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
         {
-            // Используйте IntelliSense, чтобы узнать, какие атрибуты существуют для отладки C#.
-            // Используйте наведение для описания существующих атрибутов
-            // Для получения дополнительных сведений посетите https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md.
-            "name": ".NET Core Launch (web)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            // Если вы изменили требуемые версии .NET Framework, обязательно обновите путь к программе.
-            "program": "${workspaceFolder}/TaskMgr/TaskMgrAPI/bin/Debug/net6.0/TaskMgrAPI.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/TaskMgr/TaskMgrAPI",
-            "stopAtEntry": false,
-            // Включите запуск веб-браузера при запуске ASP.NET Core. Для получения дополнительных сведений: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            }
-        },
-        {
-            "name": ".NET Core Attach",
-            "type": "coreclr",
-            "request": "attach"
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
         }
-    ]
+      ]
+    }
+  ]
 }
