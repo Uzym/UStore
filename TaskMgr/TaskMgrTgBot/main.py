@@ -25,7 +25,7 @@ async def main():
     bot: Bot = Bot(token=config.tg_bot.token, parse_mode="HTML")
     dp: Dispatcher = Dispatcher()
 
-    card_service = CardService(api_key=config.api_key)
+    card_service = CardService(api_key=config.api_key, logger=logger)
     dp["card_service"] = card_service
     section_service = SectionService(api_key=config.api_key, card_service=card_service, logger=logger)
     dp["section_service"] = section_service
