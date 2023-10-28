@@ -1,6 +1,14 @@
 using Microsoft.OpenApi.Models;
 using TaskMgrAPI.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using TaskMgrAPI.Models;
+using TaskMgrAPI.Services.Card;
+using TaskMgrAPI.Services.Comment;
+using TaskMgrAPI.Services.Project;
+using TaskMgrAPI.Services.Role;
+using TaskMgrAPI.Services.Section;
+using TaskMgrAPI.Services.User;
 
 namespace TaskMgrAPI
 {
@@ -28,6 +36,14 @@ namespace TaskMgrAPI
                      connectionString
                 )
             );
+
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IRoleService, RoleService>();
+            builder.Services.AddScoped<ICommentService, CommentService>();
+            builder.Services.AddScoped<ICardService, CardService>();
+            builder.Services.AddScoped<ISectionService, SectionService>();
+            builder.Services.AddScoped<IProjectService, ProjectService>();
+            
 
             var app = builder.Build();
 

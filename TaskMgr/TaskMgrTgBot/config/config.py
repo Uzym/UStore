@@ -13,10 +13,10 @@ class TelegramBotConfig:
 @dataclass
 class Config:
     tg_bot: TelegramBotConfig
+    api_key: str
 
 
 def load_config() -> Config:
-    # Parse a `.env` file and load the variables into environment valriables
     load_dotenv()
 
-    return Config(tg_bot=TelegramBotConfig(token=getenv("TOKEN")))
+    return Config(tg_bot=TelegramBotConfig(token=getenv("TOKEN")), api_key=getenv("API_URL"))

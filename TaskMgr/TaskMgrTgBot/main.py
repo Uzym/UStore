@@ -4,8 +4,8 @@ import logging
 from aiogram import Bot, Dispatcher
 
 from config import Config, load_config
-from src.handlers import echo
-
+from src.handlers import common_router
+from src.services import TaskMgrApiService
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,10 @@ async def main():
     bot: Bot = Bot(token=config.tg_bot.token, parse_mode="HTML")
     dp: Dispatcher = Dispatcher()
 
-    dp.include_router(echo.router)
+    task_mgr_api = TaskMgrApiService(config.api_key)
+    dp["task_mgr_api"] = task_mgr_api
+
+    dp.include_router(common_router)
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)

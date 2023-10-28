@@ -10,6 +10,9 @@ using TaskMgrAPI.Dtos.Role;
 using TaskMgrAPI.Dtos.Project;
 using TaskMgrAPI.Dtos.Section;
 using TaskMgrAPI.Attributes;
+using TaskMgrAPI.Exceptions;
+using TaskMgrAPI.Services.Project;
+using TaskMgrAPI.Services.Section;
 
 namespace TaskMgrAPI.Controllers
 {
@@ -17,22 +20,18 @@ namespace TaskMgrAPI.Controllers
     [ApiController]
     public class ProjectController : ControllerBase
     {
-        private readonly TaskmgrContext _context;
+        private readonly IProjectService _projectService;
+        private readonly ISectionService _sectionService;
         private LinkGenerator _linkGenerator;
         
-        public ProjectController(TaskmgrContext context, LinkGenerator linkGenerator)
+        public ProjectController(IProjectService projectService, ISectionService sectionService, LinkGenerator linkGenerator)
         {
-            _context = context;
+            _projectService = projectService;
             _linkGenerator = linkGenerator;
+            _sectionService = sectionService;
         }
 
-        private async Task<long> AuthUser(string telegramId)
-        {
-            var userId = await _context.Users.Where(u => u.TelegramId == telegramId).Select(u => u.UserId).FirstAsync();
-            return userId;
-        }
-
-        private IEnumerable<Link> CreateProjectLink(long project_id, List<string> rights)
+        private IEnumerable<Link> CreateProjectLink(long projectId, List<string> rights)
         {
             var links = new List<Link>();
             
@@ -56,15 +55,10 @@ namespace TaskMgrAPI.Controllers
                     else if (method.GetCustomAttributes(typeof(HttpDeleteAttribute), false).Count() != 0)
                         methodHttp = "DELETE";
 
-                    Console.WriteLine(method.GetCustomAttributes(typeof(Route), false).Length);
-                    Console.WriteLine(method.Name);
-                    Console.WriteLine(project_id);
-                    Console.WriteLine(_linkGenerator.GetUriByAction(HttpContext, method.Name, values: new { project_id }));
-
                     links.Add(
                         new Link()
                         {
-                            Href = _linkGenerator.GetUriByAction(HttpContext, method.Name, values: new { project_id }) ?? "",
+                            Href = _linkGenerator.GetPathByAction(method.Name, "Project", new { projectId }) ?? "",
                             Rel = "self",
                             Method = methodHttp
                         }
@@ -74,178 +68,180 @@ namespace TaskMgrAPI.Controllers
             
             return links;
         }
-        private async Task<List<Link>> UserAction(string telegram_id, long project_id)
+        private async Task<List<Link>> UserAction(string telegramId, long projectId)
         {
-            var userId = await AuthUser(telegram_id);
-            var rights = await _context.Database
-                .SqlQuery<string>(
-                    $"select distinct(r2.title) from public.user_project as up join public.role r on up.role_id = r.role_id join public.right_role rr on r.role_id = rr.role_id join public.\"right\" r2 on rr.right_id = r2.right_id where up.user_id = {userId} and project_id = {project_id}"
-                )
-                .ToListAsync();
+            var rights = await _projectService.UserRights(telegramId, projectId);
 
-            var userLinks = CreateProjectLink(project_id, rights);
+            var userLinks = CreateProjectLink(projectId, rights);
             
             return userLinks.ToList();
         }
         
-        private async Task<ProjectDto?> GetProjectDto(long project_id)
-        {
-            var project = await _context.Projects
-                .FromSql($"SELECT * FROM public.project WHERE project_id = {project_id} LIMIT 1")
-                .ToListAsync();
-            
-            if (project.Count == 0)
-            {
-                return null;
-            }
-
-            var projectDto = new ProjectDto
-            {
-                project_id = project[0].ProjectId,
-                title = project[0].Title,
-                description = project[0].Description ?? ""
-            };
-            
-            return projectDto;
-        }
-        
-        [Route("{project_id}")]
+        [Route("{projectId:long}")]
         [HttpGet]
-        public async Task<ActionResult<ResponseGetProjectDto>> GetById([FromHeader(Name = "Telegram-Id")] string telegramId, long project_id)
+        public async Task<ActionResult<ResponseGetProjectDto>> GetById([FromHeader(Name = "Telegram-Id")] string telegramId, long projectId)
         {
-            var projectDto = await GetProjectDto(project_id);
-            if (projectDto is null)
+            try
             {
-                return NotFound();
+                var projectDto = (await _projectService.Get(projectId)).First();
+
+                var response = new ResponseGetProjectDto()
+                {
+                    project = projectDto,
+                    links = await UserAction(telegramId, projectId)
+                };
+
+                return Ok(response);
             }
-
-            var response = new ResponseGetProjectDto()
+            catch (NotFoundException ex)
             {
-                project = projectDto,
-                links = await UserAction(telegramId, project_id)
-            };
-
-            return Ok(response);
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         
         [HttpPost]
         public async Task<ActionResult<ProjectDto>> Create(RequestCreateProjectDto data)
         {
-            var id = await _context.Database
-                .SqlQuery<long>(
-                    $"INSERT INTO public.project (title, description) VALUES ({data.title}, {data.description}) RETURNING project_id"
-                )
-                .ToListAsync();
-            
-            return await GetProjectDto(id[0]);
+            try
+            {
+                var projectDto = await _projectService.Create(data.title, data.description);
+
+                return Ok(projectDto);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet]
         public async Task<ActionResult<List<ProjectDto>>> Get([FromHeader(Name = "Telegram-Id")] string? telegramId)
         {
-            long? userId = null;
-            if (telegramId != null)
+            try
             {
-                userId = await AuthUser(telegramId);
-            }
-            
-            var allowProjects = await _context.UserProjects
-                .Where(up => up.UserId == (userId ?? up.UserId))
-                .Include(up => up.Project)
-                .Select(up => new ProjectDto()
-                {
-                    project_id = up.Project.ProjectId,
-                    title = up.Project.Title,
-                    description = up.Project.Description ?? ""
-                })
-                .ToListAsync();
-            allowProjects = allowProjects.DistinctBy(p => p.project_id).ToList();
+                var projectsDto = await _projectService.Get(telegramId:telegramId);
 
-            return Ok(allowProjects);
+                return Ok(projectsDto);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         
-        [Route("{project_id}")]
+        [Route("{projectId:long}")]
         [HttpPut]
         [RightTaskMgr("update_project")]
-        public async Task<ActionResult<ProjectDto>> Update(long project_id, RequestCreateProjectDto data)
+        public async Task<ActionResult<ProjectDto>> Update(long projectId, RequestCreateProjectDto data)
         {
-            var id = await _context.Database
-                .SqlQuery<long>(
-                    $"update public.project as p set (title, description) = ({data.title}, {data.description}) where p.project_id = {project_id} returning project_id"
-                )
-                .ToListAsync();
+            try
+            {
+                var projectsDto = await _projectService.Update(projectId,
+                    data.title,
+                    data.description);
 
-            return await GetProjectDto(project_id);
+                return Ok(projectsDto);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        [Route("{project_id}/user")]
+        [Route("{projectId:long}/user")]
         [HttpPost]
         [RightTaskMgr("update_project", "add_user")]
-        public async Task<ActionResult<ProjectDto>> AddUser(long project_id, RequestAddUser data)
+        public async Task<ActionResult<ProjectDto>> AddUser(long projectId, RequestAddUser data)
         {
-            var id = await _context.Database
-                .SqlQuery<long>(
-                    $"insert into public.user_project (user_id, project_id, role_id) values ({data.user_id}, {project_id}, {data.role_id})"
-                )
-                .ToListAsync();
-            return await GetProjectDto(project_id);
+            try
+            {
+                var userRoles = await _projectService.AddUser(data.user_id, projectId, data.role_id);
+                return Ok(userRoles);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         
-        [Route("{project_id}/user")]
+        [Route("{projectId:long}/user")]
         [HttpGet]
         [RightTaskMgr("view_project")]
-        public async Task<ActionResult<List<UserRoleDto>>> GetUsers(long project_id)
+        public async Task<ActionResult<List<UserRoleDto>>> GetUsers(long projectId)
         {
-            var user_roles = await _context.UserProjects
-                .FromSql($"select * from public.user_project as up where up.project_id = {project_id}")
-                .Select(ur => new UserRoleDto()
-                {
-                    role_id = ur.RoleId,
-                    user_id = ur.UserId
-                })
-                .ToListAsync();
-
-            return Ok(user_roles);
+            try
+            {
+                var userRoles = await _projectService.UserProject(projectId);
+                return Ok(userRoles);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        [Route("{project_id}/section")]
+        [Route("{projectId:long}/section")]
         [HttpPost]
         [RightTaskMgr("update_project", "add_section")]
-        public async Task<ActionResult<ProjectDto>> AddSection(long project_id, RequestCreateSectionDto data)
+        public async Task<ActionResult<ProjectDto>> AddSection(long projectId, RequestCreateSectionDto data)
         {
-            var id = await _context.Database
-                .SqlQuery<long>(
-                    $"insert into public.section (title, project_id) VALUES ({data.title}, {project_id})"
-                )
-                .ToListAsync();
-
-            return await GetProjectDto(project_id);
+            try
+            {
+                var comments = await _sectionService.Create(data.title, projectId);
+                return Ok(comments);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         
-        [Route("{project_id}/section")]
+        [Route("{projectId:long}/section")]
         [HttpGet]
         [RightTaskMgr("view_project")]
-        public async Task<ActionResult<List<long>>> GetSections(long project_id)
+        public async Task<ActionResult<List<long>>> GetSections(long projectId)
         {
-            var ids = await _context.Sections
-                .Where(u => u.ProjectId == project_id)
-                .Select(u => u.SectionId)
-                .ToListAsync();
-
-            return Ok(ids);
-        }
-
-        [Route("{project_id}/role")]
-        [HttpGet]
-        [RightTaskMgr("view_project")]
-        public async Task<ActionResult<List<long>>> GetRoles(long project_id)
-        {
-            var roles = await _context.Roles
-                .FromSql($"select r.role_id from public.role as r where 'project' = any(r.allow_tables::text[])")
-                .Select(r => r.RoleId)
-                .ToListAsync();
-
-            return Ok(roles);
+            try
+            {
+                var sections = await _sectionService.Get(projectId: projectId);
+                return Ok(sections);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

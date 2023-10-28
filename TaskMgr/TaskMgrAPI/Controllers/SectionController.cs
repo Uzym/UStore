@@ -7,6 +7,9 @@ using TaskMgrAPI.Dtos.Project;
 using TaskMgrAPI.Dtos.Section;
 using TaskMgrAPI.Models;
 using TaskMgrAPI.Dtos.Card;
+using TaskMgrAPI.Exceptions;
+using TaskMgrAPI.Services.Card;
+using TaskMgrAPI.Services.Section;
 
 namespace TaskMgrAPI.Controllers
 {
@@ -14,22 +17,18 @@ namespace TaskMgrAPI.Controllers
     [ApiController]
     public class SectionController : ControllerBase
     {
-        private readonly TaskmgrContext _context;
         private LinkGenerator _linkGenerator;
+        private readonly ICardService _cardService;
+        private readonly ISectionService _sectionService;
 
-        public SectionController(TaskmgrContext context, LinkGenerator linkGenerator)
+        public SectionController(ICardService cardService, ISectionService sectionService, LinkGenerator linkGenerator)
         {
-            _context = context;
             _linkGenerator = linkGenerator;
-        }
-        
-        private async Task<long> AuthUser(string telegramId)
-        {
-            var userId = await _context.Users.Where(u => u.TelegramId == telegramId).Select(u => u.UserId).FirstAsync();
-            return userId;
+            _cardService = cardService;
+            _sectionService = sectionService;
         }
 
-        private IEnumerable<Link> CreateProjectLink(long section_id, List<string> rights)
+        private IEnumerable<Link> CreateProjectLink(long sectionId, List<string> rights)
         {
             var links = new List<Link>();
             
@@ -56,7 +55,7 @@ namespace TaskMgrAPI.Controllers
                     links.Add(
                         new Link()
                         {
-                            Href = _linkGenerator.GetUriByAction(HttpContext, method.Name, values: new { section_id }) ?? "",
+                            Href = _linkGenerator.GetPathByAction(method.Name, "Section", new { sectionId }) ?? "",
                             Rel = "self",
                             Method = methodHttp
                         }
@@ -66,105 +65,100 @@ namespace TaskMgrAPI.Controllers
             
             return links;
         }
-        private async Task<List<Link>> UserAction(string telegram_id, long section_id)
+        private async Task<List<Link>> UserAction(string telegramId, long sectionId)
         {
-            var userId = await AuthUser(telegram_id);
-            var rights = await _context.Database
-                .SqlQuery<string>(
-                    $"select distinct(r2.title) from public.section as s join public.user_project up on s.project_id = up.project_id join public.role r on up.role_id = r.role_id join public.right_role rr on up.role_id = rr.role_id join public.\"right\" r2 on r2.right_id = rr.right_id where up.user_id = {userId} and s.section_id = {section_id}"
-                )
-                .ToListAsync();
+            var rights = await _sectionService.UserRights(telegramId, sectionId);
 
-            var userLinks = CreateProjectLink(section_id, rights);
+            var userLinks = CreateProjectLink(sectionId, rights);
             
             return userLinks.ToList();
         }
-        
-        private async Task<SectionDto?> GetSectionDto(long section_id)
-        {
-            var section = await _context.Sections
-                .FromSql($"SELECT * FROM public.section WHERE section_id = {section_id} LIMIT 1")
-                .ToListAsync();
-            
-            if (section.Count == 0)
-            {
-                return null;
-            }
 
-            var sectionDto = new SectionDto()
-            {
-                project_id = section[0].ProjectId,
-                title = section[0].Title,
-                section_id = section[0].SectionId
-            };
-            
-            return sectionDto;
-        }
-
-        [Route("{section_id}")]
+        [Route("{sectionId:long}")]
         [HttpGet]
-        public async Task<ActionResult<ResponseGetSectionDto>> GetById([FromHeader(Name = "Telegram-Id")] string telegramId, long section_id)
+        public async Task<ActionResult<ResponseGetSectionDto>> GetById([FromHeader(Name = "Telegram-Id")] string telegramId, long sectionId)
         {
-            var sectionDto = await GetSectionDto(section_id);
-            if (sectionDto is null)
+            try
             {
-                return NotFound();
+                var section = (await _sectionService.Get(sectionId)).First();
+
+                var response = new ResponseGetSectionDto()
+                {
+                    section = section,
+                    links = await UserAction(telegramId, sectionId)
+                };
+
+                return Ok(response);
             }
-            
-            var response = new ResponseGetSectionDto()
+            catch (NotFoundException ex)
             {
-                section = sectionDto,
-                links = await UserAction(telegramId, section_id)
-            };
-            
-            return Ok(response);
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        [Route("{section_id}")]
+        [Route("{sectionId:long}")]
         [HttpPut]
         [RightTaskMgr("update_section", "update_project")]
-        public async Task<ActionResult<SectionDto>> Update(long section_id, RequestCreateSectionDto data)
+        public async Task<ActionResult<SectionDto>> Update(long sectionId, RequestCreateSectionDto data)
         {
-            var id = await _context.Database
-                .SqlQuery<long>(
-                    $"update public.section as p set title = {data.title} where p.section_id = {section_id}"
-                )
-                .ToListAsync();
-
-            return Ok(await GetSectionDto(section_id));
+            try
+            {
+                var section = await _sectionService.Update(sectionId, data.title, data.project_id);
+                return Ok(section);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        [Route("{section_id}/card")]
+        [Route("{sectionId:long}/card")]
         [HttpGet]
         [RightTaskMgr("view_section", "view_project")]
-        public async Task<ActionResult<List<long>>> GetCards(long section_id)
+        public async Task<ActionResult<List<long>>> GetCards(long sectionId)
         {
-            var ids = await _context.Cards
-                .FromSql($"select * from public.card as up where up.section_id = {section_id}")
-                .Select(c => c.CardId)
-                .ToListAsync();
-
-            return Ok(ids);
+            try
+            {
+                var cardDtos = await _cardService.Get(sectionId: sectionId);
+                return Ok(cardDtos);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        [Route("{section_id}/card")]
+        [Route("{sectionId:long}/card")]
         [HttpPost]
         [RightTaskMgr("add_card")]
-        public async Task<ActionResult<SectionDto>> AddCard(long section_id, RequestCreateCardDto data)
+        public async Task<ActionResult<CardDto>> AddCard([FromHeader(Name = "Telegram-Id")] string telegramId, long sectionId, RequestCreateCardDto data)
         {
-            var model = new Models.Card()
+            try
             {
-                SectionId = section_id,
-                Title = data.title,
-                Description = data.description,
-                Due = data.due,
-                Created = DateTime.Now,
-                Tags = data.tags.ToArray()
-            };
-            await _context.Cards.AddAsync(model);
-            await _context.SaveChangesAsync();
-            
-            return Ok(await GetSectionDto(section_id));
+                var cardDto = await _cardService.Create(data, sectionId);
+
+                return Ok(cardDto);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

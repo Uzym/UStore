@@ -80,18 +80,18 @@ services:
   #   networks:
   #     - network
 
-  # taskmgr_tgbot:
-  #   image: taskmgr/tgbot
-  #   restart: always
-  #   build:
-  #     context: ./TaskMgrTgBot
-  #   environment:
-  #     - TOKEN=${TASKMGR_TOKEN}
-  #     - API_URL=${TASKMGR_API_URL}
-  #   depends_on:
-  #     - taskmgr_api
-  #   networks:
-  #     - network
+  taskmgr_tgbot:
+    image: taskmgr/tgbot
+    restart: always
+    build:
+      context: ./TaskMgrTgBot
+    environment:
+      - TOKEN=${TASKMGR_TOKEN}
+      - API_URL=${TASKMGR_API_URL}
+    depends_on:
+      - taskmgr_api
+    networks:
+      - network
   
   # minio:
   #   container_name: minio
