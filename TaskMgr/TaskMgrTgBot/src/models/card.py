@@ -14,3 +14,7 @@ class RequestCreateCard(BaseModel):
 class ResponseGetCard(BaseModel):
     card: Card
     links: List[Link]
+
+
+class RequestCreateComment(BaseModel):
+    description: str
