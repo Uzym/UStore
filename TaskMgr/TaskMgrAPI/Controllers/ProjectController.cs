@@ -31,7 +31,7 @@ namespace TaskMgrAPI.Controllers
             _sectionService = sectionService;
         }
 
-        private IEnumerable<Link> CreateProjectLink(long project_id, List<string> rights)
+        private IEnumerable<Link> CreateProjectLink(long projectId, List<string> rights)
         {
             var links = new List<Link>();
             
@@ -55,15 +55,10 @@ namespace TaskMgrAPI.Controllers
                     else if (method.GetCustomAttributes(typeof(HttpDeleteAttribute), false).Count() != 0)
                         methodHttp = "DELETE";
 
-                    Console.WriteLine(method.GetCustomAttributes(typeof(Route), false).Length);
-                    Console.WriteLine(method.Name);
-                    Console.WriteLine(project_id);
-                    Console.WriteLine(_linkGenerator.GetUriByAction(HttpContext, method.Name, values: new { project_id }));
-
                     links.Add(
                         new Link()
                         {
-                            Href = _linkGenerator.GetUriByAction(HttpContext, method.Name, values: new { project_id }) ?? "",
+                            Href = _linkGenerator.GetPathByAction(method.Name, "Project", new { projectId }) ?? "",
                             Rel = "self",
                             Method = methodHttp
                         }

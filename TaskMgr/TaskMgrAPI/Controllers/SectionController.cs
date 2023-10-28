@@ -28,7 +28,7 @@ namespace TaskMgrAPI.Controllers
             _sectionService = sectionService;
         }
 
-        private IEnumerable<Link> CreateProjectLink(long section_id, List<string> rights)
+        private IEnumerable<Link> CreateProjectLink(long sectionId, List<string> rights)
         {
             var links = new List<Link>();
             
@@ -55,7 +55,7 @@ namespace TaskMgrAPI.Controllers
                     links.Add(
                         new Link()
                         {
-                            Href = _linkGenerator.GetUriByAction(HttpContext, method.Name, values: new { section_id }) ?? "",
+                            Href = _linkGenerator.GetPathByAction(method.Name, "Section", new { sectionId }) ?? "",
                             Rel = "self",
                             Method = methodHttp
                         }

@@ -49,46 +49,23 @@ namespace TaskMgrAPI.Controllers
                     if (attr.Right.Intersect(rights).Count() == 0)
                         continue;
                     
-                    var gets = (HttpGetAttribute[]) method.GetCustomAttributes(typeof(HttpGetAttribute), false);
-                    var posts = (HttpPostAttribute[]) method.GetCustomAttributes(typeof(HttpPostAttribute), false);
-                    var patches = (HttpPatchAttribute[]) method.GetCustomAttributes(typeof(HttpPatchAttribute), false);
-                    var puts = (HttpPutAttribute[]) method.GetCustomAttributes(typeof(HttpPutAttribute), false);
-                    var delets = (HttpDeleteAttribute[]) method.GetCustomAttributes(typeof(HttpDeleteAttribute), false);
                     var methodHttp = "";
-                    var routeUri = "";
-                 
-                    if (gets.Count() != 0)
-                    {
+                    if (method.GetCustomAttributes(typeof(HttpGetAttribute), false).Count() != 0)
                         methodHttp = "GET";
-                        routeUri = gets.Where(g => g.Template != null).Select(g => g.Template.Substring(9)).FirstOrDefault();
-                    }
-                    else if (posts.Count() != 0)
-                    {
+                    else if (method.GetCustomAttributes(typeof(HttpPostAttribute), false).Count() != 0)
                         methodHttp = "POST";
-                        routeUri = posts.Where(p => p.Template != null).Select(p => p.Template.Substring(9)).FirstOrDefault();
-                    }
-                    else if (patches.Count() != 0)
-                    {
+                    else if (method.GetCustomAttributes(typeof(HttpPatchAttribute), false).Count() != 0)
                         methodHttp = "PATCH";
-                        routeUri = patches.Where(p => p.Template != null).Select(p => p.Template.Substring(9)).FirstOrDefault();
-                    }
-                    else if (puts.Count() != 0)
-                    {
+                    else if (method.GetCustomAttributes(typeof(HttpPutAttribute), false).Count() != 0)
                         methodHttp = "PUT";
-                        routeUri = puts.Where(p => p.Template != null).Select(p => p.Template.Substring(9)).FirstOrDefault();
-                    }
-                    else if (delets.Count() != 0)
-                    {
+                    else if (method.GetCustomAttributes(typeof(HttpDeleteAttribute), false).Count() != 0)
                         methodHttp = "DELETE";
-                        routeUri = delets.Where(d => d.Template != null).Select(d => d.Template.Substring(9)).FirstOrDefault();
-                    }
 
-                    Console.WriteLine(_linkGenerator.GetUriByAction(HttpContext) + routeUri);
                     links.Add(
                         new Link()
                         {
-                            Href = _linkGenerator.GetUriByAction(HttpContext) != null ? _linkGenerator.GetUriByAction(HttpContext) + routeUri : "",
-                            Rel = method.Name,
+                            Href = _linkGenerator.GetPathByAction(method.Name, "Card", new { cardId }) ?? "",
+                            Rel = "self",
                             Method = methodHttp
                         }
                     );

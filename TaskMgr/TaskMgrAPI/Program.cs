@@ -1,6 +1,7 @@
 using Microsoft.OpenApi.Models;
 using TaskMgrAPI.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using TaskMgrAPI.Models;
 using TaskMgrAPI.Services.Card;
 using TaskMgrAPI.Services.Comment;
@@ -42,6 +43,7 @@ namespace TaskMgrAPI
             builder.Services.AddScoped<ICardService, CardService>();
             builder.Services.AddScoped<ISectionService, SectionService>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
+            
 
             var app = builder.Build();
 
