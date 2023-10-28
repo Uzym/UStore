@@ -20,7 +20,7 @@ class ProjectService(TaskMgrApiService):
         url = self.api_key + self.controller + "/" + str(project_id)
         async with self.session.get(url, headers=headers) as response:
             if response.status == 200:
-                data = await  response.json()
+                data = await response.json()
                 return domain.Project.parse_obj(data)
             else:
                 raise Exception
