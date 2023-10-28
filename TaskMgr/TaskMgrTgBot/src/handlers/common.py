@@ -8,7 +8,6 @@ from src.services import UserService
 from src.lexicon import LEXICON
 
 router: Router = Router()
-
 @router.message(Command(commands=["start"]))
 async def start_message(message: Message, user_service: UserService, logger: Logger):
     # logger.info(str(await user_service.get_user(1)))
@@ -24,6 +23,6 @@ async def help_message(message: Message):
 async def get_me(message: Message):
     pass
 
-@router.message()
-async def process_any_message(message: Message):
-    await message.reply(text=message.text)
+# @router.message()
+# async def process_any_message(message: Message):
+#     await message.reply(text=message.text)

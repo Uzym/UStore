@@ -4,8 +4,8 @@ import logging
 from aiogram import Bot, Dispatcher
 
 from config import Config, load_config
-from src.handlers import common_router
-from src.services import UserService
+from src.handlers import common_router, project_router
+from src.services import UserService, ProjectService
 
 logger = logging.getLogger(__name__)
 
@@ -25,10 +25,14 @@ async def main():
     dp: Dispatcher = Dispatcher()
 
     user_service = UserService(api_key=config.api_key)
+    project_service = ProjectService(api_key=config.api_key, logger=logger)
     dp["user_service"] = user_service
+    dp["project_service"] = project_service
+
     dp["logger"] = logger
 
     dp.include_router(common_router)
+    dp.include_router(project_router)
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)

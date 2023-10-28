@@ -1,10 +1,11 @@
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 from .domain import Link, Section
 
 
 class RequestCreateSection(BaseModel):
-    title: str
+    title: Optional[str]
+    project_id: int
 
 
 class ResponseGetSection(BaseModel):
