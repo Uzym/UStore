@@ -148,6 +148,10 @@ namespace TaskMgrAPI.Controllers
         {
             try
             {
+                Console.WriteLine(data.title);
+                Console.WriteLine(data.description);
+                Console.WriteLine(projectId);
+
                 var projectsDto = await _projectService.Update(projectId,
                     data.title,
                     data.description);

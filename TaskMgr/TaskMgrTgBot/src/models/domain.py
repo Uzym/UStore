@@ -45,10 +45,16 @@ class Project(BaseModel):
     title: str
     description: str
 
+    def __str__(self):
+        return f'{self.project_id} {self.title} {self.description}'
+
 
 class AddUser(BaseModel):
     user_id: int
     role_id: int
+
+    def __str__(self):
+        return f'{self.user_id} {self.role_id}'
 
 
 class Right(BaseModel):

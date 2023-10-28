@@ -4,6 +4,7 @@ from typing import List
 from pydantic import parse_obj_as
 from json import loads
 
+
 class UserService(TaskMgrApiService):
     controller = "/user"
 
