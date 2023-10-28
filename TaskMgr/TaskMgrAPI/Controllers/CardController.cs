@@ -112,8 +112,8 @@ namespace TaskMgrAPI.Controllers
         [RightTaskMgr("update_card")]
         public async Task<ActionResult<CardDto>> Update(long cardId, RequestCreateCardDto data)
         {
-            try
-            {
+            // try
+            // {
                 var card = await _cardService.Update(cardId,
                     title: data.title,
                     description: data.description,
@@ -121,15 +121,15 @@ namespace TaskMgrAPI.Controllers
                     due: data.due,
                     tags: data.tags);
                 return Ok(card);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            // }
+            // catch (NotFoundException ex)
+            // {
+            //     return NotFound(ex.Message);
+            // }
+            // catch (Exception ex)
+            // {
+            //     return BadRequest(ex.Message);
+            // }
         }
 
         [HttpGet("{cardId:long}/comment")]

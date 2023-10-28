@@ -12,7 +12,7 @@ class CardService(TaskMgrApiService):
 
     def __init__(self, api_key: str, logger: logging.Logger):
         super().__init__(api_key=api_key)
-        self.logger=logger
+        self.logger = logger
 
     async def get_card(self, card_id: int, telegram_id: str) -> card.ResponseGetCard:
         url = self.api_key + self.controller + "/" + str(card_id)
@@ -21,3 +21,50 @@ class CardService(TaskMgrApiService):
             data = await response.json()
             return card.ResponseGetCard.parse_obj(data)
 
+    async def update_card(self,
+                          card_id: int,
+                          title: str = None,
+                          description: str = None,
+                          due: str = None,
+                          tags: List[str] = None,
+                          section_id: int = None) -> domain.Card:
+        url = self.api_key + self.controller + "/" + str(card_id)
+        request = loads(card.RequestCreateCard(
+            title=title,
+            description=description,
+            due=due,
+            tags=tags,
+            section_id=section_id).json(exclude_none=False))
+        async with self.session.put(url, json=request) as response:
+            if response.status == 200:
+                data = await response.json()
+                return domain.Card.parse_obj(data)
+
+    async def add_user(self, card_id: int, user_id: int, role_id: int) -> List[domain.AddUser]:
+        url = self.api_key + self.controller + f"/{card_id}/user"
+        request = loads(domain.AddUser(user_id=user_id, role_id=role_id).json(exclude_none=False))
+        async with self.session.post(url, json=request) as response:
+            if response.status == 200:
+                data = await response.json()
+                return parse_obj_as(List[domain.AddUser], data)
+
+    async def get_users(self, card_id: int) -> List[domain.AddUser]:
+        url = self.api_key + self.controller + f"/{card_id}/user"
+        async with self.session.get(url) as response:
+            if response.status == 200:
+                data = await response.json()
+                return parse_obj_as(List[domain.AddUser], data)
+
+    async def complete_card(self, card_id: int) -> domain.Card:
+        url = self.api_key + self.controller + f"/{card_id}/complete"
+        async with self.session.patch(url) as response:
+            if response.status == 200:
+                data = await response.json()
+                return domain.Card.parse_obj(data)
+
+    async def uncomplete_card(self, card_id: int) -> domain.Card:
+        url = self.api_key + self.controller + f"/{card_id}/uncomplete"
+        async with self.session.patch(url) as response:
+            if response.status == 200:
+                data = await response.json()
+                return domain.Card.parse_obj(data)
