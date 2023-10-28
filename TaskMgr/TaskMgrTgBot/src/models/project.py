@@ -1,6 +1,6 @@
 from typing import List
 from pydantic import BaseModel
-from .domen import Link, Project
+from .domain import Link, Project
 
 
 class RequestCreateProject(BaseModel):

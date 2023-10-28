@@ -1,6 +1,6 @@
 from typing import List
 from pydantic import BaseModel
-from .domen import Link, Card
+from .domain import Link, Card
 
 
 class RequestCreateCard(BaseModel):

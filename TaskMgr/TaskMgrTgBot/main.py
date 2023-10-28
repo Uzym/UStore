@@ -5,7 +5,7 @@ from aiogram import Bot, Dispatcher
 
 from config import Config, load_config
 from src.handlers import common_router
-from src.services import TaskMgrApiService
+from src.services import UserService
 
 logger = logging.getLogger(__name__)
 
@@ -24,8 +24,9 @@ async def main():
     bot: Bot = Bot(token=config.tg_bot.token, parse_mode="HTML")
     dp: Dispatcher = Dispatcher()
 
-    task_mgr_api = TaskMgrApiService(config.api_key)
-    dp["task_mgr_api"] = task_mgr_api
+    user_service = UserService(api_key=config.api_key)
+    dp["user_service"] = user_service
+    dp["logger"] = logger
 
     dp.include_router(common_router)
 

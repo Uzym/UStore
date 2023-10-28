@@ -1,6 +1,6 @@
 from typing import List
 from pydantic import BaseModel
-from .domen import Link, Section
+from .domain import Link, Section
 
 
 class RequestCreateSection(BaseModel):

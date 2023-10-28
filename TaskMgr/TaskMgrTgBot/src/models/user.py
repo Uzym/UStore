@@ -1,6 +1,6 @@
 from typing import List
 from pydantic import BaseModel
-from .domen import Link, Card
+from .domain import Link, Card
 
 
 class RequestCreateUser(BaseModel):
@@ -11,3 +11,5 @@ class RequestCreateUser(BaseModel):
 class ResponseGetCard(BaseModel):
     card: Card
     links: List[Link]
+
+
