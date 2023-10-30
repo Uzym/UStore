@@ -243,7 +243,7 @@ namespace StoreAPI.Controllers
             decimal sum = 0;
             int iter = 0;
 
-            var due = DateTime.MaxValue;
+            var due = DateTime.MinValue;
             
             foreach (var op in orderProducts)
             {
@@ -279,7 +279,7 @@ namespace StoreAPI.Controllers
                 description += "Цена: " + (op.Product.Cost * discount).ToString() + "\n\t";
                 description += "Скидка: " + (1 - discount) * 100 + "%\n";
 
-                if (DateTime.Now.AddHours(3) + op.Product.DeliveryTime < due)
+                if (DateTime.Now.AddHours(3) + op.Product.DeliveryTime > due)
                 {
                     due = DateTime.Now.AddHours(3) + op.Product.DeliveryTime;
                 }

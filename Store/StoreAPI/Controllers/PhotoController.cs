@@ -6,7 +6,7 @@ using StoreAPI.Dtos.Photo;
 
 namespace StoreAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class PhotoController : ControllerBase
     {
@@ -45,7 +45,7 @@ namespace StoreAPI.Controllers
         {
             var id = await _context.Database
                 .SqlQuery<long>(
-                    $"insert into public.photo (name, product_id, category_id, series_id, firm_id) VALUES ({data.name}, {data.category_id}, {data.category_id}, {data.series_id}, {data.firm_id}) RETURNING photo_id"
+                    $"insert into public.photo (name, product_id, category_id, series_id, firm_id) VALUES ({data.name}, {data.product_id}, {data.category_id}, {data.series_id}, {data.firm_id}) RETURNING photo_id"
                 )
                 .ToListAsync();
 

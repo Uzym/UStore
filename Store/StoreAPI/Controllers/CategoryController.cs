@@ -6,7 +6,7 @@ using StoreAPI.Dtos.Category;
 
 namespace StoreAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
     {

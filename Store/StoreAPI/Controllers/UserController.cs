@@ -6,7 +6,7 @@ using StoreAPI.Dtos.User;
 
 namespace StoreAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
