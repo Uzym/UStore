@@ -1,14 +1,16 @@
 from logging import Logger
 
-from aiogram import Router
+from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
-from aiogram.filters import Command
+from aiogram.types import Message, CallbackQuery
+from aiogram.filters import Command, and_f
 from typing import List
 
+from src.filters.callback import FormCallback
 from src.services import UserService, SectionService
 from src.lexicon import LEXICON
 from src.models import domain
+from src.states.states import DefualtForm
 
 
 router: Router = Router()
@@ -24,22 +26,54 @@ async def start_message(message: Message, user_service: UserService, state: FSMC
 
 @router.message(Command(commands=["help"]))
 async def help_message(message: Message, section_service: SectionService, logger: Logger):
-    a = await section_service.get_section(telegram_id=str(message.from_user.id), section_id=1)
-    logger.info(str(a))
-    b = await section_service.update_section(section_id=1, title="Залупа слоника", project_id=1)
-    logger.info(str(b))
-    c = await section_service.cards(telegram_id=str(message.from_user.id), section_id=1)
-    logger.info(str(c))
-    d = await section_service.create_card(telegram_id=str(message.from_user.id), section_id=1, title="BOBOB")
-    logger.info(str(d))
-
     await message.answer(text=LEXICON["help"])
 
 
 @router.message(Command(commands=["me"]))
 async def get_me(message: Message, user_service: UserService):
-    users: List[domain.User] = await user_service.users(telegram_id=str(message.from_user.id))
-    if len(users) == 0:
-        await message.answer(text=LEXICON["not_found_user"])
-    else:
+    try:
+        users: List[domain.User] = await user_service.users(telegram_id=str(message.from_user.id))
         await message.answer(text=str(users[0]))
+    except:
+        await message.answer(text=LEXICON["not_found"])
+
+
+@router.message(Command(commands=["skip"]))
+async def skip(
+        message: Message,
+        state: FSMContext
+):
+    try:
+        await state.clear()
+        await message.answer(text=LEXICON["skip"])
+    except:
+        await message.answer(text=LEXICON["not_found"])
+
+
+@router.callback_query(FormCallback.filter(F.cnt > 0))
+async def get_user_input_start(
+        callback: CallbackQuery,
+        callback_data: FormCallback,
+        state: FSMContext,
+):
+    await callback.answer(text=LEXICON["loading"])
+    try:
+        await state.clear()
+        await state.set_state(DefualtForm.user_input)
+        await state.set_data({"cnt": callback_data.cnt, "input": []})
+        await callback.message.answer(text=f"{callback_data.obj} {callback_data.tag} {callback_data.cnt}")
+    except:
+        await callback.answer(text=LEXICON["not_found"])
+
+
+# @router.message(DefualtForm.user_input)
+# async def get_user_input(
+#         message: Message,
+#         state: FSMContext
+# ):
+#     try:
+#         data = await state.get_data()
+#         data["input"].append(message.text)
+#         data["cnt"] = data["cnt"] - 1
+#     except:
+#         await message.answer(text=LEXICON["not_found"])

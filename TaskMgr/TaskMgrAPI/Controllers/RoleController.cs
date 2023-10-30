@@ -39,5 +39,32 @@ namespace TaskMgrAPI.Controllers
                  return BadRequest(ex.Message);
              }
          }
+
+         [HttpGet]
+         public async Task<ActionResult<List<RoleDto>>> GetAll(
+             [FromQuery(Name = "title")] string? title,
+             [FromQuery(Name = "description")] string? description,
+             [FromQuery(Name = "table")] string? table
+         )
+         {
+             try
+             {
+                 var roles = await _roleService.Get(
+                     title: title,
+                     description: description,
+                     table: table
+                 );
+                 return Ok(roles);
+             }
+             catch (NotFoundException ex)
+             {
+                 return NotFound(ex.Message);
+             }
+             catch (Exception ex)
+             {
+                 return BadRequest(ex.Message);
+             }
+         }
+         
     }
 }

@@ -7,13 +7,35 @@ from pydantic import parse_obj_as
 from json import loads
 
 
+def parse_link_project(link: domain.Link):
+    url = link.href.lower().split('/')
+    if url[1].lower() != "project":
+        raise Exception
+    project_id: int = int(url[2])
+    if len(url) == 3:
+        if link.method == "PUT":
+            return project_id, "update"
+        if link.method == "GET":
+            return project_id, "get"
+    if len(url) == 4:
+        if link.method == "POST" and url[3] == "section":
+            return project_id, "add_section"
+        if link.method == "GET" and url[3] == "section":
+            return project_id, "get_section"
+        if link.method == "POST" and url[3] == "user":
+            return project_id, "add_user"
+        if link.method == "GET" and url[3] == "user":
+            return project_id, "get_user"
+    return project_id, "post"
+
+
 class ProjectService(TaskMgrApiService):
     def __init__(self, api_key: str, logger: logging.Logger):
         super().__init__(api_key=api_key)
         self.logger = logger
         self.controller = "/project"
 
-    async def get_project(self, project_id: int, telegram_id: str = None) -> domain.Project:
+    async def get_project(self, project_id: int, telegram_id: str = None) -> project.ResponseGetProjectDto:
         headers = {
             'Telegram-Id': telegram_id
         }
@@ -21,7 +43,7 @@ class ProjectService(TaskMgrApiService):
         async with self.session.get(url, headers=headers) as response:
             if response.status == 200:
                 data = await response.json()
-                return domain.Project.parse_obj(data)
+                return project.ResponseGetProjectDto.parse_obj(data)
             else:
                 raise Exception
 

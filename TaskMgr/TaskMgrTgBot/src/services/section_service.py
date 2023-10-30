@@ -8,6 +8,24 @@ from pydantic import parse_obj_as
 from json import loads
 
 
+def parse_link_section(link: domain.Link):
+    url = link.href.lower().split('/')
+    if url[1].lower() != "section":
+        raise Exception
+    section_id: int = int(url[2])
+    if len(url) == 3:
+        if link.method == "PUT":
+            return section_id, "update"
+        if link.method == "GET":
+            return section_id, "get"
+    if len(url) == 4:
+        if link.method == "POST" and url[3] == "card":
+            return section_id, "add_card"
+        if link.method == "GET" and url[3] == "card":
+            return section_id, "get_card"
+    return section_id, "post"
+
+
 class SectionService(TaskMgrApiService):
     controller = "/section"
 
@@ -16,7 +34,7 @@ class SectionService(TaskMgrApiService):
         self.card_service = card_service
         self.logger = logger
 
-    async def get_section(self, section_id: int, telegram_id: str) -> domain.Section:
+    async def get_section(self, section_id: int, telegram_id: str) -> section.ResponseGetSection:
         url = self.api_key + self.controller + "/" + str(section_id)
         headers = {'Telegram-Id': telegram_id}
         async with self.session.get(url, headers=headers) as response:
