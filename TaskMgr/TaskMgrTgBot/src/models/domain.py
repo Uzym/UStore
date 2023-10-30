@@ -1,5 +1,5 @@
 from typing import List, Optional
-
+from aiogram import html
 from pydantic import BaseModel
 
 
@@ -30,6 +30,9 @@ class Section(BaseModel):
     title: str
     project_id: int
 
+    def __str__(self):
+        return f"{html.bold(self.title)}"
+
 
 class User(BaseModel):
     user_id: int
@@ -37,7 +40,7 @@ class User(BaseModel):
     telegram_id: str
 
     def __str__(self):
-        return f"Имя в системе: {self.name}\nID: {self.user_id}\nTelegramID: {self.telegram_id}"
+        return f"Имя: {html.bold(self.name)}\nID: {html.bold(self.user_id)}\nTelegramID: {html.bold(self.telegram_id)}"
 
 
 class Project(BaseModel):
@@ -46,7 +49,7 @@ class Project(BaseModel):
     description: str
 
     def __str__(self):
-        return f'{self.project_id} {self.title} {self.description}'
+        return f"{html.italic(self.project_id)}: {html.bold(html.quote(self.title))}\n\n{html.quote(self.description)}"
 
 
 class AddUser(BaseModel):
@@ -54,7 +57,7 @@ class AddUser(BaseModel):
     role_id: int
 
     def __str__(self):
-        return f'{self.user_id} {self.role_id}'
+        return f"{self.user_id} {self.role_id}"
 
 
 class Right(BaseModel):

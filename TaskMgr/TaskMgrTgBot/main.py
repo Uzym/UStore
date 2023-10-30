@@ -4,9 +4,8 @@ import logging
 from aiogram import Bot, Dispatcher
 
 from config import Config, load_config
-from src.handlers import common_router
 from src.services import UserService, SectionService, CardService, ProjectService, RoleService
-from src.handlers import common_router, project_router
+from src.handlers import common_router, project_router, section_router
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +39,7 @@ async def main():
 
     dp.include_router(common_router)
     dp.include_router(project_router)
+    dp.include_router(section_router)
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
