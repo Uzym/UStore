@@ -51,6 +51,19 @@ services:
     depends_on:
       - store_api
 
+  store_tgbot:
+    image: store/tgbot
+    build:
+      context: ./StoreTgBot
+    environment:
+      - TOKEN=${STORE_TOKEN}
+      - API_URL=${STORE_API_URL}
+    depends_on:
+      - store_api
+    networks:
+      - store_network
+    restart: always
+
   # minio:
   #   container_name: minio
   #   image: minio/minio

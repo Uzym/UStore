@@ -20,25 +20,6 @@ services:
     networks:
       - network
 
-  store_db:
-    image: postgres
-    volumes:
-      - store_db_volume:/var/lib/postgresql/data
-      - ./Store/StoreDB/init.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "5434:5433"
-    environment:
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-      POSTGRES_DB: "store"
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d store" ]
-      interval: 2s
-      timeout: 2s
-      retries: 20
-    networks:
-      - network
-
   taskmgr_api:
     image: taskmgr/api
     environment:
@@ -50,6 +31,38 @@ services:
     ports:
       - '8000:80'
       - '443:443'
+    networks:
+      - network
+
+  taskmgr_tgbot:
+    image: taskmgr/tgbot
+    restart: always
+    build:
+      context: ./TaskMgrTgBot
+    environment:
+      - TOKEN=${TASKMGR_TOKEN}
+      - API_URL=${TASKMGR_API_URL}
+    depends_on:
+      - taskmgr_api
+    networks:
+      - network
+
+  store_db:
+    image: postgres
+    volumes:
+      - store_db_volume:/var/lib/postgresql/data
+      - ./Store/StoreDB/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "store"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d store" ]
+      interval: 2s
+      timeout: 2s
+      retries: 20
     networks:
       - network
 
@@ -68,6 +81,17 @@ services:
     networks:
       - network
 
+  store_tgbot:
+    image: store/tgbot
+    environment:
+      - TOKEN=${STORE_TOKEN}
+      - API_URL=${STORE_API_URL}
+    depends_on:
+      - store_api
+    networks:
+      - network
+    restart: always
+
   # store_frontend:
   #   image: store/frontend
   #   # environment:
@@ -80,47 +104,48 @@ services:
   #   networks:
   #     - network
 
-  taskmgr_tgbot:
-    image: taskmgr/tgbot
-    restart: always
-    build:
-      context: ./TaskMgrTgBot
-    environment:
-      - TOKEN=${TASKMGR_TOKEN}
-      - API_URL=${TASKMGR_API_URL}
+  minio:
+    container_name: minio
+    image: minio/minio
+    volumes:
+      - minio_volume:/data
+    ports:
+      - "9000:9000"
+    command: server /data
+    networks:
+      - network
+    restart: on-failure
+
+  s3_api:
+    image: s3/api
     depends_on:
-      - taskmgr_api
+      - minio
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    ports:
+      - '8002:80'
     networks:
       - network
   
-  # minio:
-  #   container_name: minio
-  #   image: minio/minio
-  #   volumes:
-  #     - minio_volume:/data
+  # ustore_proxy:
+  #   image: ustore/proxy
+  #   build:
+  #     context: .
+  #     dockerfile: nginx.dockerfile
+  #   expose:
+  #     - "80"
   #   ports:
-  #     - "9000:9000"
-  #   command: server /data
+  #     - "8003:80"
   #   networks:
-  #     - store_network
-  #   restart: on-failure
-
-  # s3_api:
-  #   image: s3/api
+  #     - network
   #   depends_on:
-  #     - minio
-  #   environment:
-  #     ASPNETCORE_ENVIRONMENT: "Development"
-  #   ports:
-  #     - '8002:80'
-  #     - '443:443'
-  #   networks:
-  #     - store_network
+  #     - store_frontend
 
 volumes:
   taskmgr_db_volume:
   store_db_volume:
-  pgadmin-data:
+  minio_volume:
+  # staticbuild:
 
 networks:
   network:

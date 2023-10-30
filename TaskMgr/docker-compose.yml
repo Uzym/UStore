@@ -39,7 +39,6 @@ services:
 
   taskmgr_tgbot:
     image: taskmgr/tgbot
-    restart: always
     build:
       context: ./TaskMgrTgBot
     environment:
@@ -49,6 +48,7 @@ services:
       - taskmgr_api
     networks:
       - taskmgr_network
+    restart: always
 
 volumes:
   db_volume:

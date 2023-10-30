@@ -14,7 +14,7 @@ namespace StoreAPI.Clients
             _client = client;        
         }
 
-        public async Task<bool> CreateCard(long section_id, string tg_id, RequestCreateCardDto data)
+        public async Task<CardDto> CreateCard(long section_id, string tg_id, RequestCreateCardDto data)
         {
             _client.DefaultRequestHeaders.Add("Telegram-Id", tg_id);
             var content = new StringContent(
@@ -25,7 +25,8 @@ namespace StoreAPI.Clients
             var res = await _client.PostAsync(
                 $"{Environment.GetEnvironmentVariable("TASKMGR_API_URL")}/section/{section_id}/card", 
                 content);
-            return true;
+            var resJson = await res.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<CardDto>(resJson);
         }
 
         public async Task<ResponseGetCardDto> GetCardById(string tg_id, long card_id)
