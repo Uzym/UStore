@@ -119,20 +119,26 @@ namespace StoreAPI.Controllers
                 .Where(o => o.OrderId == order_id && o.UserId == userId)
                 .FirstOrDefaultAsync();
 
-            if (order == null)
+            var product = await _context.Products
+                .FindAsync(data.product_id);
+
+            if (order == null || product == null)
             {
                 return NotFound();
             }
 
-            order.OrderProducts.Add(new OrderProduct
+            await _context.OrderProducts.AddAsync(new OrderProduct
             {
-                ProductId = data.product_id,
-                Quantity = data.quantity
+                Order = order,
+                Product = product,
+                Quantity = data.quantity,
             });
-            await _context.SaveChangesAsync();
 
+            await _context.SaveChangesAsync();
+            
             return Ok(new OrderProductDto
             {
+                order_id = order_id,
                 product_id = data.product_id,
                 quantity = data.quantity
             });
@@ -148,6 +154,7 @@ namespace StoreAPI.Controllers
                 .Where(op => op.OrderId == order_id)
                 .Select(op => new OrderProductDto
                 {
+                    order_id = op.OrderId,
                     product_id = op.ProductId,
                     quantity = op.Quantity
                 })
@@ -235,6 +242,9 @@ namespace StoreAPI.Controllers
 
             decimal sum = 0;
             int iter = 0;
+
+            var due = DateTime.MaxValue;
+            
             foreach (var op in orderProducts)
             {
                 iter++;
@@ -266,25 +276,32 @@ namespace StoreAPI.Controllers
 
                 description += iter.ToString() + "): " + op.Product.Title + " - " + op.Quantity.ToString() + "шт\n\t";
                 description += op.Product.Description + "\n\t";
-                description += "Цена: " + op.Product.Cost.ToString() + "\n\t";
-                description += "Скидка: " + discount + "\n";
+                description += "Цена: " + (op.Product.Cost * discount).ToString() + "\n\t";
+                description += "Скидка: " + (1 - discount) * 100 + "%\n";
+
+                if (DateTime.Now.AddHours(3) + op.Product.DeliveryTime < due)
+                {
+                    due = DateTime.Now.AddHours(3) + op.Product.DeliveryTime;
+                }
             }
 
             description += "ИТОГО: " + sum.ToString() + "\n";
             description += "Контакты пользователя:\n";
             description += "Telegram: " + user?.TgRef ?? "";
-            description += "Email: " + user?.Email ?? "";
-            description += "Адрес: " + user?.Adress ?? "";
-            description += "Телефон: " + user?.Telephone ?? "" + "\n";
+            description += "\nEmail: " + user?.Email ?? "";
+            description += "\nАдрес: " + user?.Adress ?? "";
+            description += "\nТелефон: " + user?.Telephone ?? "";
+
+            string title = user?.Name ?? "";
+            title += (" " + order_id.ToString());
 
             var cardRequest = new RequestCreateCardDto
             {
-                title = user?.Name ?? "" + order_id.ToString(),
+                title = title,
                 description = description,
-                due = DateTime.Now.AddDays(7).AddHours(3),
-                tags = { "order" }
+                due = due,
+                tags = new List<string>() { "order" },
             };
-
 
             var cardResponse = await _taskMgrClient.CreateCard(
                 section_id,
@@ -293,6 +310,7 @@ namespace StoreAPI.Controllers
             );
 
             order.CardId = cardResponse.card_id;
+            order.Price = sum;
             await _context.SaveChangesAsync();
                 
             return Ok(cardResponse);

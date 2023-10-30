@@ -81,6 +81,17 @@ services:
     networks:
       - network
 
+  store_tgbot:
+    image: store/tgbot
+    environment:
+      - TOKEN=${STORE_TOKEN}
+      - API_URL=${STORE_API_URL}
+    depends_on:
+      - store_api
+    networks:
+      - network
+    restart: always
+
   # store_frontend:
   #   image: store/frontend
   #   # environment:
@@ -92,17 +103,6 @@ services:
   #     - store_api
   #   networks:
   #     - network
-
-  store_tgbot:
-    image: store/tgbot
-    environment:
-      - TOKEN=${STORE_TOKEN}
-      - API_URL=${STORE_API_URL}
-    depends_on:
-      - store_api
-    networks:
-      - network
-    restart: always
 
   minio:
     container_name: minio
@@ -126,11 +126,26 @@ services:
       - '8002:80'
     networks:
       - network
+  
+  # ustore_proxy:
+  #   image: ustore/proxy
+  #   build:
+  #     context: .
+  #     dockerfile: nginx.dockerfile
+  #   expose:
+  #     - "80"
+  #   ports:
+  #     - "8003:80"
+  #   networks:
+  #     - network
+  #   depends_on:
+  #     - store_frontend
 
 volumes:
   taskmgr_db_volume:
   store_db_volume:
   minio_volume:
+  # staticbuild:
 
 networks:
   network:
