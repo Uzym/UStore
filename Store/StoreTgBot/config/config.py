@@ -16,7 +16,6 @@ class Config:
     api_key: str
     s3_api_key: str
 
-
 def load_config() -> Config:
     load_dotenv()
 
