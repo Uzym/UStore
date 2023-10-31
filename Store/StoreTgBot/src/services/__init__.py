@@ -3,3 +3,7 @@ from .firm_service import FirmService
 from .photo_service import PhotoService
 from .product_service import ProductService
 from .series_service import SeriesService
+from .category_service import CategoryService
+from .user_service import UserService
+from .order_service import OrderService
+from .s3_service import S3Service

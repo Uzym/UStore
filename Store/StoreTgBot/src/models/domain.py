@@ -109,7 +109,7 @@ class Photo(BaseModel):
             f"series_id: {self.series_id}\n"
             f"firm_id: {self.firm_id}\n"
         )
-    
+
 
 class Series(BaseModel):
     series_id: int
@@ -148,4 +148,21 @@ class User(BaseModel):
             f"email: {self.email}\n"
             f"tg_ref: {self.tg_ref}\n"
             f"admin: {self.admin}\n"
+        )
+
+
+class Order(BaseModel):
+    order_id: int
+    user_id: int
+    card_id: int
+    finished: bool
+    price: float
+
+    def __str__(self):
+        return (
+            f"order_id: {self.order_id}\n"
+            f"user_id: {self.user_id}\n"
+            f"card_id: {self.card_id}\n"
+            f"finished: {self.finished}\n"
+            f"price: {self.price}\n"
         )

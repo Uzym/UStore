@@ -1,4 +1,4 @@
-version: '3.7' #TODO : не готово
+version: '3.7' 
 
 services:
   taskmgr_db:
@@ -86,6 +86,7 @@ services:
     environment:
       - TOKEN=${STORE_TOKEN}
       - API_URL=${STORE_API_URL}
+      - S3_API_URL=${S3_API_URL}
     depends_on:
       - store_api
     networks:

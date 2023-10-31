@@ -58,6 +58,7 @@ services:
     environment:
       - TOKEN=${STORE_TOKEN}
       - API_URL=${STORE_API_URL}
+      - S3_API_URL=${S3_API_URL}
     depends_on:
       - store_api
     networks:

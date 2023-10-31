@@ -14,9 +14,11 @@ class TelegramBotConfig:
 class Config:
     tg_bot: TelegramBotConfig
     api_key: str
+    s3_api_key: str
 
 
 def load_config() -> Config:
     load_dotenv()
 
-    return Config(tg_bot=TelegramBotConfig(token=getenv("TOKEN")), api_key=getenv("API_URL"))
+    return Config(tg_bot=TelegramBotConfig(token=getenv("TOKEN")), api_key=getenv("API_URL"),
+                  s3_api_key=getenv("S3_API_URL"))
