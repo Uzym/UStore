@@ -35,7 +35,7 @@ async def photo_upload(message: Message, s3_service: S3Service, logger: Logger):
 
 
 @router.message(F.content_type.in_({'text'}))
-async def photo_upload(message: Message, s3_service: S3Service, logger: Logger):
+async def photo_download(message: Message, s3_service: S3Service, logger: Logger):
     logger.info(message.text)
     file_bytes = await s3_service.download_file(file_name=message.text)
     photo = BufferedInputFile(file_bytes, filename=message.text)
