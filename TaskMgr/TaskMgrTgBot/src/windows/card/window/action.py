@@ -11,6 +11,7 @@ from aiogram_dialog.widgets.kbd import Button, Select, Back, Group, Row, Cancel
 from aiogram_dialog.widgets.text import Format, Const, Case
 
 from src.states.states import Main, Project, Section, Card
+from src.windows.card.window.comment import comments_button
 from src.windows.card.window.to_card_button import to_card_button
 from src.windows.card.window.user import users_project_button
 from src.windows.main.window.to_main_menu_button import to_main_menu_button
@@ -135,6 +136,7 @@ card_action_buttons = [
     Group(
         users_project_button,
         card_update_button,
+        comments_button,
         complete_card_button,
         card_update_section_button,
         width=2,

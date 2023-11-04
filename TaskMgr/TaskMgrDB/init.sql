@@ -111,3 +111,22 @@ CREATE TABLE public.user_project (
 	CONSTRAINT user_project_fk_1 FOREIGN KEY (project_id) REFERENCES public.project(project_id) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT user_project_fk_2 FOREIGN KEY (role_id) REFERENCES public."role"(role_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+
+insert into public.role (title, description, allow_tables) 
+VALUES ('Создатель проекта', 'telegram creator project role', '{project}');
+
+insert into public.role (title, description, allow_tables)
+VALUES ('Создатель карточки', 'telegram creator card role', '{card}');
+
+INSERT INTO right_role (right_id, role_id)
+SELECT public.right.right_id, role.role_id
+FROM role
+         CROSS JOIN public.right
+WHERE role.title = 'Создатель проекта';
+
+INSERT INTO right_role (right_id, role_id)
+SELECT public.right.right_id, role.role_id
+FROM public.right CROSS JOIN role
+WHERE role.title = 'Создатель карточки'
+  AND public.right.title IN ('view_card', 'update_card', 'update_card_complete', 'delete_card', 'add_comment', 'view_comment', 'delete_comment', 'add_user', 'delete_user', 'view_user');

@@ -63,7 +63,7 @@ class CardService(TaskMgrApiService):
 
     async def create_comment(self, telegram_id: str, card_id: int, description: str) -> domain.Comment:
         url = self.api_key + self.controller + f"/{card_id}/comment"
-        request = loads(card.RequestCreateCard(description=description).json())
+        request = loads(card.RequestCreateComment(description=description).json())
         headers = {'Telegram-Id': telegram_id}
         async with self.session.post(url, json=request, headers=headers) as response:
             data = await response.json()

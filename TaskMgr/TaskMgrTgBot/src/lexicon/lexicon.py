@@ -39,6 +39,9 @@ LEXICON: dict[str, str] = {
                                 "тег нажмите на соотвествующую кнопку на клавиатуре",
     "card_update_due": "Изменить дедлайн",
     "card_update_section": emojize(":ON!_arrow:Переместить карточку"),
+    "await_user_role_select": "Выберите роль пользователя",
+    "add_message": "Отправте сообщение",
+    "comments": emojize(":e-mail:Комментарии"),
     # Commands
     "skip": "Пропущенно",
     "start": "Для создания проекта используйте команду /new_project название\nДля просмотра текущих проектов используйте /projects",

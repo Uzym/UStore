@@ -33,6 +33,8 @@ class Card(StatesGroup):
     update_section = State()
     users = State()
     add_user = State()
+    comments = State()
+    add_comment = State()
 
 
 class NewProject(StatesGroup):
