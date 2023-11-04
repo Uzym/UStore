@@ -6,7 +6,17 @@ from json import loads
 
 
 class UserService(TaskMgrApiService):
-    controller = "/user"
+    __instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+
+        return cls.__instance
+
+    def __init__(self, api_key: str = None):
+        super().__init__(api_key=api_key)
+        self.controller = "/user"
 
     async def get_user(self, user_id: int) -> domain.User:
         url = self.api_key + self.controller + "/" + str(user_id)
@@ -38,4 +48,3 @@ class UserService(TaskMgrApiService):
                 return parse_obj_as(List[domain.User], data)
             else:
                 raise Exception
-

@@ -39,7 +39,7 @@ public class CardService : ICardService
         var userId = (await _userService.Get(telegramId: telegramId)).First().user_id;
         var rights = await _context.Database
             .SqlQuery<string>(
-                $"select distinct(r2.title) from public.user_card as uc join public.card c on c.card_id = uc.card_id join public.section s on s.section_id = c.section_id join public.project p on p.project_id = s.project_id join public.user_project up on p.project_id = up.project_id join public.role r on (r.role_id = up.role_id) or (r.role_id = uc.role_id) join public.right_role rr on r.role_id = rr.role_id join public.\"right\" r2 on r2.right_id = rr.right_id where uc.user_id = {userId} and uc.card_id = {userId}"
+                $"select distinct(r2.title) from public.user_project as up left join public.project p on up.project_id = p.project_id left join public.section s on p.project_id = s.project_id left join public.card c on s.section_id = c.section_id left join public.user_card uc on c.card_id = uc.card_id join public.role r on (r.role_id = up.role_id) or (r.role_id = uc.role_id) join public.right_role rr on r.role_id = rr.role_id join public.\"right\" r2 on r2.right_id = rr.right_id where c.card_id = {cardId} and (up.user_id = {userId} or uc.user_id = {userId})"
             )
             .ToListAsync();
         return rights;

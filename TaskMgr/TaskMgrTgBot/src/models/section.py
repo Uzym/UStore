@@ -4,8 +4,8 @@ from .domain import Link, Section
 
 
 class RequestCreateSection(BaseModel):
-    title: Optional[str]
-    project_id: Optional[int]
+    title: Optional[str] = None
+    project_id: Optional[int] = None
 
 
 class ResponseGetSection(BaseModel):

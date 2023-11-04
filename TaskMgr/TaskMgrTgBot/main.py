@@ -1,11 +1,13 @@
 import asyncio
 import logging
-
+from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram import Bot, Dispatcher
+from aiogram_dialog import setup_dialogs
 
 from config import Config, load_config
 from src.services import UserService, SectionService, CardService, ProjectService, RoleService
-from src.handlers import common_router, project_router, section_router
+
+from src.windows import main_setup, project_setup, section_setup, card_setup
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +23,10 @@ async def main():
 
     config: Config = load_config()
 
+    storage: MemoryStorage = MemoryStorage()
+
     bot: Bot = Bot(token=config.tg_bot.token, parse_mode="HTML")
-    dp: Dispatcher = Dispatcher()
+    dp: Dispatcher = Dispatcher(storage=storage)
 
     role_service = RoleService(api_key=config.api_key, logger=logger)
     dp["role_service"] = role_service
@@ -37,9 +41,22 @@ async def main():
 
     dp["logger"] = logger
 
-    dp.include_router(common_router)
+    main_router, main_dialog = main_setup()
+    project_router, project_dialog = project_setup()
+    section_router, section_dialog = section_setup()
+    card_router, card_dialog = card_setup()
+
+    dp.include_router(main_router)
     dp.include_router(project_router)
     dp.include_router(section_router)
+    dp.include_router(card_router)
+
+    dp.include_router(main_dialog)
+    dp.include_router(project_dialog)
+    dp.include_router(section_dialog)
+    dp.include_router(card_dialog)
+
+    setup_dialogs(dp)
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)

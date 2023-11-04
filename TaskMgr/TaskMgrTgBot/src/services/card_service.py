@@ -7,10 +7,44 @@ from pydantic import parse_obj_as
 from json import loads
 
 
+def parse_link_card(link: domain.Link):
+    url = link.href.lower().split('/')
+    if url[1].lower() != "card":
+        raise Exception
+    card_id: int = int(url[2])
+    if len(url) == 3:
+        if link.method == "PUT":
+            return card_id, "update"
+        if link.method == "GET":
+            return card_id, "get"
+    if len(url) == 4:
+        if link.method == "PATCH" and url[3] == "uncomplete":
+            return card_id, "uncomplete"
+        if link.method == "PATCH" and url[3] == "complete":
+            return card_id, "complete"
+        if link.method == "POST" and url[3] == "comment":
+            return card_id, "add_comment"
+        if link.method == "GET" and url[3] == "comment":
+            return card_id, "get_comment"
+        if link.method == "POST" and url[3] == "user":
+            return card_id, "add_user"
+        if link.method == "GET" and url[3] == "user":
+            return card_id, "get_user"
+    return card_id, "post"
+
+
 class CardService(TaskMgrApiService):
+    __instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+
+        return cls.__instance
+
     controller = "/card"
 
-    def __init__(self, api_key: str, logger: logging.Logger):
+    def __init__(self, api_key: str = None, logger: logging.Logger = None):
         super().__init__(api_key=api_key)
         self.logger = logger
 
@@ -34,7 +68,6 @@ class CardService(TaskMgrApiService):
         async with self.session.post(url, json=request, headers=headers) as response:
             data = await response.json()
             return domain.Comment.parse_obj(data)
-
 
 
     async def update_card(self,
