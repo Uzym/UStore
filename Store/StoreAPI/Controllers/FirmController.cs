@@ -6,7 +6,7 @@ using StoreAPI.Dtos.Firm;
 
 namespace StoreAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class FirmController : ControllerBase
     {
@@ -17,7 +17,7 @@ namespace StoreAPI.Controllers
             _context = context;
         }
 
-        [HttpGet("firm_id")]
+        [HttpGet("{firm_id}")]
         public async Task<ActionResult<FirmDto>> Index(long firm_id)
         {
             var firm = await _context.Firms

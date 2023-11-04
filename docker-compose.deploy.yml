@@ -1,4 +1,4 @@
-version: '3.7' #TODO : не готово
+version: '3.7' 
 
 services:
   taskmgr_db:
@@ -86,23 +86,24 @@ services:
     environment:
       - TOKEN=${STORE_TOKEN}
       - API_URL=${STORE_API_URL}
+      - S3_API_URL=${S3_API_URL}
     depends_on:
       - store_api
     networks:
       - network
     restart: always
 
-  # store_frontend:
-  #   image: store/frontend
-  #   # environment:
-  #   ports:
-  #     - "5173:5173"
-  #   volumes:
-  #     - staticbuild:/app/out
-  #   depends_on:
-  #     - store_api
-  #   networks:
-  #     - network
+  store_frontend:
+    image: store/frontend
+    # environment:
+    volumes:
+      - ./Store/StoreFrontend:/usr/app
+    ports:
+      - "5173:3000"
+    depends_on:
+      - store_api
+    networks:
+      - network
 
   minio:
     container_name: minio
@@ -126,20 +127,6 @@ services:
       - '8002:80'
     networks:
       - network
-  
-  # ustore_proxy:
-  #   image: ustore/proxy
-  #   build:
-  #     context: .
-  #     dockerfile: nginx.dockerfile
-  #   expose:
-  #     - "80"
-  #   ports:
-  #     - "8003:80"
-  #   networks:
-  #     - network
-  #   depends_on:
-  #     - store_frontend
 
 volumes:
   taskmgr_db_volume:

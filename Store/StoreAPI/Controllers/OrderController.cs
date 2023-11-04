@@ -162,7 +162,7 @@ namespace StoreAPI.Controllers
             return Ok(products);
         }
 
-        [HttpPatch("{order_id}/product/delete")]
+        [HttpPatch("{order_id}/product/{product_id}/delete")]
         public async Task<ActionResult<OrderDto>> DeleteOrderProduct(
             [FromHeader(Name = "Telegram-Id")] string tg_id,
             long order_id,
@@ -192,7 +192,7 @@ namespace StoreAPI.Controllers
             return await Index(tg_id, order_id);
         }
 
-        [HttpDelete]
+        [HttpDelete("{order_id}")]
         public async Task<ActionResult<bool>> DeleteOrder(
             [FromHeader(Name = "Telegram-Id")] string tg_id,
             long order_id)
@@ -209,7 +209,7 @@ namespace StoreAPI.Controllers
 
             _context.Orders.Remove(order);
             await _context.SaveChangesAsync();
-            return Ok(order);
+            return Ok(true);
         }
 
         [HttpPatch("{order_id}/confirm")]
@@ -243,7 +243,7 @@ namespace StoreAPI.Controllers
             decimal sum = 0;
             int iter = 0;
 
-            var due = DateTime.MaxValue;
+            var due = DateTime.MinValue;
             
             foreach (var op in orderProducts)
             {
@@ -279,7 +279,7 @@ namespace StoreAPI.Controllers
                 description += "Цена: " + (op.Product.Cost * discount).ToString() + "\n\t";
                 description += "Скидка: " + (1 - discount) * 100 + "%\n";
 
-                if (DateTime.Now.AddHours(3) + op.Product.DeliveryTime < due)
+                if (DateTime.Now.AddHours(3) + op.Product.DeliveryTime > due)
                 {
                     due = DateTime.Now.AddHours(3) + op.Product.DeliveryTime;
                 }
@@ -303,9 +303,19 @@ namespace StoreAPI.Controllers
                 tags = new List<string>() { "order" },
             };
 
+            var adminTgId = await _context.Users
+                .Where(u => u.Admin == true)
+                .Select(u => u.TgId)
+                .FirstOrDefaultAsync();
+
+            if (adminTgId == null)
+            {
+                return NotFound();
+            }
+
             var cardResponse = await _taskMgrClient.CreateCard(
                 section_id,
-                tg_id,
+                adminTgId,
                 cardRequest
             );
 

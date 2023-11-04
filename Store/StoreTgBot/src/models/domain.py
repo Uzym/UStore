@@ -41,6 +41,29 @@ class Category(BaseModel):
         )
 
 
+class Product(BaseModel):
+    product_id: int
+    category_id: int
+    series_id: int
+    title: str
+    description: Optional[str] = None
+    cost: float
+    delivery_time: str
+    discount: float
+
+    def __str__(self):
+        return (
+            f"product_id: {self.product_id}\n"
+            f"category_id: {self.category_id}\n"
+            f"series_id: {self.series_id}\n"
+            f"title: {self.title}\n"
+            f"description: {self.description}\n"
+            f"cost: {self.cost}\n"
+            f"delivery_time: {self.delivery_time}\n"
+            f"discount: {self.discount}\n"
+        )
+
+
 class Firm(BaseModel):
     firm_id: int
     title: str
@@ -86,9 +109,9 @@ class Photo(BaseModel):
             f"series_id: {self.series_id}\n"
             f"firm_id: {self.firm_id}\n"
         )
-    
 
-class SeriesDto(BaseModel):
+
+class Series(BaseModel):
     series_id: int
     title: str
     description: Optional[str] = None
@@ -105,7 +128,7 @@ class SeriesDto(BaseModel):
         )
 
 
-class UserDto(BaseModel):
+class User(BaseModel):
     user_id: int
     tg_id: Optional[str] = None
     name: str
@@ -125,4 +148,21 @@ class UserDto(BaseModel):
             f"email: {self.email}\n"
             f"tg_ref: {self.tg_ref}\n"
             f"admin: {self.admin}\n"
+        )
+
+
+class Order(BaseModel):
+    order_id: int
+    user_id: int
+    card_id: int
+    finished: bool
+    price: float
+
+    def __str__(self):
+        return (
+            f"order_id: {self.order_id}\n"
+            f"user_id: {self.user_id}\n"
+            f"card_id: {self.card_id}\n"
+            f"finished: {self.finished}\n"
+            f"price: {self.price}\n"
         )

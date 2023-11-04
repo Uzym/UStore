@@ -41,11 +41,12 @@ services:
     image: store/frontend
     build:
       context: StoreFrontend
+      dockerfile: Dockerfile
     # environment:
     ports:
       - "5173:5173"
     volumes:
-      - staticbuild:/app/out
+      - ./StoreFrontend:/usr/app
     networks:
       - store_network
     depends_on:
@@ -58,6 +59,7 @@ services:
     environment:
       - TOKEN=${STORE_TOKEN}
       - API_URL=${STORE_API_URL}
+      - S3_API_URL=${S3_API_URL}
     depends_on:
       - store_api
     networks:
@@ -91,7 +93,7 @@ services:
 volumes:
   db_volume:
   minio_volume:
-  staticbuild:
+  # staticbuild:
 
 networks:
   store_network:

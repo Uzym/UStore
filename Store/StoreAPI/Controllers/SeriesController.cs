@@ -6,7 +6,7 @@ using StoreAPI.Dtos.Series;
 
 namespace StoreAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class SeriesController : ControllerBase
     {

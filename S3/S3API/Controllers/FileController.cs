@@ -48,10 +48,14 @@ namespace S3_Service.Controllers
 
             var name = Path.GetFileNameWithoutExtension(file.FileName);
             var extension = Path.GetExtension(file.FileName);
-            var str1 = DateTime.Now.ToString();
-            var str2 = Regex.Replace(str1, "[ :/.,]", "_");
-            var fileName = $"{name}_{str2}{extension}";
+            
+            var fileId = Guid.NewGuid().ToString();
 
+            //var str1 = DateTime.Now.ToString();
+            //var str2 = Regex.Replace(str1, "[ :/.,]", "_");
+            //var fileName = $"{name}_{str2}{extension}";
+            
+            var fileName = $"{fileId}{extension}";
             var filePath = Path.GetTempFileName();
 
             _logger.LogInformation($"Temp file name: '{filePath}'.");
