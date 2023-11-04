@@ -6,6 +6,8 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram_dialog import setup_dialogs
 
 from config import Config, load_config
+from src.lexicon import COMMANDS
+from src.lexicon.lexicon import BOT_NAME, BOT_DESCRIPTION, BOT_SHORT_DESCRIPTION
 from src.services import UserService, SectionService, CardService, ProjectService, RoleService
 from src.handlers import main_setup, project_setup, section_setup, card_setup
 
@@ -27,6 +29,11 @@ async def main():
 
     bot: Bot = Bot(token=config.tg_bot.token, parse_mode="HTML")
     dp: Dispatcher = Dispatcher(storage=storage)
+
+    await bot.set_my_name(BOT_NAME)
+    await bot.set_my_description(BOT_DESCRIPTION)
+    await bot.set_my_short_description(BOT_SHORT_DESCRIPTION)
+    await bot.set_my_commands(COMMANDS)
 
     role_service = RoleService(api_key=config.api_key, logger=logger)
     dp["role_service"] = role_service

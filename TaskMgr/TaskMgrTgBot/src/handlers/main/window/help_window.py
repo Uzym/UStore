@@ -20,8 +20,8 @@ help_window = Window(
         LEXICON["help"]
     ),
     List(
-        Format("- /{item[0]} - {item[1]}"),
-        items=COMMANDS
+        Format("/{item[0]} - {item[1]}"),
+        items=[(com.command, com.description) for com in COMMANDS]
     ),
     to_main_menu_button,
     state=Main.help,

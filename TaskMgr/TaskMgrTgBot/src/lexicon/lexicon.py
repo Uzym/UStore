@@ -1,15 +1,21 @@
+from aiogram.types import BotCommand
 from emoji import emojize
+
+BOT_NAME = "Telegram Tasks Manager"
+BOT_DESCRIPTION = ("Данный бот помогает в работе с совместной работе над проектами, он основан на подходе к управлению "
+                   "задачами Kanban")
+BOT_SHORT_DESCRIPTION = "Telegram Task Manager"
 
 START_COMMAND = "start"
 HELP_COMMAND = "help"
 PROJECTS_COMMAND = "projects"
 NEW_PROJECT_COMMAND = "new_project"
 
-COMMANDS: list[tuple[str, str]] = [
-    (START_COMMAND, "перейти в главное меню"),
-    (HELP_COMMAND, "открыть справку"),
-    (PROJECTS_COMMAND, "открыть проекты"),
-    (NEW_PROJECT_COMMAND, "создать проект")
+COMMANDS = [
+    BotCommand(command=START_COMMAND, description="перейти в главное меню"),
+    BotCommand(command=HELP_COMMAND, description="открыть справку"),
+    BotCommand(command=PROJECTS_COMMAND, description="открыть проекты"),
+    BotCommand(command=NEW_PROJECT_COMMAND, description="создать проект"),
 ]
 
 LEXICON: dict[str, str] = {
@@ -42,9 +48,9 @@ LEXICON: dict[str, str] = {
     "await_user_role_select": "Выберите роль пользователя",
     "add_message": "Отправте сообщение",
     "comments": emojize(":e-mail:Комментарии"),
-    # Commands
     "skip": "Пропущенно",
-    "start": "Для создания проекта используйте команду /new_project название\nДля просмотра текущих проектов используйте /projects",
+    "start": "Для создания проекта используйте команду /new_project название\n"
+             "Для просмотра текущих проектов используйте /projects",
     "help": "Данный бот служит для управления и командной работы над несколькими проектами",
     "not_found": "Данный элемент не найден",
     "loading": "Выполняется запрос",
@@ -58,7 +64,6 @@ LEXICON: dict[str, str] = {
     "get_user_project": "Получить список людей",
     "start_add_user": "Отправте имя человека которого хотите добавить",
     "add_user_keyboard": "добавить с правами:",
-    "add_user_message": "Для удостоверения в том что это тот человек нажмите на кнопку с его именем, далее под ним вы можете выбрать роль с которой добавлять пользователя",
     "end_add_user": "Пользователь добавлен",
     "start_add_section": "Отправте название списка",
     "end_add_section": "Список создан",
