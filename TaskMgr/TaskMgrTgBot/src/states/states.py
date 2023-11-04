@@ -1,4 +1,3 @@
-from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 
 
@@ -35,22 +34,3 @@ class Card(StatesGroup):
     add_user = State()
     comments = State()
     add_comment = State()
-
-
-class NewProject(StatesGroup):
-    new_project_title = State()
-    new_project_description = State()
-    new_project_ok = State()
-
-class DefualtForm(StatesGroup):
-    user_input = State()
-
-class AddUserForm(StatesGroup):
-    project_add_user = State()
-
-class AddSectionForm(StatesGroup):
-    project_add_section = State()
-
-class UpdateProjectForm(StatesGroup):
-    project_update_title = State()
-    project_update_description = State()

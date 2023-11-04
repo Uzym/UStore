@@ -68,7 +68,8 @@ class SectionService(TaskMgrApiService):
 
     async def create_card(self, telegram_id, section_id, title):
         url = self.api_key + self.controller + f"/{section_id}/card"
-        request = loads(card.RequestCreateCard(title=title, description=None, due=None, tags=[], section_id=section_id).json(exclude_none=False))
+        request = loads(card.RequestCreateCard(title=title, description=None, due=None, tags=[], section_id=section_id)
+                        .json(exclude_none=False))
         headers = {'Telegram-Id': telegram_id}
         async with self.session.post(url, json=request, headers=headers) as response:
             data = await response.json()

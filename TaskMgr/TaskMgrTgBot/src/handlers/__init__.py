@@ -1,3 +1,4 @@
-from .common import router as common_router
-from .project import router as project_router
-from .section import router as section_router
+from src.handlers.main.main_setup import setup as main_setup
+from src.handlers.project.project_setup import setup as project_setup
+from src.handlers.section.section_setup import setup as section_setup
+from src.handlers.card.card_setup import setup as card_setup

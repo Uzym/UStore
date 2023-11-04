@@ -1,13 +1,13 @@
 import asyncio
 import logging
-from aiogram.fsm.storage.memory import MemoryStorage
+
 from aiogram import Bot, Dispatcher
+from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram_dialog import setup_dialogs
 
 from config import Config, load_config
 from src.services import UserService, SectionService, CardService, ProjectService, RoleService
-
-from src.windows import main_setup, project_setup, section_setup, card_setup
+from src.handlers import main_setup, project_setup, section_setup, card_setup
 
 logger = logging.getLogger(__name__)
 

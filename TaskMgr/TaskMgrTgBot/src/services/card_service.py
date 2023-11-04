@@ -69,7 +69,6 @@ class CardService(TaskMgrApiService):
             data = await response.json()
             return domain.Comment.parse_obj(data)
 
-
     async def update_card(self,
                           card_id: int,
                           title: str = None,
