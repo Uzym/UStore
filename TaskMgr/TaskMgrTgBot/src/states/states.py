@@ -30,6 +30,9 @@ class Card(StatesGroup):
     update_description = State()
     update_tags = State()
     update_due = State()
+    update_section = State()
+    users = State()
+    add_user = State()
 
 
 class NewProject(StatesGroup):

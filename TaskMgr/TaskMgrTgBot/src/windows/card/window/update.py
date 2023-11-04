@@ -129,6 +129,7 @@ card_update_due_window = Window(
     state=Card.update_due
 )
 
+
 card_update_buttons = [
     Group(
         card_update_title_button,
