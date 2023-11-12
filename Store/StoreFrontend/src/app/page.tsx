@@ -1,5 +1,7 @@
-function HomePage() {
-	return <></>
+import HomePage from '@/components/pages/HomePage/HomePage'
+
+function page() {
+	return <HomePage />
 }
 
-export default HomePage
+export default page

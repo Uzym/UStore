@@ -1,0 +1,11 @@
+.header {
+	@apply relative flex justify-between mb-[1.5625rem];
+
+	.title {
+		@apply font-semibold text-2xl;
+	}
+
+	.icon {
+		@apply rounded-[0.4375rem] hover:rounded-[0.4375rem];
+	}
+}
