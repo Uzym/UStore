@@ -50,4 +50,16 @@ public class RoleService : IRoleService
         
         return roles;
     }
+
+    public async Task<List<Models.Role>> GetModels(long? id = null)
+    {
+        var idCheck = id is null;
+        var items = await _context.Roles
+            .Where(c => 
+                (c.RoleId == id || idCheck)
+            )
+            .ToListAsync();
+
+        return items;
+    }
 }

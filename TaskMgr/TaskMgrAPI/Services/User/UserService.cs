@@ -59,4 +59,19 @@ public class UserService : IUserService
         
         return (await Get(id: id[0])).First();
     }
+
+    public async Task<List<Models.User>> GetModels(long? id = null)
+    {
+        var idCheck = id is null;
+        var items = await _context.Users
+            .Where(c => 
+                (c.UserId == id || idCheck)
+            )
+            .Include(c => c.UserProjects)
+            .Include(c => c.UserCards)
+            .Include(c => c.Comments)
+            .ToListAsync();
+
+        return items;
+    }
 }

@@ -29,7 +29,7 @@ class FirmService(StoreApiService):
             data = await response.json()
             return domain.Firm.parse_obj(data)
 
-    async def firms(self, title: Optional[str], description: Optional[str], discount: Optional[float]) \
+    async def firms(self, title: Optional[str], description: Optional[str] = None, discount: Optional[float] = None) \
             -> List[domain.Firm]:
         url = self.api_key + self.controller
         params = {}

@@ -45,6 +45,21 @@ public class CardService : ICardService
         return rights;
     }
 
+    public async Task<List<Models.Card>> GetModels(long? id = null)
+    {
+        var idCheck = id is null;
+        var cards = await _context.Cards
+            .Where(c => 
+                (c.CardId == id || idCheck)
+            )
+            .Include(c => c.Comments)
+            .Include(c => c.Section)
+            .Include(c => c.UserCards)
+            .ToListAsync();
+
+        return cards;
+    }
+
     public async Task<List<CardDto>> Get(long? id = null, string? title = null, string? description = null, long? sectionId = null,
         DateTime? due = null, DateTime? complete = null, string? tag = null)
     {

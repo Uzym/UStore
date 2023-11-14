@@ -135,4 +135,18 @@ public class ProjectService : IProjectService
             .ToListAsync();
         return await UserProject(projectId);
     }
+
+    public async Task<List<Models.Project>> GetModels(long? id = null)
+    {
+        var idCheck = id is null;
+        var items = await _context.Projects
+            .Where(c => 
+                (c.ProjectId == id || idCheck)
+            )
+            .Include(c => c.Sections)
+            .Include(c => c.UserProjects)
+            .ToListAsync();
+
+        return items;
+    }
 }

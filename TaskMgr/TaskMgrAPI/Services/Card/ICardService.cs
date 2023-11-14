@@ -6,6 +6,9 @@ namespace TaskMgrAPI.Services.Card;
 public interface ICardService
 {
     public Task<List<string>> UserRights(string telegramId, long cardId);
+    public Task<List<Models.Card>> GetModels(
+        long? id = null
+        );
     public Task<List<CardDto>> Get(
         long? id = null, 
         string? title = null, 

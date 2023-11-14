@@ -104,4 +104,18 @@ public class SectionService : ISectionService
         await _context.SaveChangesAsync();
         return TranslateIntoDto(section);
     }
+
+    public async Task<List<Models.Section>> GetModels(long? id = null)
+    {
+        var idCheck = id is null;
+        var items = await _context.Sections
+            .Where(c => 
+                (c.SectionId == id || idCheck)
+            )
+            .Include(c => c.Project)
+            .Include(c => c.Cards)
+            .ToListAsync();
+
+        return items;
+    }
 }

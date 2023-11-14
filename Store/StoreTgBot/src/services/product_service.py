@@ -44,10 +44,10 @@ class ProductService(StoreApiService):
                 data = await response.json()
                 return domain.Product.parse_obj(data)
 
-    async def products(self, category_id: Optional[int], series_id: Optional[int], title: Optional[str],
-                       description: Optional[str],
-                       cost: Optional[float], delivery_time: Optional[str],
-                       discount: Optional[float]) -> List[domain.Product]:
+    async def products(self, category_id: Optional[int] = None, series_id: Optional[int] = None,
+                       title: Optional[str] = None, description: Optional[str] = None,
+                       cost: Optional[float] = None, delivery_time: Optional[str] = None,
+                       discount: Optional[float] = None) -> List[domain.Product]:
         url = self.api_key + self.controller
         params = {}
         if category_id is not None:

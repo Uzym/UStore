@@ -11,6 +11,7 @@ using TaskMgrAPI.Dtos.Project;
 using TaskMgrAPI.Dtos.User;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.OData.Query;
 using TaskMgrAPI.Exceptions;
 using TaskMgrAPI.Services.Card;
 using TaskMgrAPI.Services.Comment;
@@ -74,12 +75,13 @@ namespace TaskMgrAPI.Controllers
             
             return links;
         }
+
         private async Task<List<Link>> UserAction(string telegramId, long cardId)
         {
             var rights = await _cardService.UserRights(telegramId, cardId);
 
             var userLinks = CreateProjectLink(cardId, rights);
-            
+
             return userLinks.ToList();
         }
 
