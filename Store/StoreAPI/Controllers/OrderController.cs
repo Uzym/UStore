@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cors;
 using StoreAPI.Clients;
 using StoreAPI.Context;
 using StoreAPI.Dtos.Card;
@@ -13,6 +14,7 @@ namespace StoreAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [EnableCors]
     public class OrderController : ControllerBase
     {
         private readonly StoreContext _context;

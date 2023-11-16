@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cors;
 using StoreAPI.Context;
 using StoreAPI.Dtos.Series;
 
@@ -8,6 +9,7 @@ namespace StoreAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [EnableCors]
     public class SeriesController : ControllerBase
     {
         private readonly StoreContext _context;
