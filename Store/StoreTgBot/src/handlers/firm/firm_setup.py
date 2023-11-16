@@ -6,6 +6,7 @@ from aiogram.types import Message
 from aiogram_dialog import DialogManager, StartMode, Dialog
 from src.handlers.firm.window.firms_search_window import search_firm_windows
 from src.handlers.firm.window.firms_create_window import create_firm_windows
+from src.handlers.firm.window.firm_window import firm_window
 
 from src.lexicon.lexicon import FIRMS_COMMAND, NEW_FIRM_COMMAND, LEXICON
 from src.states.states import Firm
@@ -41,7 +42,7 @@ async def firm_create(message: Message, dialog_manager: DialogManager):
 #     await message.answer(text=LEXICON["not_found"])
 
 
-dialog: Dialog = Dialog(*search_firm_windows, *create_firm_windows)  # TODO
+dialog: Dialog = Dialog(*create_firm_windows, *search_firm_windows, firm_window)  # TODO
 
 
 def setup() -> Router():

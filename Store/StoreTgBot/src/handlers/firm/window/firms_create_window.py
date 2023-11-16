@@ -8,6 +8,7 @@ from aiogram_dialog.widgets.kbd import Select, Group, ScrollingGroup, Button, Ro
 from aiogram_dialog.widgets.text import Format, Const
 from aiogram_dialog.widgets.input import MessageInput
 
+from src.handlers.firm.window.firm_window import get_firm_button
 from src.lexicon import LEXICON
 from src.services import FirmService
 from src.states.states import Firm
@@ -97,14 +98,25 @@ firm_create_discount_param_window = Window(
 )
 
 
-async def firm_create(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.switch_to(Firm.firm)
+async def firm_create_getter(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, **kwargs):
+    title = None
+    if 'title' in dialog_manager.dialog_data.keys():
+        title = dialog_manager.dialog_data['title']
+    description = None
+    if 'description' in dialog_manager.dialog_data.keys():
+        description = dialog_manager.dialog_data['description']
+    discount = None
+    if 'discount' in dialog_manager.dialog_data.keys():
+        discount = dialog_manager.dialog_data['discount']
+    firm_data = await firm_service.create_firm(title=title, description=description, discount=discount)
+    dialog_manager.start_data['firm_id'] = firm_data.firm_id
+    await dialog_manager.switch_to(Firm.firm)
 
 
 firm_create_button = Button(
     text=Const("Создать фирму"),
     id="firm_create",
-    on_click=firm_create
+    on_click=firm_create_getter
 )
 
 
@@ -122,43 +134,23 @@ firm_create_window = Window(
 )
 
 
-async def firm_create_getter(dialog_manager: DialogManager, **kwargs):
-    title = None
-    if 'title' in dialog_manager.dialog_data.keys():
-        title = dialog_manager.dialog_data['title']
-    description = None
-    if 'description' in dialog_manager.dialog_data.keys():
-        description = dialog_manager.dialog_data['description']
-    discount = None
-    if 'discount' in dialog_manager.dialog_data.keys():
-        discount = dialog_manager.dialog_data['discount']
-    firm_data = await firm_service.create_firm(title=title, description=description, discount=discount)
-    data = [
-        (firm_data.title, firm_data.description, firm_data.discount, str(firm_data.firm_id)) # TODO пересчет скидки
-    ]
-    return {
-        "firms": data
-    }
-
-
-firm_create_result_window = Window(
-    Format("Фирма"),
-    Group(
-        Select(
-            text=Format("{item[0]}\n{item[1]}\n{item[2]}"),
-            item_id_getter=operator.itemgetter(1),
-            items="firm",
-            id="firm_i"
-        ),
-        id="firm",
-        width=1,
-    ),
-    Cancel(Const("Завершить")),
-    state=Firm.firm,
-    getter=firm_create_getter
-)
+# firm_create_result_window = Window(
+#     Format("Фирма"),
+#     Group(
+#         Select(
+#             text=Format("{item[0]}\n{item[1]}\n{item[2]}"),
+#             item_id_getter=operator.itemgetter(1),
+#             items="firm",
+#             id="firm_i",
+#         ),
+#         id="firm",
+#         width=1,
+#     ),
+#     Cancel(Const("Завершить")),
+#     state=Firm.firm_create_result,
+#     getter=firm_create_getter
+# )
 
 
 create_firm_windows = [firm_create_title_param_window, firm_create_description_param_window, 
-                       firm_create_window, firm_create_discount_param_window,
-                       firm_create_result_window]
+                       firm_create_window, firm_create_discount_param_window]

@@ -11,6 +11,7 @@ from aiogram_dialog.widgets.input import MessageInput
 from src.lexicon import LEXICON
 from src.services import FirmService
 from src.states.states import Firm
+from src.handlers.firm.window.firm_window import get_firm_button
 
 
 firm_service = FirmService()
@@ -148,7 +149,8 @@ firms_window = Window(
             text=Format("{item[0]}"),
             item_id_getter=operator.itemgetter(1),
             items="firms",
-            id="firm_i"
+            id="firm_i",
+            on_click=get_firm_button
         ),
         id="firms_group",
         width=1,

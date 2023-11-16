@@ -81,14 +81,17 @@ namespace StoreAPI.Controllers
             string? title,
             string? description,
             decimal? discount,
-            long? firm_id
+            long? firm_id,
+            long? category_id
             )
         {
             var series = await _context.Series
+                .Include(s => s.Products)
                 .Where(s => (title == null || s.Title == title) &&
                             (description == null || s.Description == description) &&
                             (discount == null || s.Discount == discount) &&
-                            (firm_id == null || s.FirmId == firm_id))
+                            (firm_id == null || s.FirmId == firm_id) &&
+                            (category_id == null || s.Products.Any(p => p.CategoryId == category_id)))
                 .Select(s => new SeriesDto
                 {
                     series_id = s.SeriesId,
