@@ -3,7 +3,8 @@ import logging
 from .store_api import StoreApiService
 from src.models import domain, order, card
 from typing import List, Optional
-from pydantic import parse_obj_as, parse_raw_as
+from pydantic import parse_obj_as
+from pydantic.v1 import parse_raw_as
 from json import loads
 
 

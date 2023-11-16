@@ -3,12 +3,18 @@ import logging
 from .store_api import StoreApiService
 from src.models import domain, user
 from typing import List, Optional
-from pydantic import parse_obj_as
+from pydantic.v1 import parse_obj_as
 from json import loads
 
 
 class UserService(StoreApiService):
+    __instance = None
 
+    def __new__(cls, *args, **kwargs):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+
+        return cls.__instance
     def __init__(self, api_key: str, logger: logging.Logger):
         super().__init__(api_key=api_key)
         self.logger = logger

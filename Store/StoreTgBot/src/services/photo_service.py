@@ -3,8 +3,10 @@ import logging
 from .store_api import StoreApiService
 from src.models import domain, photo
 from typing import List, Optional
-from pydantic import parse_raw_as
+from pydantic.v1 import parse_raw_as
 from json import loads
+
+from ..models.domain import Photo
 
 
 class PhotoService(StoreApiService):
@@ -21,8 +23,8 @@ class PhotoService(StoreApiService):
                 data = await response.json()
                 return domain.Photo.parse_obj(data)
 
-    async def create_photo(self, name: str, product_id: int, category_id: int, series_id: int,
-                           firm_id: int) -> domain.Photo:
+    async def create_photo(self, name: str, product_id: int = None, category_id: int = None, series_id: int = None,
+                           firm_id: int = None) -> domain.Photo:
         url = self.api_key + self.controller
         request = loads(
             photo.RequestCreatePhoto(name=name, product_id=product_id, category_id=category_id, series_id=series_id,
@@ -37,7 +39,8 @@ class PhotoService(StoreApiService):
             data = await response.read()
             return parse_raw_as(bool, data)
 
-    async def photos(self, product_id: Optional[int], firm_id: Optional[str], series_id: Optional[str], category_id: Optional[str]) -> List[str]:
+    async def photos(self, product_id: Optional[int] = None, firm_id: Optional[str] = None,
+                     series_id: Optional[str] = None, category_id: Optional[str] = None) -> List[Photo]:
         url = self.api_key + self.controller
         params = {}
         if product_id is not None:
@@ -52,4 +55,4 @@ class PhotoService(StoreApiService):
             if response.status == 200:
                 data = await response.read()
                 self.logger.info(data)
-                return parse_raw_as(List[str], data)
+                return parse_raw_as(List[Photo], data)

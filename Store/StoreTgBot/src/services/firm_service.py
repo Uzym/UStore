@@ -3,13 +3,20 @@ import logging
 from .store_api import StoreApiService
 from src.models import domain, firm
 from typing import List, Optional
-from pydantic import parse_obj_as
+from pydantic.v1 import parse_obj_as
 from json import loads
 
 
 class FirmService(StoreApiService):
+    __instance = None
 
-    def __init__(self, api_key: str, logger: logging.Logger):
+    def __new__(cls, *args, **kwargs):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+
+        return cls.__instance
+
+    def __init__(self, api_key: str = None, logger: logging.Logger = None):
         super().__init__(api_key=api_key)
         self.logger = logger
         self.controller = "/firm"
@@ -29,7 +36,7 @@ class FirmService(StoreApiService):
             data = await response.json()
             return domain.Firm.parse_obj(data)
 
-    async def firms(self, title: Optional[str], description: Optional[str], discount: Optional[float]) \
+    async def firms(self, title: Optional[str] = None, description: Optional[str] = None, discount: Optional[float] = None) \
             -> List[domain.Firm]:
         url = self.api_key + self.controller
         params = {}

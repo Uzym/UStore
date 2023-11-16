@@ -3,7 +3,7 @@ import logging
 from .store_api import StoreApiService
 from src.models import domain, category
 from typing import List, Optional
-from pydantic import parse_obj_as
+from pydantic.v1 import parse_obj_as
 from json import loads
 
 
@@ -30,8 +30,8 @@ class CategoryService(StoreApiService):
             data = await response.json()
             return domain.Category.parse_obj(data)
 
-    async def categories(self, title: Optional[str], description: Optional[str], discount: Optional[float]) \
-            -> List[domain.Category]:
+    async def categories(self, title: Optional[str] = None, description: Optional[str] = None,
+                         discount: Optional[float] = None) -> List[domain.Category]:
         url = self.api_key + self.controller
         params = {}
         if title is not None:

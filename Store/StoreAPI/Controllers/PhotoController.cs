@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StoreAPI.Context;
@@ -71,7 +71,7 @@ namespace StoreAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<string>>> GetByFilters(
+        public async Task<ActionResult<List<PhotoDto>>> GetByFilters(
              long? product_id,
              long? firm_id,
              long? series_id,
@@ -84,7 +84,15 @@ namespace StoreAPI.Controllers
                 (firm_id == null || p.FirmId == firm_id) &&
                 (series_id == null || p.SeriesId == series_id) &&
                 (category_id == null || p.CategoryId == category_id))
-                .Select(p => p.Name)
+                .Select(p => new PhotoDto()
+                {
+                    photo_id = p.PhotoId,
+                    name = p.Name,
+                    product_id = p.ProductId,
+                    firm_id = p.FirmId,
+                    series_id = p.SeriesId,
+                    category_id = p.CategoryId
+                })
                 .ToListAsync();
 
             return Ok(photos);

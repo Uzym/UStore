@@ -2,7 +2,7 @@ import logging
 
 from .store_api import StoreApiService
 from src.models import s3
-from pydantic import parse_raw_as
+from pydantic.v1 import parse_raw_as
 from typing import BinaryIO
 from aiohttp import FormData
 from aiogram.types import InputFile

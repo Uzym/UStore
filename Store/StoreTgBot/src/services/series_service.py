@@ -3,7 +3,7 @@ import logging
 from .store_api import StoreApiService
 from src.models import domain, series
 from typing import List, Optional
-from pydantic import parse_obj_as
+from pydantic.v1 import parse_obj_as
 from json import loads
 
 
@@ -31,8 +31,8 @@ class SeriesService(StoreApiService):
             data = await response.json()
             return domain.Series.parse_obj(data)
 
-    async def series_list(self, title: Optional[str], description: Optional[str], discount: Optional[float],
-                          firm_id: Optional[int]) -> List[domain.Series]:
+    async def series_list(self, title: Optional[str] = None, description: Optional[str] = None,
+                          discount: Optional[float] = None, firm_id: Optional[int] = None) -> List[domain.Series]:
         url = self.api_key + self.controller
         params = {}
         if title is not None:
