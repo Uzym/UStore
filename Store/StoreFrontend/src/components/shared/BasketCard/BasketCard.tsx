@@ -15,11 +15,12 @@ const BasketCard: FC<BasketCardProps> = ({ cost, text }) => {
 		<Box className={styles.card}>
 			<Image
 				src={CardImg}
+				className={styles.img}
 				alt=''
 				height={100}
 				width={100}
-				className={styles.img}
 				quality={100}
+				placeholder='blur'
 			/>
 			<Box className={styles.content}>
 				<Typography className={styles.cost}>{cost}</Typography>

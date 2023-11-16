@@ -7,7 +7,7 @@ import styles from './MiddleCard.module.scss'
 
 interface MiddleCardProps {
 	href: string
-	title?: string
+	title?: string | null
 	price?: string
 	descriptions?: string
 }
@@ -21,7 +21,13 @@ const MiddleCard: FC<MiddleCardProps> = ({
 	return (
 		<Box className={styles.card}>
 			<Link href={href}>
-				<Image src={CardImg} alt={''} quality={100} className={styles.img} />
+				<Image
+					src={CardImg}
+					className={styles.img}
+					alt={''}
+					quality={100}
+					placeholder='blur'
+				/>
 				{title && <Typography className={styles.title}>{title}</Typography>}
 				{price && <Typography className={styles.price}>{price}</Typography>}
 				{descriptions && (

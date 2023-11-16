@@ -7,6 +7,7 @@ import { montserrat } from '@/theme/fonts'
 import CartPage from '../pages/CartPage/CartPage'
 import { useState } from 'react'
 import styles from './MainLayout.module.scss'
+import Link from 'next/link'
 
 const MainLayout = () => {
 	const [isCartOpen, setIsCartOpen] = useState(false)
@@ -14,9 +15,13 @@ const MainLayout = () => {
 	return (
 		<>
 			<header className={styles.header}>
-				<Typography className={classNames(styles.title, montserrat.className)}>
-					UStore
-				</Typography>
+				<Link href={'/'}>
+					<Typography
+						className={classNames(styles.title, montserrat.className)}
+					>
+						UStore
+					</Typography>
+				</Link>
 				<IconButton
 					className={classNames(styles.icon, {
 						['bg-ns-black hover:bg-ns-black']: isCartOpen,

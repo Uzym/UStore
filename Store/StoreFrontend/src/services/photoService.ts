@@ -45,7 +45,7 @@ export const photoService = {
 		categoryId?: number
 	) {
 		try {
-			const data: Blob[] = await (
+			const data: Photo[] = await (
 				await axios.get(URL_photo, {
 					params: {
 						product_id: productId,
@@ -53,7 +53,6 @@ export const photoService = {
 						series_id: seriesId,
 						category_id: categoryId,
 					},
-					responseType: 'blob',
 				})
 			).data
 

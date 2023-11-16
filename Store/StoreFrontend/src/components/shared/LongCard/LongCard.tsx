@@ -6,7 +6,7 @@ import Link from 'next/link'
 import styles from './LongCard.module.scss'
 
 interface LongCardProps {
-	children: string
+	children: string | null
 	href: string
 }
 
@@ -15,7 +15,15 @@ const LongCard: FC<LongCardProps> = ({ children, href }) => {
 		<Box className={styles.card}>
 			<Link href={href}>
 				<Typography className={styles.title}>{children}</Typography>
-				<Image src={CardImg} alt={''} className={styles.img} quality={100} />
+				<Image
+					src={CardImg}
+					className={styles.img}
+					alt={children || ''}
+					width={360}
+					height={170}
+					quality={100}
+					placeholder='blur'
+				/>
 			</Link>
 		</Box>
 	)
