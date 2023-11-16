@@ -13,6 +13,7 @@ namespace StoreAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [EnableCors]
     public class OrderController : ControllerBase
     {
         private readonly StoreContext _context;

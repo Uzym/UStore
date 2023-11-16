@@ -8,6 +8,7 @@ namespace StoreAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [EnableCors]
     public class FirmController : ControllerBase
     {
         private readonly StoreContext _context;
