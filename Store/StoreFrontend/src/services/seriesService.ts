@@ -29,16 +29,29 @@ export const seriesService = {
 			}
 		}
 	},
-	async getManySeries(
-		title?: string,
-		description?: string,
-		discount?: number,
+	async getManySeries({
+		categoryId,
+		description,
+		discount,
+		firmId,
+		title,
+	}: {
+		title?: string
+		description?: string
+		discount?: number
 		firmId?: number
-	) {
+		categoryId?: number
+	}) {
 		try {
 			const data: Series[] = await (
 				await axios.get(URL_series, {
-					params: { title, description, discount, firm_id: firmId },
+					params: {
+						title,
+						description,
+						discount,
+						firm_id: firmId,
+						category_id: categoryId,
+					},
 				})
 			).data
 

@@ -31,7 +31,7 @@ namespace StoreAPI
                 )
             );
 
-            builder.services.AddCors();
+            builder.Services.AddCors();
 
             var app = builder.Build();
 
