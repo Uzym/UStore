@@ -1,4 +1,4 @@
-## Комманды
+## Команды
 ### Создать
 - `/new_product title; description; cost; category_title; series_title; delivery_time; discount + прикрепленные фото`
   - создает объект продукта, category_id и series_id она находит из title
