@@ -61,5 +61,4 @@ class PhotoService(StoreApiService):
         async with self.session.get(url, params=params) as response:
             if response.status == 200:
                 data = await response.read()
-                self.logger.info(data)
                 return parse_raw_as(List[Photo], data)

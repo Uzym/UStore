@@ -14,5 +14,4 @@ class IsAdmin(Filter):
     async def __call__(self, message: Message):
         tg_id = str(message.from_user.id)
         users = await user_service.users(tg_id=tg_id)
-        logging.info(users)
         return len(users) > 0 and users[0].admin

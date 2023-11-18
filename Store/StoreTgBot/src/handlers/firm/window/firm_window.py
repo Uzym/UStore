@@ -37,8 +37,11 @@ async def get_firm_photos(dialog_manager: DialogManager, **kwargs):
         dialog_manager.dialog_data["is_photo"] = True
     if len(photos) > 0:
         await bot.send_media_group(chat_id=dialog_manager.event.from_user.id, media=photos)
+    photos_data = [
+        (photo_object.name, str(photo_object.photo_id)) for photo_object in photo_objects
+    ]
     return {
-        'photos': photos
+        "photos": photos_data
     }
 
 
@@ -49,8 +52,7 @@ async def firm_getter(dialog_manager: DialogManager, **kwargs):
     return {
         "firm_title": firm_data.title,
         "firm_description": firm_data.description,
-        "firm_discount": firm_data.discount,
-        "photos": photos["photos"]
+        "firm_discount": firm_data.discount
     }
 
 
@@ -88,9 +90,7 @@ async def add_firm_photo(message: Message, message_input: MessageInput, manager:
     file_info = await bot.get_file(file_id)
     file = await bot.download_file(file_info.file_path)
     photo_data = await s3_service.upload_file(file_path=file_info.file_path, file=file)
-    logger.info(photo_data)
     res = await photo_service.create_photo(name=photo_data.fileName, firm_id=manager.dialog_data['firm_id'])
-    logger.info(res)
     await manager.switch_to(Firm.firm)
 
 
@@ -118,13 +118,52 @@ back_to_list_button = Button(
 )
 
 
+async def firm_photos_delete_button(callback: CallbackQuery, button: Button, manager: DialogManager, **kwargs):
+    await manager.switch_to(Firm.firm_delete_photo)
+
+
+firm_photos_delete_button = Button(
+    text=Const("Удалить фото"),
+    id="firm_photos_delete",
+    on_click=firm_photos_delete_button
+)
+
+
+async def delete_firm_photo_button(callback: CallbackQuery, widget: Any, manager: DialogManager, item_id: str):
+    photo_object = await photo_service.get_photo(photo_id=int(item_id))
+    await s3_service.delete_file(file_name=photo_object.name)
+    await photo_service.delete_photo(photo_id=photo_object.photo_id)
+    await manager.switch_to(Firm.firm)
+
+
+firm_delete_photos_window = Window(
+    Format("Удалить фото"),
+    ScrollingGroup(
+        Select(
+            text=Format("{item[0]}"),
+            item_id_getter=operator.itemgetter(1),
+            items="photos",
+            id="photo_i",
+            when=F["dialog_data"]["is_photo"].is_not(None),
+            on_click=delete_firm_photo_button
+        ),
+        id="firm_delete_photos_group",
+        width=1,
+        height=10,
+    ),
+    back_to_list_button,
+    state=Firm.firm_delete_photo,
+    getter=get_firm_photos
+)
+
+
 firm_window = Window(
     Format("Фирма"),
-    # DynamicMedia("photos", when=F["dialog_data"]["is_photo"].is_not(None)),
     Format(html.bold(html.quote("{firm_title}"))),
     Format(html.quote("{firm_description}")),
     Format(html.quote("{firm_discount}")),
     add_firm_photo_button,
+    firm_photos_delete_button,
     to_firm_update_button,
     back_to_list_button,
     Cancel(Const("Завершить")),

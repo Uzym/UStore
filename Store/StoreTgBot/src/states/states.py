@@ -21,5 +21,6 @@ class Firm(StatesGroup):
     firm_update_description = State()
     firm_update_discount = State()
     firm_wait_photo = State()
+    firm_delete_photo = State()
     firms = State()
     firm = State()
