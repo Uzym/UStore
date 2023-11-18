@@ -76,6 +76,25 @@ namespace StoreAPI.Controllers
             return await Index(series.SeriesId);
         }
 
+        [HttpDelete("{series_id}/delete")]
+        public async Task<ActionResult<bool>> DeleteSeries(
+            long series_id
+            )
+        {
+            var series = await _context.Series
+                .FindAsync(series_id);
+
+            if (series == null)
+            {
+                return NotFound();
+            }
+
+            _context.Series.Remove(series);
+            await _context.SaveChangesAsync();
+
+            return Ok(true);
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<SeriesDto>>> GetByFilters(
             string? title,

@@ -120,6 +120,27 @@ firm_update_button = Button(
 )
 
 
+async def firm_delete_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, **kwargs):
+    firm_id = dialog_manager.dialog_data['firm_id']
+    logger.info(firm_id)
+    res = await firm_service.delete_firm(firm_id)
+    logger.info(res)
+    if 'title' in dialog_manager.dialog_data.keys():
+        dialog_manager.dialog_data.pop('title')
+    if 'description' in dialog_manager.dialog_data.keys():
+        dialog_manager.dialog_data.pop('description')
+    if 'discount' in dialog_manager.dialog_data.keys():
+        dialog_manager.dialog_data.pop('discount')
+    await dialog_manager.switch_to(Firm.firms)
+
+
+firm_delete_button = Button(
+    text=Const("Удалить фирму"),
+    id="firm_delete",
+    on_click=firm_delete_button
+)
+
+
 firm_update_window = Window(
     Const("Изменить фирму"),
     Group(
@@ -127,6 +148,7 @@ firm_update_window = Window(
         firm_update_description_button,
         firm_update_discount_button,
         firm_update_button,
+        firm_delete_button,
         Back(Const(LEXICON["back"])),
         Cancel(Const(LEXICON["cancel"]))
     ),

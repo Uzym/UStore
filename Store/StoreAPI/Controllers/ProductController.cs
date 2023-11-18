@@ -82,6 +82,25 @@ namespace StoreAPI.Controllers
             return await Index(product.ProductId);
         }
 
+        [HttpDelete("{product_id}/delete")]
+        public async Task<ActionResult<bool>> DeleteFirm(
+            long product_id
+            )
+        {
+            var product = await _context.Products
+                .FindAsync(product_id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+
+            return Ok(true);
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<ProductDto>>> GetByFilters(
             long? category_id,

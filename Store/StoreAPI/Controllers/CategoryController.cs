@@ -74,6 +74,25 @@ namespace StoreAPI.Controllers
             return await Index(category_id);
         }
 
+        [HttpDelete("{category_id}/delete")]
+        public async Task<ActionResult<bool>> DeleteCategory(
+            long category_id
+            )
+        {
+            var category = await _context.Categories
+                .FindAsync(category_id);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            _context.Categories.Remove(category);
+            await _context.SaveChangesAsync();
+
+            return Ok(true);
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<CategoryDto>>> GetByFilters(
             string? title,

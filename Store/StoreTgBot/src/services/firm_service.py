@@ -3,7 +3,7 @@ import logging
 from .store_api import StoreApiService
 from src.models import domain, firm
 from typing import List, Optional
-from pydantic.v1 import parse_obj_as
+from pydantic.v1 import parse_obj_as, parse_raw_as
 from json import loads
 
 
@@ -60,3 +60,12 @@ class FirmService(StoreApiService):
             if response.status == 200:
                 data = await response.json()
                 return domain.Firm.parse_obj(data)
+
+    async def delete_firm(self, firm_id: int) -> bool:
+        url = self.api_key + self.controller + f"/{firm_id}/delete"
+        self.logger.info(url)
+        async with self.session.delete(url) as response:
+            if response.status == 200:
+                data = await response.read()
+                self.logger.info(data)
+                return parse_raw_as(bool, data)

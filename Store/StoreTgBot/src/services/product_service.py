@@ -3,7 +3,7 @@ import logging
 from .store_api import StoreApiService
 from src.models import domain, product
 from typing import List, Optional
-from pydantic.v1 import parse_obj_as
+from pydantic.v1 import parse_obj_as, parse_raw_as
 from json import loads
 
 
@@ -43,6 +43,13 @@ class ProductService(StoreApiService):
             if response.status == 200:
                 data = await response.json()
                 return domain.Product.parse_obj(data)
+
+    async def delete_product(self, product_id: int) -> bool:
+        url = self.api_key + self.controller + f"/{product_id}/delete"
+        async with self.session.delete(url) as response:
+            if response.status == 200:
+                data = await response.read()
+                return parse_raw_as(bool, data)
 
     async def products(self, category_id: Optional[int] = None, series_id: Optional[int] = None,
                        title: Optional[str] = None, description: Optional[str] = None,
