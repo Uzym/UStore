@@ -51,8 +51,8 @@ class FirmService(StoreApiService):
                 data = await response.json()
                 return parse_obj_as(List[domain.Firm], data)
 
-    async def update_firm(self, firm_id: int, title: Optional[str], description: Optional[str],
-                          discount: Optional[float]) -> domain.Firm:
+    async def update_firm(self, firm_id: int, title: Optional[str] = None, description: Optional[str] = None,
+                          discount: Optional[float] = None) -> domain.Firm:
         url = self.api_key + self.controller + f"/{firm_id}/update"
         request = loads(
             firm.RequestCreateFirm(title=title, description=description, discount=discount).json(exclude_none=False))

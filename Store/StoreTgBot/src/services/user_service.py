@@ -15,7 +15,8 @@ class UserService(StoreApiService):
             cls.__instance = super().__new__(cls)
 
         return cls.__instance
-    def __init__(self, api_key: str, logger: logging.Logger):
+
+    def __init__(self, api_key: str = None, logger: logging.Logger = None):
         super().__init__(api_key=api_key)
         self.logger = logger
         self.controller = "/user"
@@ -27,8 +28,8 @@ class UserService(StoreApiService):
                 data = await response.json()
                 return domain.User.parse_obj(data)
 
-    async def create_user(self, tg_id: str, name: str, adress: Optional[str], telephone: Optional[str],
-                          email: Optional[str], tg_ref: Optional[str], admin: bool) -> domain.User:
+    async def create_user(self, tg_id: str, name: str, adress: Optional[str] = None, telephone: Optional[str] = None,
+                          email: Optional[str] = None, tg_ref: Optional[str] = None, admin: bool = False) -> domain.User:
         url = self.api_key + self.controller
         request = loads(user.RequestCreateUser(tg_id=tg_id, name=name, adress=adress, telephone=telephone, email=email,
                                                tg_ref=tg_ref, admin=admin).json(exclude_none=False))

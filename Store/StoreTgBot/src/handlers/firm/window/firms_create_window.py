@@ -110,6 +110,7 @@ async def firm_create_getter(callback: CallbackQuery, button: Button, dialog_man
         discount = dialog_manager.dialog_data['discount']
     firm_data = await firm_service.create_firm(title=title, description=description, discount=discount)
     dialog_manager.start_data['firm_id'] = firm_data.firm_id
+    dialog_manager.dialog_data['firm_id'] = firm_data.firm_id
     await dialog_manager.switch_to(Firm.firm)
 
 
@@ -132,24 +133,6 @@ firm_create_window = Window(
     ),
     state=Firm.firm_create
 )
-
-
-# firm_create_result_window = Window(
-#     Format("Фирма"),
-#     Group(
-#         Select(
-#             text=Format("{item[0]}\n{item[1]}\n{item[2]}"),
-#             item_id_getter=operator.itemgetter(1),
-#             items="firm",
-#             id="firm_i",
-#         ),
-#         id="firm",
-#         width=1,
-#     ),
-#     Cancel(Const("Завершить")),
-#     state=Firm.firm_create_result,
-#     getter=firm_create_getter
-# )
 
 
 create_firm_windows = [firm_create_title_param_window, firm_create_description_param_window, 

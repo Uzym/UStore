@@ -9,8 +9,15 @@ from aiogram.types import InputFile
 
 
 class S3Service(StoreApiService):
+    __instance = None
 
-    def __init__(self, api_key: str, logger: logging.Logger):
+    def __new__(cls, *args, **kwargs):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+
+        return cls.__instance
+    
+    def __init__(self, api_key: str = None, logger: logging.Logger = None):
         super().__init__(api_key=api_key)
         self.logger = logger
 

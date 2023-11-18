@@ -10,9 +10,11 @@ from src.handlers.main.window.get_me_window import get_me_window
 from src.handlers.main.window.help_window import help_window
 from src.handlers.main.window.main_window import main_window
 
+user_service = UserService()
+
 
 async def start_message(message: Message, dialog_manager: DialogManager):
-    # await user_service.create_user(name=message.from_user.full_name, telegram_id=str(message.from_user.id))
+    await user_service.create_user(tg_id=str(message.from_user.id), name=message.from_user.full_name, admin=False)
     await dialog_manager.start(Main.main, mode=StartMode.RESET_STACK)
 
 

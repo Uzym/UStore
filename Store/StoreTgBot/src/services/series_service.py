@@ -32,7 +32,8 @@ class SeriesService(StoreApiService):
             return domain.Series.parse_obj(data)
 
     async def series_list(self, title: Optional[str] = None, description: Optional[str] = None,
-                          discount: Optional[float] = None, firm_id: Optional[int] = None) -> List[domain.Series]:
+                          discount: Optional[float] = None, firm_id: Optional[int] = None,
+                          category_id: Optional[int] = None) -> List[domain.Series]:
         url = self.api_key + self.controller
         params = {}
         if title is not None:
@@ -43,6 +44,8 @@ class SeriesService(StoreApiService):
             params["discount"] = discount
         if firm_id is not None:
             params["firm_id"] = firm_id
+        if category_id is not None:
+            params["category_id"] = category_id
         async with self.session.get(url, params=params) as response:
             if response.status == 200:
                 data = await response.json()
