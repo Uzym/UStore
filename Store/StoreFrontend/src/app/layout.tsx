@@ -5,7 +5,7 @@ import { roboto } from '@/theme/fonts'
 import MainLayout from '@/components/layouts/MainLayout'
 
 export const metadata: Metadata = {
-	title: 'UStore',
+	title: { template: '%s | UStore', default: 'Home | UStore' },
 	description: 'Магазин одежды и обуви',
 }
 

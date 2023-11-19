@@ -27,7 +27,15 @@ export const firmService = {
 			}
 		}
 	},
-	async getFirms(title?: string, description?: string, discount?: number) {
+	async getFirms({
+		title,
+		description,
+		discount,
+	}: {
+		title?: string
+		description?: string
+		discount?: number
+	}) {
 		try {
 			const data: Firm[] = await (
 				await axios.get(URL_firm, { params: { title, description, discount } })

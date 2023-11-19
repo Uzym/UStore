@@ -29,15 +29,23 @@ export const productService = {
 			}
 		}
 	},
-	async getProducts(
-		categoryId?: number,
-		seriesId?: number,
-		title?: string,
-		description?: string,
-		cost?: number,
-		deliveryTime?: string,
+	async getProducts({
+		categoryId,
+		cost,
+		deliveryTime,
+		description,
+		discount,
+		seriesId,
+		title,
+	}: {
+		categoryId?: number
+		seriesId?: number
+		title?: string
+		description?: string
+		cost?: number
+		deliveryTime?: string
 		discount?: number
-	) {
+	}) {
 		try {
 			const data: Product[] = await (
 				await axios.get(URL_product, {
