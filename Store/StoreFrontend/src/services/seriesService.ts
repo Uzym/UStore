@@ -73,4 +73,13 @@ export const seriesService = {
 			}
 		}
 	},
+	async removeSeries(seriesId: number) {
+		try {
+			await axios.delete(`${URL_series}/${seriesId}/delete`)
+		} catch (error) {
+			if (error instanceof Error) {
+				console.log(error.message)
+			}
+		}
+	},
 }

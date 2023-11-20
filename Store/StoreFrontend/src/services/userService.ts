@@ -5,7 +5,7 @@ import axios from 'axios'
 const URL_user = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/User`
 
 export const userService = {
-	async getUserByTgId(tgId: number) {
+	async getUserByTgId(tgId?: number) {
 		try {
 			const data: User = await (
 				await axios.get(URL_user, { params: { tg_id: tgId } })

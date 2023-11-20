@@ -81,4 +81,13 @@ export const productService = {
 			}
 		}
 	},
+	async removeProduct(productId: number) {
+		try {
+			await axios.delete(`${URL_product}/${productId}/delete`)
+		} catch (error) {
+			if (error instanceof Error) {
+				console.log(error.message)
+			}
+		}
+	},
 }

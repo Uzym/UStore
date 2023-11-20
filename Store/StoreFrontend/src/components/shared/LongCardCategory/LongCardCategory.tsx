@@ -2,38 +2,30 @@
 
 import { Box, Typography } from '@mui/material'
 import { FC, useState } from 'react'
-import Image from 'next/image'
-import CardImg from '/public/image3.png'
+import Image, { StaticImageData } from 'next/image'
 import Link from 'next/link'
-import styles from './MiddleCard.module.scss'
-import { useMutation, useQuery } from '@tanstack/react-query'
 import { photoService } from '@/services/photoService'
 import { fileService } from '@/services/fileService'
+import styles from './LongCardCategory.module.scss'
+import CardImg from '/public/image1.png'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
-interface MiddleCardProps {
+interface LongCardCategoryProps {
+	children: string | null
 	href: string
-	title?: string | null
-	price?: string
-	descriptions?: string
-	firmId?: number
-	seriesId?: number
-	productId?: number
+	categoryId?: number
 }
 
-const MiddleCard: FC<MiddleCardProps> = ({
+const LongCardCategory: FC<LongCardCategoryProps> = ({
+	children,
 	href,
-	title,
-	price,
-	descriptions,
-	firmId,
-	productId,
-	seriesId,
+	categoryId,
 }) => {
 	const [photo, setPhoto] = useState<string>()
 
 	const { data, isSuccess } = useQuery({
-		queryKey: ['MiddleCard'],
-		queryFn: () => photoService.getPhotos({ firmId, productId, seriesId }),
+		queryKey: ['LongCardCategory'],
+		queryFn: () => photoService.getPhotos({ categoryId: categoryId }),
 	})
 
 	const mutationPhoto = useMutation({
@@ -51,23 +43,19 @@ const MiddleCard: FC<MiddleCardProps> = ({
 	return (
 		<Box className={styles.card}>
 			<Link href={href}>
+				<Typography className={styles.title}>{children}</Typography>
 				<Image
 					src={photo || CardImg}
 					className={styles.img}
-					alt={''}
+					alt={children || ''}
+					width={360}
+					height={170}
 					quality={100}
 					placeholder='blur'
 				/>
-				{title && <Typography className={styles.title}>{title}</Typography>}
-				{price && <Typography className={styles.price}>{price}</Typography>}
-				{descriptions && (
-					<Typography className={styles.descriptions}>
-						{descriptions}
-					</Typography>
-				)}
 			</Link>
 		</Box>
 	)
 }
 
-export default MiddleCard
+export default LongCardCategory

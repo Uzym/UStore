@@ -1,7 +1,7 @@
 import MiddleCard from '@/components/shared/MiddleCard/MiddleCard'
 import NotFoundDataText from '@/components/ui/NotFoundDataText/NotFoundDataText'
 import { seriesService } from '@/services/seriesService'
-import { Grid, Typography } from '@mui/material'
+import { Grid } from '@mui/material'
 import { FC } from 'react'
 
 interface FirmPageProps {

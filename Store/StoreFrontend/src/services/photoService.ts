@@ -38,12 +38,17 @@ export const photoService = {
 			}
 		}
 	},
-	async getPhotos(
-		productId?: number,
-		firmId?: number,
-		seriesId?: number,
+	async getPhotos({
+		productId,
+		firmId,
+		seriesId,
+		categoryId,
+	}: {
+		productId?: number
+		firmId?: number
+		seriesId?: number
 		categoryId?: number
-	) {
+	}) {
 		try {
 			const data: Photo[] = await (
 				await axios.get(URL_photo, {

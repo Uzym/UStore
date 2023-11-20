@@ -59,4 +59,13 @@ export const firmService = {
 			}
 		}
 	},
+	async removeFirm(firmId: number) {
+		try {
+			await axios.delete(`${URL_firm}/${firmId}/delete`)
+		} catch (error) {
+			if (error instanceof Error) {
+				console.log(error.message)
+			}
+		}
+	},
 }
