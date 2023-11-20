@@ -29,7 +29,15 @@ export const categoryService = {
 			}
 		}
 	},
-	async getCategories(title?: string, description?: string, discount?: number) {
+	async getCategories({
+		title,
+		description,
+		discount,
+	}: {
+		title?: string
+		description?: string
+		discount?: number
+	}) {
 		try {
 			const data: Category[] = await (
 				await axios.get(URL_category, {

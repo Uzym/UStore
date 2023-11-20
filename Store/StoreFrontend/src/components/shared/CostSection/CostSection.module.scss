@@ -1,0 +1,11 @@
+.cost {
+	@apply text-2xl font-semibold border-2 border-ns-black rounded-lg p-2 w-fit self-center;
+}
+
+.textButton {
+	@apply font-semibold;
+}
+
+.tab {
+	@apply text-center;
+}

@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: 'standalone'
+	output: 'standalone',
+	images: {
+		remotePatterns: [
+			{ protocol: 'https', hostname: 'w.forfun.com' },
+			{ protocol: 'https', hostname: 'sun9-24.userapi.com' },
+		],
+	},
 }
-
+// TODO: убрать лишнее
 module.exports = nextConfig

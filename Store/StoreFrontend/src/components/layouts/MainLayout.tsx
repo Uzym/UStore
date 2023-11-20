@@ -4,10 +4,10 @@ import { IconButton, Typography } from '@mui/material'
 import CartIcon from '../ui/СartIcon/CartIcon'
 import classNames from 'classnames'
 import { montserrat } from '@/theme/fonts'
-import CartPage from '../pages/CartPage/CartPage'
 import { useState } from 'react'
 import styles from './MainLayout.module.scss'
 import Link from 'next/link'
+import CartDialog from '../shared/CartDialog/CartDialog'
 
 const MainLayout = () => {
 	const [isCartOpen, setIsCartOpen] = useState(false)
@@ -36,7 +36,7 @@ const MainLayout = () => {
 					{isCartOpen ? <CartIcon color='#FFFFFF' /> : <CartIcon />}
 				</IconButton>
 			</header>
-			<CartPage isCartOpen={isCartOpen} setIsCartOpen={setIsCartOpen} />
+			<CartDialog isCartOpen={isCartOpen} setIsCartOpen={setIsCartOpen} />
 		</>
 	)
 }

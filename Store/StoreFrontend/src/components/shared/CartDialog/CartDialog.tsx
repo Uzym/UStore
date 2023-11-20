@@ -1,19 +1,19 @@
 'use client'
 
 import { Box, IconButton, List, ListItem, Typography } from '@mui/material'
-import styles from './CartPage.module.scss'
+import styles from './CartDialog.module.scss'
 import CloseCartDialogIcon from '@/components/ui/CloseCartDialogIcon/CloseCartDialogIcon'
 import { Dispatch, FC, SetStateAction } from 'react'
 import BasketCard from '@/components/shared/BasketCard/BasketCard'
-import BigButton from '@/components/ui/BigButton/BigButton'
 import classNames from 'classnames'
+import CustomButton from '@/components/ui/CustomButton/CustomButton'
 
-interface CartPageProps {
+interface CartDialogProps {
 	isCartOpen: boolean
 	setIsCartOpen: Dispatch<SetStateAction<boolean>>
 }
 
-const CartPage: FC<CartPageProps> = ({ isCartOpen, setIsCartOpen }) => {
+const CartDialog: FC<CartDialogProps> = ({ isCartOpen, setIsCartOpen }) => {
 	return (
 		<Box
 			className={classNames(styles.cartDialog, {
@@ -53,7 +53,7 @@ const CartPage: FC<CartPageProps> = ({ isCartOpen, setIsCartOpen }) => {
 				</ListItem>
 			</List>
 			<Box className={styles.costContainer}>
-				<BigButton>перейти к оформлению</BigButton>
+				<CustomButton>перейти к оформлению</CustomButton>
 				<Typography className={styles.cost}>41 997 ₽</Typography>
 			</Box>
 			<IconButton
@@ -66,4 +66,4 @@ const CartPage: FC<CartPageProps> = ({ isCartOpen, setIsCartOpen }) => {
 	)
 }
 
-export default CartPage
+export default CartDialog
