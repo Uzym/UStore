@@ -9,14 +9,20 @@ START_COMMAND = "start"
 HELP_COMMAND = "help"
 FIRMS_COMMAND = "firms"
 NEW_FIRM_COMMAND = "new_firm"
-CATEGORIES_COMMAND = "category"
+CATEGORIES_COMMAND = "categories"
 NEW_CATEGORY_COMMAND = "new_category"
+SERIES_COMMAND = "series"
+NEW_SERIES_COMMAND = "new_series"
 
 COMMANDS = [
     BotCommand(command=START_COMMAND, description="перейти в главное меню"),
     BotCommand(command=HELP_COMMAND, description="открыть справку"),
     BotCommand(command=FIRMS_COMMAND, description="управление фирмами"),
-    BotCommand(command=NEW_FIRM_COMMAND, description="создание фирмы")
+    BotCommand(command=NEW_FIRM_COMMAND, description="создать фирму"),
+    BotCommand(command=CATEGORIES_COMMAND, description="управление категориями"),
+    BotCommand(command=NEW_CATEGORY_COMMAND, description="создать категорию"),
+    BotCommand(command=SERIES_COMMAND, description="управление сериями"),
+    BotCommand(command=NEW_SERIES_COMMAND, description="создать серию")
 ]
 
 LEXICON: dict[str, str] = {
@@ -55,4 +61,16 @@ LEXICON: dict[str, str] = {
     "complete": emojize(":check_mark_button: Завершить"),
     "update_firm": emojize(":pencil: Изменить фирму"),
     "delete_firm": emojize(":wastebasket: Удалить фирму"),
+    "search_categories": emojize(":magnifying_glass_tilted_right: Поиск категорий"),
+    "categories_list": emojize(":memo: Список категорий"),
+    "category": emojize(":trade_mark: Категория"),
+    "create_category": emojize(":plus: Создать категорию"),
+    "update_category": emojize(":pencil: Изменить категорию"),
+    "delete_category": emojize(":wastebasket: Удалить категорию"),
+    "search_series": emojize(":magnifying_glass_tilted_right: Поиск категорий"),
+    "series_list": emojize(":memo: Список серий"),
+    "series": emojize(":trade_mark: Серия"),
+    "create_series": emojize(":plus: Создать серию"),
+    "update_series": emojize(":pencil: Изменить серию"),
+    "delete_series": emojize(":wastebasket: Удалить серию"),
 }

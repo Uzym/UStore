@@ -43,4 +43,25 @@ class Category(StatesGroup):
     category_delete_photo = State()
     categories = State()
     category = State()
-    
+
+
+class Series(StatesGroup):
+    series_search = State()
+    series_search_firms_list = State()
+    series_search_categories_list = State()
+    series_search_title_filter = State()
+    series_search_description_filter = State()
+    series_search_discount_filter = State()
+    series_create = State()
+    series_create_firms_list = State()
+    series_create_title_param = State()
+    series_create_description_param = State()
+    series_create_discount_param = State()
+    series_update = State()
+    series_update_title = State()
+    series_update_description = State()
+    series_update_discount = State()
+    series_wait_photo = State()
+    series_delete_photo = State()
+    series_list = State()
+    series = State()

@@ -157,7 +157,7 @@ firms_window = Window(
         height=10,
     ),
     firms_search_go_back_button,
-    Cancel(Const("Завершить")),
+    Cancel(Const(LEXICON["ok"])),
     state=Firm.firms,
     getter=firms_getter
 )
