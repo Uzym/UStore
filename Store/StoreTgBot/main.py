@@ -10,7 +10,7 @@ from src.lexicon import COMMANDS
 from src.lexicon.lexicon import BOT_NAME, BOT_DESCRIPTION, BOT_SHORT_DESCRIPTION
 from src.services import FirmService, PhotoService, ProductService, CategoryService, UserService, OrderService
 from src.services import S3Service
-from src.handlers import common_router, main_setup, firm_setup
+from src.handlers import common_router, main_setup, firm_setup, category_setup, series_setup
 
 logger = logging.getLogger(__name__)
 
@@ -37,12 +37,18 @@ def init_services(dp: Dispatcher, config: Config):
 def setup_routers(dp: Dispatcher):
     main_router, main_dialog = main_setup()
     firm_router, firm_dialog = firm_setup()
+    category_router, category_dialog = category_setup()
+    series_router, series_dialog = series_setup()
 
     dp.include_router(main_router)
     dp.include_router(firm_router)
+    dp.include_router(category_router)
+    dp.include_router(series_router)
 
     dp.include_router(main_dialog)
     dp.include_router(firm_dialog)
+    dp.include_router(category_dialog)
+    dp.include_router(series_dialog)
 
     setup_dialogs(dp)
 

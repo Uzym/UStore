@@ -69,7 +69,7 @@ async def to_firm_update_button(callback: CallbackQuery, button: Button, manager
 
 to_firm_update_button = Button(
     text=Const(LEXICON["update"]),
-    id="firms_update_go_back",
+    id="to_firm_update",
     on_click=to_firm_update_button
 )
 
