@@ -19,7 +19,8 @@
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-redux": "^8.1.2"
+    "react-redux": "^8.1.2",
+    "sharp": "^0.32.6"
   },
   "devDependencies": {
     "@types/node": "latest",
