@@ -13,24 +13,24 @@ from src.handlers.category.window.category_window import (category_window, categ
                                                           category_delete_photos_window)
 
 
-async def categories(message: Message, manager: DialogManager):
+async def categories(message: Message, dialog_manager: DialogManager):
     try:
-        await manager.done()
+        await dialog_manager.done()
     except:
         pass
-    await manager.start(Category.categories_search,
-                        mode=StartMode.RESET_STACK,
-                        data={"telegram_id": str(message.from_user.id)})
+    await dialog_manager.start(Category.categories_search,
+                               mode=StartMode.RESET_STACK,
+                               data={"telegram_id": str(message.from_user.id)})
 
 
-async def category_create(message: Message, manager: DialogManager):
+async def category_create(message: Message, dialog_manager: DialogManager):
     try:
-        await manager.done()
+        await dialog_manager.done()
     except:
         pass
-    await manager.start(Category.category_create,
-                        mode=StartMode.RESET_STACK,
-                        data={"telegram_id": str(message.from_user.id)})
+    await dialog_manager.start(Category.category_create,
+                               mode=StartMode.RESET_STACK,
+                               data={"telegram_id": str(message.from_user.id)})
 
 dialog: Dialog = Dialog(*create_category_windows, *search_category_windows, category_window,
                         *update_category_windows, category_wait_photo_window, category_delete_photos_window)

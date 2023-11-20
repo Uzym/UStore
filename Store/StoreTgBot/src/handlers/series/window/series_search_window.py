@@ -20,8 +20,8 @@ category_service = CategoryService()
 logging = logging.getLogger()
 
 
-async def series_search_go_back_button(callback: CallbackQuery, button: Button, manager: DialogManager, **kwargs):
-    await manager.switch_to(Series.series_search)
+async def series_search_go_back_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, **kwargs):
+    await dialog_manager.switch_to(Series.series_search)
 
 
 series_search_go_back_button = Button(
@@ -32,8 +32,8 @@ series_search_go_back_button = Button(
 
 
 async def series_search_filter_firms_list_button(callback: CallbackQuery, button: Button,
-                                                 manager: DialogManager, **kwargs):
-    await manager.switch_to(Series.series_search_firms_list)
+                                                 dialog_manager: DialogManager, **kwargs):
+    await dialog_manager.switch_to(Series.series_search_firms_list)
 
 
 series_search_filter_firms_list_button = Button(
@@ -43,15 +43,15 @@ series_search_filter_firms_list_button = Button(
 )
 
 
-async def series_search_filter_firm_id_button(callback: CallbackQuery, widget: Any, manager: DialogManager,
+async def series_search_filter_firm_id_button(callback: CallbackQuery, widget: Any, dialog_manager: DialogManager,
                                               item_id: str):
     await callback.answer(text=LEXICON["loading"])
-    manager.start_data['firm_id'] = int(item_id)
-    manager.dialog_data['firm_id'] = int(item_id)
-    await manager.switch_to(Series.series_search)
+    dialog_manager.start_data['firm_id'] = int(item_id)
+    dialog_manager.dialog_data['firm_id'] = int(item_id)
+    await dialog_manager.switch_to(Series.series_search)
 
 
-async def series_search_firms_getter(manager: DialogManager, **kwargs):
+async def series_search_firms_getter(dialog_manager: DialogManager, **kwargs):
     firms_data = await firm_service.firms()
     data = [
         (firm.title, str(firm.firm_id)) for firm in firms_data
@@ -83,8 +83,8 @@ series_search_firms_window = Window(
 
 
 async def series_search_filter_categories_list_button(callback: CallbackQuery, button: Button,
-                                                      manager: DialogManager, **kwargs):
-    await manager.switch_to(Series.series_search_categories_list)
+                                                      dialog_manager: DialogManager, **kwargs):
+    await dialog_manager.switch_to(Series.series_search_categories_list)
 
 
 series_search_filter_categories_list_button = Button(
@@ -94,15 +94,15 @@ series_search_filter_categories_list_button = Button(
 )
 
 
-async def series_search_filter_category_id_button(callback: CallbackQuery, widget: Any, manager: DialogManager,
+async def series_search_filter_category_id_button(callback: CallbackQuery, widget: Any, dialog_manager: DialogManager,
                                                   item_id: str):
     await callback.answer(text=LEXICON["loading"])
-    manager.start_data['category_id'] = int(item_id)
-    manager.dialog_data['category_id'] = int(item_id)
-    await manager.switch_to(Series.series_search)
+    dialog_manager.start_data['category_id'] = int(item_id)
+    dialog_manager.dialog_data['category_id'] = int(item_id)
+    await dialog_manager.switch_to(Series.series_search)
 
 
-async def series_search_categories_getter(manager: DialogManager, **kwargs):
+async def series_search_categories_getter(dialog_manager: DialogManager, **kwargs):
     categories_data = await category_service.categories()
     data = [
         (category.title, str(category.category_id)) for category in categories_data
@@ -133,9 +133,9 @@ series_search_categories_window = Window(
 )
 
 
-async def series_search_filter_title_button(callback: CallbackQuery, button: Button, manager: DialogManager,
+async def series_search_filter_title_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager,
                                             **kwargs):
-    await manager.switch_to(Series.series_search_title_filter)
+    await dialog_manager.switch_to(Series.series_search_title_filter)
 
 
 series_search_filter_title_button = Button(
@@ -145,9 +145,9 @@ series_search_filter_title_button = Button(
 )
 
 
-async def series_search_filter_title(message: Message, message_input: MessageInput, manager: DialogManager):
-    manager.dialog_data['title'] = message.text
-    await manager.switch_to(Series.series_search)
+async def series_search_filter_title(message: Message, message_input: MessageInput, dialog_manager: DialogManager):
+    dialog_manager.dialog_data['title'] = message.text
+    await dialog_manager.switch_to(Series.series_search)
 
 
 series_search_filter_title_window = Window(
@@ -158,9 +158,9 @@ series_search_filter_title_window = Window(
 )
 
 
-async def series_search_filter_description_button(callback: CallbackQuery, button: Button, manager: DialogManager,
+async def series_search_filter_description_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager,
                                                   **kwargs):
-    await manager.switch_to(Series.series_search_description_filter)
+    await dialog_manager.switch_to(Series.series_search_description_filter)
 
 
 series_search_filter_description_button = Button(
@@ -170,9 +170,9 @@ series_search_filter_description_button = Button(
 )
 
 
-async def series_search_filter_description(message: Message, message_input: MessageInput, manager: DialogManager):
-    manager.dialog_data['description'] = message.text
-    await manager.switch_to(Series.series_search)
+async def series_search_filter_description(message: Message, message_input: MessageInput, dialog_manager: DialogManager):
+    dialog_manager.dialog_data['description'] = message.text
+    await dialog_manager.switch_to(Series.series_search)
 
 
 series_search_filter_description_window = Window(
@@ -183,9 +183,9 @@ series_search_filter_description_window = Window(
 )
 
 
-async def series_search_filter_discount_button(callback: CallbackQuery, button: Button, manager: DialogManager,
+async def series_search_filter_discount_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager,
                                                **kwargs):
-    await manager.switch_to(Series.series_search_discount_filter)
+    await dialog_manager.switch_to(Series.series_search_discount_filter)
 
 
 series_search_filter_discount_button = Button(
@@ -195,9 +195,9 @@ series_search_filter_discount_button = Button(
 )
 
 
-async def series_search_filter_discount(message: Message, message_input: MessageInput, manager: DialogManager):
-    manager.dialog_data['discount'] = float(message.text)
-    await manager.switch_to(Series.series_search)
+async def series_search_filter_discount(message: Message, message_input: MessageInput, dialog_manager: DialogManager):
+    dialog_manager.dialog_data['discount'] = float(message.text)
+    await dialog_manager.switch_to(Series.series_search)
 
 
 series_search_filter_discount_window = Window(
@@ -208,8 +208,8 @@ series_search_filter_discount_window = Window(
 )
 
 
-async def series_search(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.switch_to(Series.series)
+async def series_search(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
+    await dialog_manager.switch_to(Series.series_list)
 
 
 series_search_button = Button(
@@ -234,16 +234,16 @@ series_search_window = Window(
 )
 
 
-async def series_getter(manager: DialogManager, **kwargs):
+async def series_getter(dialog_manager: DialogManager, **kwargs):
     title = None
-    if 'title' in manager.dialog_data.keys():
-        title = manager.dialog_data['title']
+    if 'title' in dialog_manager.dialog_data.keys():
+        title = dialog_manager.dialog_data['title']
     description = None
-    if 'description' in manager.dialog_data.keys():
-        description = manager.dialog_data['description']
+    if 'description' in dialog_manager.dialog_data.keys():
+        description = dialog_manager.dialog_data['description']
     discount = None
-    if 'discount' in manager.dialog_data.keys():
-        discount = manager.dialog_data['discount']
+    if 'discount' in dialog_manager.dialog_data.keys():
+        discount = dialog_manager.dialog_data['discount']
     series_data = await series_service.series_list(title=title, description=description, discount=discount)
     data = [
         (series.title, str(series.series_id)) for series in series_data

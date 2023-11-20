@@ -18,8 +18,8 @@ firm_service = FirmService()
 logger = logging.getLogger()
 
 
-async def series_create_go_back_button(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.switch_to(Series.series_create)
+async def series_create_go_back_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
+    await dialog_manager.switch_to(Series.series_create)
 
 
 series_create_go_back_button = Button(
@@ -30,8 +30,8 @@ series_create_go_back_button = Button(
 
 
 async def series_create_firms_list_param_button(callback: CallbackQuery, button: Button,
-                                                manager: DialogManager, **kwargs):
-    await manager.switch_to(Series.series_create_firms_list)
+                                                dialog_manager: DialogManager, **kwargs):
+    await dialog_manager.switch_to(Series.series_create_firms_list)
 
 
 series_create_filter_firms_list_param_button = Button(
@@ -41,15 +41,15 @@ series_create_filter_firms_list_param_button = Button(
 )
 
 
-async def series_create_firm_id_param_button(callback: CallbackQuery, widget: Any, manager: DialogManager,
+async def series_create_firm_id_param_button(callback: CallbackQuery, widget: Any, dialog_manager: DialogManager,
                                              item_id: str):
     await callback.answer(text=LEXICON["loading"])
-    manager.start_data['firm_id'] = int(item_id)
-    manager.dialog_data['firm_id'] = int(item_id)
-    await manager.switch_to(Series.series_create)
+    dialog_manager.start_data['firm_id'] = int(item_id)
+    dialog_manager.dialog_data['firm_id'] = int(item_id)
+    await dialog_manager.switch_to(Series.series_create)
 
 
-async def series_create_firms_getter(manager: DialogManager, **kwargs):
+async def series_create_firms_getter(dialog_manager: DialogManager, **kwargs):
     firms_data = await firm_service.firms()
     data = [
         (firm.title, str(firm.firm_id)) for firm in firms_data
@@ -80,13 +80,13 @@ series_create_firms_window = Window(
 )
 
 
-async def series_create_title_param_button(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.switch_to(Series.series_create_title_param)
+async def series_create_title_param_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
+    await dialog_manager.switch_to(Series.series_create_title_param)
 
 
-async def series_create_title_param(message: Message, message_input: MessageInput, manager: DialogManager):
-    manager.dialog_data['title'] = message.text
-    await manager.switch_to(Series.series_create)
+async def series_create_title_param(message: Message, message_input: MessageInput, dialog_manager: DialogManager):
+    dialog_manager.dialog_data['title'] = message.text
+    await dialog_manager.switch_to(Series.series_create)
 
 
 series_create_title_param_button = Button(
@@ -104,13 +104,13 @@ series_create_title_param_window = Window(
 )
 
 
-async def series_create_description_param_button(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.switch_to(Series.series_create_description_param)
+async def series_create_description_param_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
+    await dialog_manager.switch_to(Series.series_create_description_param)
 
 
-async def series_create_description_param(message: Message, message_input: MessageInput, manager: DialogManager):
-    manager.dialog_data['description'] = message.text
-    await manager.switch_to(Series.series_create)
+async def series_create_description_param(message: Message, message_input: MessageInput, dialog_manager: DialogManager):
+    dialog_manager.dialog_data['description'] = message.text
+    await dialog_manager.switch_to(Series.series_create)
 
 
 series_create_description_param_button = Button(
@@ -128,13 +128,13 @@ series_create_description_param_window = Window(
 )
 
 
-async def series_create_discount_param_button(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.switch_to(Series.series_create_discount_param)
+async def series_create_discount_param_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
+    await dialog_manager.switch_to(Series.series_create_discount_param)
 
 
-async def series_create_discount_param(message: Message, message_input: MessageInput, manager: DialogManager):
-    manager.dialog_data['discount'] = float(message.text)
-    await manager.switch_to(Series.series_create)
+async def series_create_discount_param(message: Message, message_input: MessageInput, dialog_manager: DialogManager):
+    dialog_manager.dialog_data['discount'] = float(message.text)
+    await dialog_manager.switch_to(Series.series_create)
 
 
 series_create_discount_param_button = Button(
@@ -152,24 +152,24 @@ series_create_discount_param_window = Window(
 )
 
 
-async def series_create_getter(callback: CallbackQuery, button: Button, manager: DialogManager, **kwargs):
+async def series_create_getter(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, **kwargs):
     title = None
-    if 'title' in manager.dialog_data.keys():
-        title = manager.dialog_data['title']
+    if 'title' in dialog_manager.dialog_data.keys():
+        title = dialog_manager.dialog_data['title']
     description = None
-    if 'description' in manager.dialog_data.keys():
-        description = manager.dialog_data['description']
+    if 'description' in dialog_manager.dialog_data.keys():
+        description = dialog_manager.dialog_data['description']
     discount = None
-    if 'discount' in manager.dialog_data.keys():
-        discount = manager.dialog_data['discount']
+    if 'discount' in dialog_manager.dialog_data.keys():
+        discount = dialog_manager.dialog_data['discount']
     firm_id = None
-    if 'firm_id' in manager.dialog_data.keys():
-        firm_id = manager.dialog_data['firm_id']
+    if 'firm_id' in dialog_manager.dialog_data.keys():
+        firm_id = dialog_manager.dialog_data['firm_id']
     series_data = await series_service.create_series(title=title, description=description,
                                                      discount=discount, firm_id=firm_id)
-    manager.start_data['series_id'] = series_data.series_id
-    manager.dialog_data['series_id'] = series_data.series_id
-    await manager.switch_to(Series.series)
+    dialog_manager.start_data['series_id'] = series_data.series_id
+    dialog_manager.dialog_data['series_id'] = series_data.series_id
+    await dialog_manager.switch_to(Series.series)
 
 
 series_create_button = Button(

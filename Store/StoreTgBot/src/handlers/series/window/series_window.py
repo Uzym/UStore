@@ -24,9 +24,9 @@ token = config.load_config().tg_bot.token
 bot = Bot(token)
 
 
-async def get_series_photos(manager: DialogManager, **kwargs):
-    manager.dialog_data["is_photo"] = None
-    series_id = manager.dialog_data["series_id"]
+async def get_series_photos(dialog_manager: DialogManager, **kwargs):
+    dialog_manager.dialog_data["is_photo"] = None
+    series_id = dialog_manager.dialog_data["series_id"]
     photo_objects = await photo_service.photos(series_id=series_id)
     photos = []
     for photo_object in photo_objects:
@@ -34,9 +34,9 @@ async def get_series_photos(manager: DialogManager, **kwargs):
         photo_file = BufferedInputFile(photo_bytes, filename=photo_object.name)
         photo = InputMediaPhoto(media=photo_file)
         photos.append(photo)
-        manager.dialog_data["is_photo"] = True
+        dialog_manager.dialog_data["is_photo"] = True
     if len(photos) > 0:
-        await bot.send_media_group(chat_id=manager.event.from_user.id, media=photos)
+        await bot.send_media_group(chat_id=dialog_manager.event.from_user.id, media=photos)
     photos_data = [
         (photo_object.name, str(photo_object.photo_id)) for photo_object in photo_objects
     ]
@@ -45,10 +45,10 @@ async def get_series_photos(manager: DialogManager, **kwargs):
     }
 
 
-async def series_getter(manager: DialogManager, **kwargs):
-    series_id = int(manager.start_data['series_id'])
+async def series_getter(dialog_manager: DialogManager, **kwargs):
+    series_id = int(dialog_manager.start_data['series_id'])
     series_data = await series_service.get_series(series_id=series_id)
-    photos = await get_series_photos(manager)
+    photos = await get_series_photos(dialog_manager)
     return {
         "series_title": series_data.title,
         "series_description": series_data.description,
@@ -56,15 +56,15 @@ async def series_getter(manager: DialogManager, **kwargs):
     }
 
 
-async def get_series_button(callback: CallbackQuery, widget: Any, manager: DialogManager, item_id: str):
+async def get_series_button(callback: CallbackQuery, widget: Any, dialog_manager: DialogManager, item_id: str):
     await callback.answer(text=LEXICON["loading"])
-    manager.start_data["series_id"] = item_id
-    manager.dialog_data["series_id"] = item_id
-    await manager.switch_to(Series.series)
+    dialog_manager.start_data["series_id"] = item_id
+    dialog_manager.dialog_data["series_id"] = item_id
+    await dialog_manager.switch_to(Series.series)
 
 
-async def to_series_update_button(callback: CallbackQuery, button: Button, manager: DialogManager, **kwargs):
-    await manager.switch_to(Series.series_update)
+async def to_series_update_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, **kwargs):
+    await dialog_manager.switch_to(Series.series_update)
 
 
 to_series_update_button = Button(
@@ -74,8 +74,8 @@ to_series_update_button = Button(
 )
 
 
-async def add_series_photo_button(callback: CallbackQuery, button: Button, manager: DialogManager, **kwargs):
-    await manager.switch_to(Series.series_wait_photo)
+async def add_series_photo_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, **kwargs):
+    await dialog_manager.switch_to(Series.series_wait_photo)
 
 
 add_series_photo_button = Button(
@@ -85,13 +85,13 @@ add_series_photo_button = Button(
 )
 
 
-async def add_series_photo(message: Message, message_input: MessageInput, manager: DialogManager):
+async def add_series_photo(message: Message, message_input: MessageInput, dialog_manager: DialogManager):
     file_id = message.photo[-1].file_id
     file_info = await bot.get_file(file_id)
     file = await bot.download_file(file_info.file_path)
     photo_data = await s3_service.upload_file(file_path=file_info.file_path, file=file)
-    res = await photo_service.create_photo(name=photo_data.fileName, series_id=manager.dialog_data['series_id'])
-    await manager.switch_to(Series.series)
+    res = await photo_service.create_photo(name=photo_data.fileName, series_id=dialog_manager.dialog_data['series_id'])
+    await dialog_manager.switch_to(Series.series)
 
 
 series_wait_photo_window = Window(
@@ -101,14 +101,14 @@ series_wait_photo_window = Window(
 )
 
 
-async def back_to_list_button(callback: CallbackQuery, button: Button, manager: DialogManager, **kwargs):
-    if 'title' in manager.dialog_data.keys():
-        manager.dialog_data.pop('title')
-    if 'description' in manager.dialog_data.keys():
-        manager.dialog_data.pop('description')
-    if 'discount' in manager.dialog_data.keys():
-        manager.dialog_data.pop('discount')
-    await manager.switch_to(Series.series_list)
+async def back_to_list_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, **kwargs):
+    if 'title' in dialog_manager.dialog_data.keys():
+        dialog_manager.dialog_data.pop('title')
+    if 'description' in dialog_manager.dialog_data.keys():
+        dialog_manager.dialog_data.pop('description')
+    if 'discount' in dialog_manager.dialog_data.keys():
+        dialog_manager.dialog_data.pop('discount')
+    await dialog_manager.switch_to(Series.series_list)
 
 
 back_to_list_button = Button(
@@ -118,8 +118,8 @@ back_to_list_button = Button(
 )
 
 
-async def series_photos_delete_button(callback: CallbackQuery, button: Button, manager: DialogManager, **kwargs):
-    await manager.switch_to(Series.series_delete_photo)
+async def series_photos_delete_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, **kwargs):
+    await dialog_manager.switch_to(Series.series_delete_photo)
 
 
 series_photos_delete_button = Button(
@@ -129,11 +129,11 @@ series_photos_delete_button = Button(
 )
 
 
-async def delete_series_photo_button(callback: CallbackQuery, widget: Any, manager: DialogManager, item_id: str):
+async def delete_series_photo_button(callback: CallbackQuery, widget: Any, dialog_manager: DialogManager, item_id: str):
     photo_object = await photo_service.get_photo(photo_id=int(item_id))
     await s3_service.delete_file(file_name=photo_object.name)
     await photo_service.delete_photo(photo_id=photo_object.photo_id)
-    await manager.switch_to(Series.series)
+    await dialog_manager.switch_to(Series.series)
 
 
 series_delete_photos_window = Window(

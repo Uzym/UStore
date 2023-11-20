@@ -75,7 +75,7 @@ series_update_firms_window = Window(
     ),
     series_update_go_back_button,
     Cancel(Const(LEXICON["cancel"])),
-    state=Series.series_search_firms_list,
+    state=Series.series_update_firms_list,
     getter=series_update_firms_getter
 )
 

@@ -17,8 +17,8 @@ category_service = CategoryService()
 logging = logging.getLogger()
 
 
-async def categories_search_go_back_button(callback: CallbackQuery, button: Button, manager: DialogManager, **kwargs):
-    await manager.switch_to(Category.categories_search)
+async def categories_search_go_back_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, **kwargs):
+    await dialog_manager.switch_to(Category.categories_search)
 
 
 categories_search_go_back_button = Button(
@@ -28,9 +28,9 @@ categories_search_go_back_button = Button(
 )
 
 
-async def categories_search_filter_title_button(callback: CallbackQuery, button: Button, manager: DialogManager,
+async def categories_search_filter_title_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager,
                                                 **kwargs):
-    await manager.switch_to(Category.categories_search_title_filter)
+    await dialog_manager.switch_to(Category.categories_search_title_filter)
 
 
 categories_search_filter_title_button = Button(
@@ -40,9 +40,9 @@ categories_search_filter_title_button = Button(
 )
 
 
-async def categories_search_filter_title(message: Message, message_input: MessageInput, manager: DialogManager):
-    manager.dialog_data['title'] = message.text
-    await manager.switch_to(Category.categories_search)
+async def categories_search_filter_title(message: Message, message_input: MessageInput, dialog_manager: DialogManager):
+    dialog_manager.dialog_data['title'] = message.text
+    await dialog_manager.switch_to(Category.categories_search)
 
 
 categories_search_filter_title_window = Window(
@@ -53,9 +53,9 @@ categories_search_filter_title_window = Window(
 )
 
 
-async def categories_search_filter_description_button(callback: CallbackQuery, button: Button, manager: DialogManager,
+async def categories_search_filter_description_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager,
                                                       **kwargs):
-    await manager.switch_to(Category.categories_search_description_filter)
+    await dialog_manager.switch_to(Category.categories_search_description_filter)
 
 
 categories_search_filter_description_button = Button(
@@ -65,9 +65,9 @@ categories_search_filter_description_button = Button(
 )
 
 
-async def categories_search_filter_description(message: Message, message_input: MessageInput, manager: DialogManager):
-    manager.dialog_data['description'] = message.text
-    await manager.switch_to(Category.categories_search)
+async def categories_search_filter_description(message: Message, message_input: MessageInput, dialog_manager: DialogManager):
+    dialog_manager.dialog_data['description'] = message.text
+    await dialog_manager.switch_to(Category.categories_search)
 
 
 categories_search_filter_description_window = Window(
@@ -78,9 +78,9 @@ categories_search_filter_description_window = Window(
 )
 
 
-async def categories_search_filter_discount_button(callback: CallbackQuery, button: Button, manager: DialogManager,
+async def categories_search_filter_discount_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager,
                                                    **kwargs):
-    await manager.switch_to(Category.categories_search_discount_filter)
+    await dialog_manager.switch_to(Category.categories_search_discount_filter)
 
 
 categories_search_filter_discount_button = Button(
@@ -90,9 +90,9 @@ categories_search_filter_discount_button = Button(
 )
 
 
-async def categories_search_filter_discount(message: Message, message_input: MessageInput, manager: DialogManager):
-    manager.dialog_data['discount'] = float(message.text)
-    await manager.switch_to(Category.categories_search)
+async def categories_search_filter_discount(message: Message, message_input: MessageInput, dialog_manager: DialogManager):
+    dialog_manager.dialog_data['discount'] = float(message.text)
+    await dialog_manager.switch_to(Category.categories_search)
 
 
 categories_search_filter_discount_window = Window(
@@ -103,8 +103,8 @@ categories_search_filter_discount_window = Window(
 )
 
 
-async def categories_search(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.switch_to(Category.categories)
+async def categories_search(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
+    await dialog_manager.switch_to(Category.categories)
 
 
 categories_search_button = Button(
@@ -128,16 +128,16 @@ categories_search_window = Window(
 )
 
 
-async def categories_getter(manager: DialogManager, **kwargs):
+async def categories_getter(dialog_manager: DialogManager, **kwargs):
     title = None
-    if 'title' in manager.dialog_data.keys():
-        title = manager.dialog_data['title']
+    if 'title' in dialog_manager.dialog_data.keys():
+        title = dialog_manager.dialog_data['title']
     description = None
-    if 'description' in manager.dialog_data.keys():
-        description = manager.dialog_data['description']
+    if 'description' in dialog_manager.dialog_data.keys():
+        description = dialog_manager.dialog_data['description']
     discount = None
-    if 'discount' in manager.dialog_data.keys():
-        discount = manager.dialog_data['discount']
+    if 'discount' in dialog_manager.dialog_data.keys():
+        discount = dialog_manager.dialog_data['discount']
     categories_data = await category_service.categories(title=title, description=description, discount=discount)
     data = [
         (category.title, str(category.category_id)) for category in categories_data

@@ -35,8 +35,7 @@ LEXICON: dict[str, str] = {
     "ok": emojize(":green_circle: Подтвердить"),
     "add": emojize(":plus: Добавить"),
     "update": emojize(":memo: Изменить"),
-    "start": "Для создания проекта используйте команду /new_project название\n"
-             "Для просмотра текущих проектов используйте /projects",
+    "start": "",
     "help": BOT_DESCRIPTION,
     "not_found": "Данный элемент не найден",
     "loading": "Выполняется запрос",
@@ -67,7 +66,7 @@ LEXICON: dict[str, str] = {
     "create_category": emojize(":plus: Создать категорию"),
     "update_category": emojize(":pencil: Изменить категорию"),
     "delete_category": emojize(":wastebasket: Удалить категорию"),
-    "search_series": emojize(":magnifying_glass_tilted_right: Поиск категорий"),
+    "search_series": emojize(":magnifying_glass_tilted_right: Поиск серий"),
     "series_list": emojize(":memo: Список серий"),
     "series": emojize(":trade_mark: Серия"),
     "create_series": emojize(":plus: Создать серию"),

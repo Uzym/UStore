@@ -61,6 +61,7 @@ class Series(StatesGroup):
     series_update_title = State()
     series_update_description = State()
     series_update_discount = State()
+    series_update_firms_list = State()
     series_wait_photo = State()
     series_delete_photo = State()
     series_list = State()

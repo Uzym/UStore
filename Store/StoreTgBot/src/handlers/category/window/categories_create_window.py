@@ -17,8 +17,8 @@ categories_service = CategoryService()
 logger = logging.getLogger()
 
 
-async def category_create_go_back_button(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.switch_to(Category.category_create)
+async def category_create_go_back_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
+    await dialog_manager.switch_to(Category.category_create)
 
 
 category_create_go_back_button = Button(
@@ -28,13 +28,13 @@ category_create_go_back_button = Button(
 )
 
 
-async def category_create_title_param_button(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.switch_to(Category.category_create_title_param)
+async def category_create_title_param_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
+    await dialog_manager.switch_to(Category.category_create_title_param)
 
 
-async def category_create_title_param(message: Message, message_input: MessageInput, manager: DialogManager):
-    manager.dialog_data['title'] = message.text
-    await manager.switch_to(Category.category_create)
+async def category_create_title_param(message: Message, message_input: MessageInput, dialog_manager: DialogManager):
+    dialog_manager.dialog_data['title'] = message.text
+    await dialog_manager.switch_to(Category.category_create)
 
 
 category_create_title_param_button = Button(
@@ -52,13 +52,15 @@ category_create_title_param_window = Window(
 )
 
 
-async def category_create_description_param_button(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.switch_to(Category.category_create_description_param)
+async def category_create_description_param_button(callback: CallbackQuery, button: Button,
+                                                   dialog_manager: DialogManager):
+    await dialog_manager.switch_to(Category.category_create_description_param)
 
 
-async def category_create_description_param(message: Message, message_input: MessageInput, manager: DialogManager):
-    manager.dialog_data['description'] = message.text
-    await manager.switch_to(Category.category_create)
+async def category_create_description_param(message: Message, message_input: MessageInput,
+                                            dialog_manager: DialogManager):
+    dialog_manager.dialog_data['description'] = message.text
+    await dialog_manager.switch_to(Category.category_create)
 
 
 category_create_description_param_button = Button(
@@ -76,13 +78,13 @@ category_create_description_param_window = Window(
 )
 
 
-async def category_create_discount_param_button(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.switch_to(Category.category_create_discount_param)
+async def category_create_discount_param_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
+    await dialog_manager.switch_to(Category.category_create_discount_param)
 
 
-async def category_create_discount_param(message: Message, message_input: MessageInput, manager: DialogManager):
-    manager.dialog_data['discount'] = float(message.text)
-    await manager.switch_to(Category.category_create)
+async def category_create_discount_param(message: Message, message_input: MessageInput, dialog_manager: DialogManager):
+    dialog_manager.dialog_data['discount'] = float(message.text)
+    await dialog_manager.switch_to(Category.category_create)
 
 
 category_create_discount_param_button = Button(
@@ -100,20 +102,20 @@ category_create_discount_param_window = Window(
 )
 
 
-async def category_create_getter(callback: CallbackQuery, button: Button, manager: DialogManager, **kwargs):
+async def category_create_getter(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, **kwargs):
     title = None
-    if 'title' in manager.dialog_data.keys():
-        title = manager.dialog_data['title']
+    if 'title' in dialog_manager.dialog_data.keys():
+        title = dialog_manager.dialog_data['title']
     description = None
-    if 'description' in manager.dialog_data.keys():
-        description = manager.dialog_data['description']
+    if 'description' in dialog_manager.dialog_data.keys():
+        description = dialog_manager.dialog_data['description']
     discount = None
-    if 'discount' in manager.dialog_data.keys():
-        discount = manager.dialog_data['discount']
+    if 'discount' in dialog_manager.dialog_data.keys():
+        discount = dialog_manager.dialog_data['discount']
     category_data = await categories_service.create_category(title=title, description=description, discount=discount)
-    manager.start_data['category_id'] = category_data.category_id
-    manager.dialog_data['category_id'] = category_data.category_id
-    await manager.switch_to(Category.category)
+    dialog_manager.start_data['category_id'] = category_data.category_id
+    dialog_manager.dialog_data['category_id'] = category_data.category_id
+    await dialog_manager.switch_to(Category.category)
 
 
 category_create_button = Button(

@@ -13,22 +13,22 @@ from src.handlers.series.window.series_window import (series_window, series_wait
                                                       series_delete_photos_window)
 
 
-async def series(message: Message, manager: DialogManager):
+async def series(message: Message, dialog_manager: DialogManager):
     try:
-        await manager.done()
+        await dialog_manager.done()
     except:
         pass
-    await manager.start(Series.series_search,
+    await dialog_manager.start(Series.series_search,
                         mode=StartMode.RESET_STACK,
                         data={"telegram_id": str(message.from_user.id)})
 
 
-async def series_create(message: Message, manager: DialogManager):
+async def series_create(message: Message, dialog_manager: DialogManager):
     try:
-        await manager.done()
+        await dialog_manager.done()
     except:
         pass
-    await manager.start(Series.series_create,
+    await dialog_manager.start(Series.series_create,
                         mode=StartMode.RESET_STACK,
                         data={"telegram_id": str(message.from_user.id)})
 

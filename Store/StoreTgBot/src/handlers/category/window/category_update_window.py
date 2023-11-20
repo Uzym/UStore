@@ -16,8 +16,8 @@ category_service = CategoryService()
 logger = logging.getLogger()
 
 
-async def category_update_go_back_button(callback: CallbackQuery, button: Button, manager: DialogManager, **kwargs):
-    await manager.switch_to(Category.category_update)
+async def category_update_go_back_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, **kwargs):
+    await dialog_manager.switch_to(Category.category_update)
 
 
 category_update_go_back_button = Button(
@@ -27,13 +27,13 @@ category_update_go_back_button = Button(
 )
 
 
-async def category_update_title_button(callback: CallbackQuery, button: Button, manager: DialogManager, **kwargs):
-    await manager.switch_to(Category.category_update_title)
+async def category_update_title_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, **kwargs):
+    await dialog_manager.switch_to(Category.category_update_title)
 
 
-async def category_update_title(message: Message, message_input: MessageInput, manager: DialogManager):
-    manager.dialog_data['title'] = message.text
-    await manager.switch_to(Category.category_update)
+async def category_update_title(message: Message, message_input: MessageInput, dialog_manager: DialogManager):
+    dialog_manager.dialog_data['title'] = message.text
+    await dialog_manager.switch_to(Category.category_update)
 
 
 category_update_title_button = Button(
@@ -50,13 +50,13 @@ category_update_title_window = Window(
 )
 
 
-async def category_update_description_button(callback: CallbackQuery, button: Button, manager: DialogManager, **kwargs):
-    await manager.switch_to(Category.category_update_description)
+async def category_update_description_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, **kwargs):
+    await dialog_manager.switch_to(Category.category_update_description)
 
 
-async def category_update_description(message: Message, message_input: MessageInput, manager: DialogManager):
-    manager.dialog_data['description'] = message.text
-    await manager.switch_to(Category.category_update)
+async def category_update_description(message: Message, message_input: MessageInput, dialog_manager: DialogManager):
+    dialog_manager.dialog_data['description'] = message.text
+    await dialog_manager.switch_to(Category.category_update)
 
 
 category_update_description_button = Button(
@@ -73,13 +73,13 @@ category_update_description_window = Window(
 )
 
 
-async def category_update_discount_button(callback: CallbackQuery, button: Button, manager: DialogManager, **kwargs):
-    await manager.switch_to(Category.category_update_discount)
+async def category_update_discount_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, **kwargs):
+    await dialog_manager.switch_to(Category.category_update_discount)
 
 
-async def category_update_discount(message: Message, message_input: MessageInput, manager: DialogManager):
-    manager.dialog_data['discount'] = float(message.text)
-    await manager.switch_to(Category.category_update)
+async def category_update_discount(message: Message, message_input: MessageInput, dialog_manager: DialogManager):
+    dialog_manager.dialog_data['discount'] = float(message.text)
+    await dialog_manager.switch_to(Category.category_update)
 
 
 category_update_discount_button = Button(
@@ -96,21 +96,21 @@ category_update_discount_window = Window(
 )
 
 
-async def category_update_getter(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, **kwargs):
-    category_id = dialog_manager.dialog_data['category_id']
+async def category_update_getter(callback: CallbackQuery, button: Button, dialog_dialog_manager: DialogManager, **kwargs):
+    category_id = dialog_dialog_manager.dialog_data['category_id']
     title = None
-    if 'title' in dialog_manager.dialog_data.keys():
-        title = dialog_manager.dialog_data['title']
+    if 'title' in dialog_dialog_manager.dialog_data.keys():
+        title = dialog_dialog_manager.dialog_data['title']
     description = None
-    if 'description' in dialog_manager.dialog_data.keys():
-        description = dialog_manager.dialog_data['description']
+    if 'description' in dialog_dialog_manager.dialog_data.keys():
+        description = dialog_dialog_manager.dialog_data['description']
     discount = None
-    if 'discount' in dialog_manager.dialog_data.keys():
-        discount = dialog_manager.dialog_data['discount']
+    if 'discount' in dialog_dialog_manager.dialog_data.keys():
+        discount = dialog_dialog_manager.dialog_data['discount']
     category_data = await category_service.update_category(category_id=category_id, title=title,
                                                            description=description, discount=discount)
-    dialog_manager.start_data['category_id'] = category_data.category_id
-    await dialog_manager.switch_to(Category.category)
+    dialog_dialog_manager.start_data['category_id'] = category_data.category_id
+    await dialog_dialog_manager.switch_to(Category.category)
 
 
 category_update_button = Button(
@@ -120,18 +120,18 @@ category_update_button = Button(
 )
 
 
-async def category_delete_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, **kwargs):
-    category_id = dialog_manager.dialog_data['category_id']
+async def category_delete_button(callback: CallbackQuery, button: Button, dialog_dialog_manager: DialogManager, **kwargs):
+    category_id = dialog_dialog_manager.dialog_data['category_id']
     logger.info(category_id)
     res = await category_service.delete_category(category_id)
     logger.info(res)
-    if 'title' in dialog_manager.dialog_data.keys():
-        dialog_manager.dialog_data.pop('title')
-    if 'description' in dialog_manager.dialog_data.keys():
-        dialog_manager.dialog_data.pop('description')
-    if 'discount' in dialog_manager.dialog_data.keys():
-        dialog_manager.dialog_data.pop('discount')
-    await dialog_manager.switch_to(Category.categories)
+    if 'title' in dialog_dialog_manager.dialog_data.keys():
+        dialog_dialog_manager.dialog_data.pop('title')
+    if 'description' in dialog_dialog_manager.dialog_data.keys():
+        dialog_dialog_manager.dialog_data.pop('description')
+    if 'discount' in dialog_dialog_manager.dialog_data.keys():
+        dialog_dialog_manager.dialog_data.pop('discount')
+    await dialog_dialog_manager.switch_to(Category.categories)
 
 
 category_delete_button = Button(

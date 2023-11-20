@@ -8,7 +8,8 @@ from aiogram_dialog import setup_dialogs
 from config import Config, load_config
 from src.lexicon import COMMANDS
 from src.lexicon.lexicon import BOT_NAME, BOT_DESCRIPTION, BOT_SHORT_DESCRIPTION
-from src.services import FirmService, PhotoService, ProductService, CategoryService, UserService, OrderService
+from src.services import (FirmService, PhotoService, ProductService, CategoryService, SeriesService, UserService,
+                          OrderService)
 from src.services import S3Service
 from src.handlers import common_router, main_setup, firm_setup, category_setup, series_setup
 
@@ -26,7 +27,7 @@ def init_services(dp: Dispatcher, config: Config):
     dp["product_service"] = product_service
     category_service = CategoryService(api_key=config.api_key, logger=logger)
     dp["category_service"] = category_service
-    series_service = CategoryService(api_key=config.api_key, logger=logger)
+    series_service = SeriesService(api_key=config.api_key, logger=logger)
     dp["series_service"] = series_service
     order_service = OrderService(api_key=config.api_key, logger=logger)
     dp["order_service"] = order_service
