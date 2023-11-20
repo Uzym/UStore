@@ -23,7 +23,7 @@ async def firms_search_go_back_button(callback: CallbackQuery, button: Button, m
 
 
 firms_search_go_back_button = Button(
-    text=Const("Назад"),
+    text=Const(LEXICON["back"]),
     id="firms_search_go_back",
     on_click=firms_search_go_back_button
 )
@@ -39,13 +39,13 @@ async def firms_search_filter_title(message: Message, message_input: MessageInpu
 
 
 firms_search_filter_title_button = Button(
-    text=Const("Задать название"),
+    text=Const(LEXICON["select_title"]),
     id="firms_search_filter_title",
     on_click=firms_search_filter_title_button
 )
 
 firms_search_filter_title_window = Window(
-    Const("Введите название фирмы"),
+    Const(LEXICON["input_title"]),
     MessageInput(firms_search_filter_title),
     Row(firms_search_go_back_button, Cancel(Const(LEXICON["cancel"]))),
     state=Firm.firms_search_title_filter
@@ -62,13 +62,13 @@ async def firms_search_filter_description(message: Message, message_input: Messa
 
 
 firms_search_filter_description_button = Button(
-    text=Const("Задать описание"),
+    text=Const(LEXICON["select_description"]),
     id="firms_search_filter_description",
     on_click=firms_search_filter_description_button
 )
 
 firms_search_filter_description_window = Window(
-    Const("Введите описание фирмы"),
+    Const(LEXICON["input_description"]),
     MessageInput(firms_search_filter_description),
     Row(firms_search_go_back_button, Cancel(Const(LEXICON["cancel"]))),
     state=Firm.firms_search_description_filter
@@ -85,13 +85,13 @@ async def firms_search_filter_discount(message: Message, message_input: MessageI
 
 
 firms_search_filter_discount_button = Button(
-    text=Const("Задать скидку"),
+    text=Const(LEXICON["select_discount"]),
     id="firms_search_filter_discount",
     on_click=firms_search_filter_discount_button
 )
 
 firms_search_filter_discount_window = Window(
-    Const("Введите скидку"),
+    Const(LEXICON["input_discount"]),
     MessageInput(firms_search_filter_discount),
     Row(firms_search_go_back_button, Cancel(Const(LEXICON["cancel"]))),
     state=Firm.firms_search_discount_filter
@@ -103,14 +103,14 @@ async def firms_search(callback: CallbackQuery, button: Button, manager: DialogM
 
 
 firms_search_button = Button(
-    text=Const("Поиск"),
+    text=Const(LEXICON["ok"]),
     id="firms_search",
     on_click=firms_search
 )
 
 
 firms_search_window = Window(
-    Const("Поиск фирм"),
+    Const(LEXICON["search_firms"]),
     Group(
         firms_search_filter_title_button,
         firms_search_filter_description_button,
@@ -143,7 +143,7 @@ async def firms_getter(dialog_manager: DialogManager, **kwargs):
 
 
 firms_window = Window(
-    Format("Список фирм"),
+    Const(LEXICON["firms_list"]),
     ScrollingGroup(
         Select(
             text=Format("{item[0]}"),

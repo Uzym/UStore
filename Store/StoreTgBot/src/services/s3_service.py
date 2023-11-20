@@ -39,7 +39,6 @@ class S3Service(StoreApiService):
             content_type=content_type,
         )
         async with self.session.post(url, data=form_data) as response:
-            self.logger.info(response)
             if response.status == 200:
                 data = await response.json()
                 return s3.ResponseUploadFile.parse_obj(data)

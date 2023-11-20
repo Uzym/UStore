@@ -68,7 +68,7 @@ async def to_firm_update_button(callback: CallbackQuery, button: Button, manager
 
 
 to_firm_update_button = Button(
-    text=Const("Изменить"),
+    text=Const(LEXICON["update"]),
     id="firms_update_go_back",
     on_click=to_firm_update_button
 )
@@ -79,7 +79,7 @@ async def add_firm_photo_button(callback: CallbackQuery, button: Button, manager
 
 
 add_firm_photo_button = Button(
-    text=Const("Добавить фото"),
+    text=Const(LEXICON["add_photo"]),
     id="add_firm_photo",
     on_click=add_firm_photo_button
 )
@@ -95,7 +95,7 @@ async def add_firm_photo(message: Message, message_input: MessageInput, manager:
 
 
 firm_wait_photo_window = Window(
-    Const("Отправьте фото (как фото а не как файл)"),
+    Const(LEXICON["send_photo"]),
     MessageInput(add_firm_photo),
     state=Firm.firm_wait_photo
 )
@@ -123,7 +123,7 @@ async def firm_photos_delete_button(callback: CallbackQuery, button: Button, man
 
 
 firm_photos_delete_button = Button(
-    text=Const("Удалить фото"),
+    text=Const(LEXICON["delete_photo"]),
     id="firm_photos_delete",
     on_click=firm_photos_delete_button
 )
@@ -137,7 +137,7 @@ async def delete_firm_photo_button(callback: CallbackQuery, widget: Any, manager
 
 
 firm_delete_photos_window = Window(
-    Format("Удалить фото"),
+    Const(LEXICON["delete_photo"]),
     ScrollingGroup(
         Select(
             text=Format("{item[0]}"),
@@ -158,7 +158,7 @@ firm_delete_photos_window = Window(
 
 
 firm_window = Window(
-    Format("Фирма"),
+    Const(LEXICON["firm"]),
     Format(html.bold(html.quote("{firm_title}"))),
     Format(html.quote("{firm_description}")),
     Format(html.quote("{firm_discount}")),
@@ -166,7 +166,7 @@ firm_window = Window(
     firm_photos_delete_button,
     to_firm_update_button,
     back_to_list_button,
-    Cancel(Const("Завершить")),
+    Cancel(Const(LEXICON["complete"])),
     state=Firm.firm,
     getter=firm_getter
 )

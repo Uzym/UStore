@@ -22,7 +22,7 @@ async def firm_update_go_back_button(callback: CallbackQuery, button: Button, ma
 
 
 firm_update_go_back_button = Button(
-    text=Const("Назад"),
+    text=Const(LEXICON["back"]),
     id="firms_update_go_back",
     on_click=firm_update_go_back_button
 )
@@ -38,13 +38,13 @@ async def firm_update_title(message: Message, message_input: MessageInput, manag
 
 
 firm_update_title_button = Button(
-    text=Const("Обновить название"),
+    text=Const(LEXICON["update_title"]),
     id="firms_update_filter_title",
     on_click=firm_update_title_button
 )
 
 firm_update_title_window = Window(
-    Const("Введите название фирмы"),
+    Const(LEXICON["input_title"]),
     MessageInput(firm_update_title),
     Row(firm_update_go_back_button, Cancel(Const(LEXICON["cancel"]))),
     state=Firm.firm_update_title
@@ -61,13 +61,13 @@ async def firm_update_description(message: Message, message_input: MessageInput,
 
 
 firm_update_description_button = Button(
-    text=Const("Обновить описание"),
+    text=Const(LEXICON["update_description"]),
     id="firms_search_filter_description",
     on_click=firm_update_description_button
 )
 
 firm_update_description_window = Window(
-    Const("Введите описание фирмы"),
+    Const(LEXICON["input_description"]),
     MessageInput(firm_update_description),
     Row(firm_update_go_back_button, Cancel(Const(LEXICON["cancel"]))),
     state=Firm.firm_update_description
@@ -84,13 +84,13 @@ async def firm_update_discount(message: Message, message_input: MessageInput, ma
 
 
 firm_update_discount_button = Button(
-    text=Const("Обновить скидку"),
+    text=Const(LEXICON["update_discount"]),
     id="firms_search_filter_discount",
     on_click=firm_update_discount_button
 )
 
 firm_update_discount_window = Window(
-    Const("Введите скидку"),
+    Const(LEXICON["input_discount"]),
     MessageInput(firm_update_discount),
     Row(firm_update_go_back_button, Cancel(Const(LEXICON["cancel"]))),
     state=Firm.firm_update_discount
@@ -114,7 +114,7 @@ async def firm_update_getter(callback: CallbackQuery, button: Button, dialog_man
 
 
 firm_update_button = Button(
-    text=Const("Изменить фирму"),
+    text=Const(LEXICON["update_firm"]),
     id="firm_update",
     on_click=firm_update_getter
 )
@@ -135,14 +135,14 @@ async def firm_delete_button(callback: CallbackQuery, button: Button, dialog_man
 
 
 firm_delete_button = Button(
-    text=Const("Удалить фирму"),
+    text=Const(LEXICON["delete_firm"]),
     id="firm_delete",
     on_click=firm_delete_button
 )
 
 
 firm_update_window = Window(
-    Const("Изменить фирму"),
+    Const(LEXICON["update_firm"]),
     Group(
         firm_update_title_button,
         firm_update_description_button,

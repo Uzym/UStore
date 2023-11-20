@@ -23,7 +23,7 @@ async def firm_create_go_back_button(callback: CallbackQuery, button: Button, ma
 
 
 firm_create_go_back_button = Button(
-    text=Const("Назад"),
+    text=Const(LEXICON["back"]),
     id="firms_create_go_back",
     on_click=firm_create_go_back_button
 )
@@ -39,13 +39,13 @@ async def firm_create_title_param(message: Message, message_input: MessageInput,
 
 
 firm_create_title_param_button = Button(
-    text=Const("Задать название"),
+    text=Const(LEXICON["select_title"]),
     id="firms_search_filter_title",
     on_click=firm_create_title_param_button
 )
 
 firm_create_title_param_window = Window(
-    Const("Введите название фирмы"),
+    Const(LEXICON["input_title"]),
     MessageInput(firm_create_title_param),
     Row(firm_create_go_back_button, Cancel(Const(LEXICON["cancel"]))),
     state=Firm.firm_create_title_param
@@ -62,13 +62,13 @@ async def firm_create_description_param(message: Message, message_input: Message
 
 
 firm_create_description_param_button = Button(
-    text=Const("Задать описание"),
+    text=Const(LEXICON["select_description"]),
     id="firms_search_filter_description",
     on_click=firm_create_description_param_button
 )
 
 firm_create_description_param_window = Window(
-    Const("Введите описание фирмы"),
+    Const(LEXICON["input_description"]),
     MessageInput(firm_create_description_param),
     Row(firm_create_go_back_button, Cancel(Const(LEXICON["cancel"]))),
     state=Firm.firm_create_description_param
@@ -85,13 +85,13 @@ async def firm_create_discount_param(message: Message, message_input: MessageInp
 
 
 firm_create_discount_param_button = Button(
-    text=Const("Задать скидку"),
+    text=Const(LEXICON["select_discount"]),
     id="firms_search_filter_discount",
     on_click=firm_create_discount_param_button
 )
 
 firm_create_discount_param_window = Window(
-    Const("Введите скидку"),
+    Const(LEXICON["input_discount"]),
     MessageInput(firm_create_discount_param),
     Row(firm_create_go_back_button, Cancel(Const(LEXICON["cancel"]))),
     state=Firm.firm_create_discount_param
@@ -115,14 +115,14 @@ async def firm_create_getter(callback: CallbackQuery, button: Button, dialog_man
 
 
 firm_create_button = Button(
-    text=Const("Создать фирму"),
+    text=Const(LEXICON["ok"]),
     id="firm_create",
     on_click=firm_create_getter
 )
 
 
 firm_create_window = Window(
-    Const("Создать фирму"),
+    Const(LEXICON["create_firm"]),
     Group(
         firm_create_title_param_button,
         firm_create_description_param_button,

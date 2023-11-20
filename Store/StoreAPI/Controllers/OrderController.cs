@@ -36,7 +36,9 @@ namespace StoreAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<OrderDto>>> Get([FromHeader(Name = "Telegram-Id")] string tg_id, bool? finished)
+        public async Task<ActionResult<List<OrderDto>>> Get(
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id, bool? finished)
         {
             var userId = await AuthUser(tg_id);
             var orders = await _context.Orders
@@ -56,7 +58,9 @@ namespace StoreAPI.Controllers
         }
 
         [HttpGet("{order_id}")]
-        public async Task<ActionResult<OrderDto>> Index([FromHeader(Name = "Telegram-Id")] string tg_id, long order_id)
+        public async Task<ActionResult<OrderDto>> Index(
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id, long order_id)
         {
             var userId = await AuthUser(tg_id);
             var order = await _context.Orders
@@ -80,7 +84,8 @@ namespace StoreAPI.Controllers
 
         [HttpPost]
         public async Task<ActionResult<OrderDto>> CreateOrder(
-            [FromHeader(Name = "Telegram-Id")] string tg_id,
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id,
             RequestCreateOrderDto data)
         {
             var userId = await AuthUser(tg_id);
@@ -111,7 +116,8 @@ namespace StoreAPI.Controllers
 
         [HttpPost("{order_id}/products")]
         public async Task<ActionResult<OrderProductDto>> AddOrderProduct(
-            [FromHeader(Name = "Telegram-Id")] string tg_id,
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id,
             long order_id,
             OrderProductDto data)
         {
@@ -148,7 +154,8 @@ namespace StoreAPI.Controllers
 
         [HttpGet("{order_id}/products")]
         public async Task<ActionResult<List<OrderProductDto>>> GetOrderProducts(
-            [FromHeader(Name = "Telegram-Id")] string tg_id,
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id,
             long order_id)
         {
             await AuthUser(tg_id);
@@ -166,7 +173,8 @@ namespace StoreAPI.Controllers
 
         [HttpPatch("{order_id}/product/{product_id}/delete")]
         public async Task<ActionResult<OrderDto>> DeleteOrderProduct(
-            [FromHeader(Name = "Telegram-Id")] string tg_id,
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id,
             long order_id,
             long product_id)
         {
@@ -196,7 +204,8 @@ namespace StoreAPI.Controllers
 
         [HttpDelete("{order_id}")]
         public async Task<ActionResult<bool>> DeleteOrder(
-            [FromHeader(Name = "Telegram-Id")] string tg_id,
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id,
             long order_id)
         {
             var userId = await AuthUser(tg_id);
@@ -218,7 +227,8 @@ namespace StoreAPI.Controllers
         public async Task<ActionResult<ResponseGetCardDto>> ConfirmOrder(
             long order_id, 
             long section_id,
-            [FromHeader(Name = "Telegram-Id")] string tg_id)
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id)
         {
             var userId = await AuthUser(tg_id);
             var user = await _context.Users
@@ -330,7 +340,8 @@ namespace StoreAPI.Controllers
 
         [HttpGet("{order_id}/card")]
         public async Task<ActionResult<ResponseGetCardDto>> GetTaskMgrCard(
-            [FromHeader(Name = "Telegram-Id")] string tg_id,
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id,
             long order_id)
         {
             var userId = await AuthUser(tg_id);
