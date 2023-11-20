@@ -63,4 +63,13 @@ export const categoryService = {
 			}
 		}
 	},
+	async deleteCategory(categoryId: number) {
+		try {
+			await axios.delete(`${URL_category}/${categoryId}/delete`)
+		} catch (error) {
+			if (error instanceof Error) {
+				console.log(error.message)
+			}
+		}
+	},
 }
