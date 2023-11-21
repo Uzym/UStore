@@ -8,8 +8,15 @@ from json import loads
 
 
 class ProductService(StoreApiService):
+    __instance = None
 
-    def __init__(self, api_key: str, logger: logging.Logger):
+    def __new__(cls, *args, **kwargs):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+
+        return cls.__instance
+
+    def __init__(self, api_key: str = None, logger: logging.Logger = None):
         super().__init__(api_key=api_key)
         self.logger = logger
         self.controller = "/product"
@@ -52,6 +59,7 @@ class ProductService(StoreApiService):
                 return parse_raw_as(bool, data)
 
     async def products(self, category_id: Optional[int] = None, series_id: Optional[int] = None,
+                       firm_id: Optional[int] = None,
                        title: Optional[str] = None, description: Optional[str] = None,
                        cost: Optional[float] = None, delivery_time: Optional[str] = None,
                        discount: Optional[float] = None) -> List[domain.Product]:
@@ -61,6 +69,8 @@ class ProductService(StoreApiService):
             params["category_id"] = category_id
         if series_id is not None:
             params["series_id"] = series_id
+        if firm_id is not None:
+            params["firm_id"] = firm_id
         if title is not None:
             params["title"] = title
         if description is not None:

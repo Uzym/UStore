@@ -159,9 +159,9 @@ firm_delete_photos_window = Window(
 
 firm_window = Window(
     Const(LEXICON["firm"]),
-    Format(html.bold(html.quote("{firm_title}"))),
-    Format(html.quote("{firm_description}")),
-    Format(html.quote("{firm_discount}")),
+    Format(html.bold(html.quote("Название: {firm_title}"))),
+    Format(html.quote("Описание: {firm_description}")),
+    Format(html.quote("Скидка: {firm_discount}")),
     add_firm_photo_button,
     firm_photos_delete_button,
     to_firm_update_button,

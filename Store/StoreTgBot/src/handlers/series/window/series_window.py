@@ -13,12 +13,13 @@ from aiogram_dialog.api.entities import MediaAttachment, MediaId
 from aiogram_dialog.widgets.media import DynamicMedia
 
 from src.lexicon import LEXICON
-from src.services import SeriesService, PhotoService, S3Service
+from src.services import SeriesService, PhotoService, S3Service, FirmService
 from src.states.states import Series
 
 series_service = SeriesService()
 photo_service = PhotoService()
 s3_service = S3Service()
+firm_service = FirmService()
 logger = logging.getLogger()
 token = config.load_config().tg_bot.token
 bot = Bot(token)
@@ -48,11 +49,14 @@ async def get_series_photos(dialog_manager: DialogManager, **kwargs):
 async def series_getter(dialog_manager: DialogManager, **kwargs):
     series_id = int(dialog_manager.start_data['series_id'])
     series_data = await series_service.get_series(series_id=series_id)
+    firms = await firm_service.firms(series_id=series_id)
+    firm_title = firms[0].title
     photos = await get_series_photos(dialog_manager)
     return {
         "series_title": series_data.title,
         "series_description": series_data.description,
-        "series_discount": series_data.discount
+        "series_discount": series_data.discount,
+        "firm_title": firm_title
     }
 
 
@@ -102,6 +106,8 @@ series_wait_photo_window = Window(
 
 
 async def back_to_list_button(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, **kwargs):
+    # if 'firm_id' in dialog_manager.dialog_data.keys():
+    #     dialog_manager.dialog_data.pop('firm_id')
     if 'title' in dialog_manager.dialog_data.keys():
         dialog_manager.dialog_data.pop('title')
     if 'description' in dialog_manager.dialog_data.keys():
@@ -159,9 +165,10 @@ series_delete_photos_window = Window(
 
 series_window = Window(
     Const(LEXICON["series"]),
-    Format(html.bold(html.quote("{series_title}"))),
-    Format(html.quote("{series_description}")),
-    Format(html.quote("{series_discount}")),
+    Format(html.bold(html.quote("Название: {series_title}"))),
+    Format(html.quote("Описание: {series_description}")),
+    Format(html.quote("Скидка: {series_discount}")),
+    Format(html.quote("Фирма: {firm_title}")),
     add_series_photo_button,
     series_photos_delete_button,
     to_series_update_button,

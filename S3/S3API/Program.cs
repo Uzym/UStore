@@ -31,6 +31,7 @@ namespace S3API
             
             // builder.Services.Configure<MinioOptions>(Configuration.GetSection(nameof(MinioOptions)));
             
+            builder.Services.AddCors();
 
             var app = builder.Build();
 
@@ -45,11 +46,11 @@ namespace S3API
 
             //app.UseAuthorization();
 
-            //app.UseCors(x => x
-            //    .AllowAnyMethod()
-            //    .AllowAnyHeader()
-            //    .SetIsOriginAllowed(origin => true)
-            //    .AllowCredentials());
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true)
+                .AllowCredentials());
 
             app.MapControllers();
 

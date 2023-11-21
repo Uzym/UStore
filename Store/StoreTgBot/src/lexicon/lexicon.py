@@ -13,6 +13,8 @@ CATEGORIES_COMMAND = "categories"
 NEW_CATEGORY_COMMAND = "new_category"
 SERIES_COMMAND = "series"
 NEW_SERIES_COMMAND = "new_series"
+PRODUCTS_COMMAND = "products"
+NEW_PRODUCT_COMMAND = "new_product"
 
 COMMANDS = [
     BotCommand(command=START_COMMAND, description="перейти в главное меню"),
@@ -22,7 +24,9 @@ COMMANDS = [
     BotCommand(command=CATEGORIES_COMMAND, description="управление категориями"),
     BotCommand(command=NEW_CATEGORY_COMMAND, description="создать категорию"),
     BotCommand(command=SERIES_COMMAND, description="управление сериями"),
-    BotCommand(command=NEW_SERIES_COMMAND, description="создать серию")
+    BotCommand(command=NEW_SERIES_COMMAND, description="создать серию"),
+    BotCommand(command=PRODUCTS_COMMAND, description="управление продуктами"),
+    BotCommand(command=NEW_PRODUCT_COMMAND, description="создать продукт")
 ]
 
 LEXICON: dict[str, str] = {
@@ -43,12 +47,21 @@ LEXICON: dict[str, str] = {
     "select_title": emojize(":blue_book: Задать название"),
     "select_description": emojize(":open_book: Задать описание"),
     "select_discount": emojize(":shopping_cart: Задать скидку"),
+    "select_cost": emojize(":shopping_cart: Задать цену"),
+    "select_delivery_time": emojize(":shopping_cart: Задать время доставки"),
+    "select_firm": emojize(":shopping_cart: Задать фирму"),
+    "select_category": emojize(":shopping_cart: Задать категорию"),
+    "select_series": emojize(":shopping_cart: Задать серию"),
     "input_title": emojize(":pencil: Введите название"),
     "input_description": emojize(":pencil: Введите описание"),
     "input_discount": emojize(":pencil: Введите скидку"),
+    "input_cost": emojize(":shopping_cart: Введите цену"),
+    "input_delivery_time": emojize(":shopping_cart: Введите время доставки в формате 7.24:59:59.0"),
     "update_title": emojize(":pencil: Обновить название"),
     "update_description": emojize(":pencil: Обновить описание"),
     "update_discount": emojize(":pencil: Обновить скидку"),
+    "update_cost": emojize(":shopping_cart: Обновить цену"),
+    "update_delivery_time": emojize(":shopping_cart: Обновить время доставки"),
     "search": emojize(":magnifying_glass: Поиск"),
     "search_firms": emojize(":magnifying_glass_tilted_right: Поиск фирм"),
     "firms_list": emojize(":memo: Список фирм"),
@@ -72,4 +85,10 @@ LEXICON: dict[str, str] = {
     "create_series": emojize(":plus: Создать серию"),
     "update_series": emojize(":pencil: Изменить серию"),
     "delete_series": emojize(":wastebasket: Удалить серию"),
+    "search_products": emojize(":magnifying_glass_tilted_right: Поиск продуктов"),
+    "products": emojize(":memo: Список продуктов"),
+    "product": emojize(":trade_mark: Продукт"),
+    "create_product": emojize(":plus: Создать продукт"),
+    "update_product": emojize(":pencil: Изменить продукт"),
+    "delete_product": emojize(":wastebasket: Удалить продукт"),
 }

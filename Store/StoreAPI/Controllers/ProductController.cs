@@ -105,6 +105,7 @@ namespace StoreAPI.Controllers
         public async Task<ActionResult<List<ProductDto>>> GetByFilters(
             long? category_id,
             long? series_id,
+            long? firm_id,
             string? title,
             string? description,
             decimal? cost,
@@ -113,13 +114,15 @@ namespace StoreAPI.Controllers
             )
         {
             var products = await _context.Products
+                .Include(p => p.Series)
                 .Where(p => (category_id == null || p.CategoryId == category_id) &&
                             (series_id == null || p.SeriesId == series_id) &&
                             (title ==  null || p.Title == title) &&
                             (description == null || p.Description == description) &&
                             (cost == null ||  p.Cost == cost) &&
                             (discount == null || p.Discount == discount) &&
-                            (delivery_time == null ||  p.DeliveryTime == delivery_time))
+                            (delivery_time == null ||  p.DeliveryTime == delivery_time) &&
+                            (firm_id == null || (p.Series != null && p.Series.FirmId == firm_id)))
                 .Select(p => new ProductDto
                 {
                     product_id = p.ProductId,

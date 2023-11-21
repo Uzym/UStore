@@ -159,9 +159,9 @@ category_delete_photos_window = Window(
 
 category_window = Window(
     Const(LEXICON["category"]),
-    Format(html.bold(html.quote("{category_title}"))),
-    Format(html.quote("{category_description}")),
-    Format(html.quote("{category_discount}")),
+    Format(html.bold(html.quote("Название: {category_title}"))),
+    Format(html.quote("Описание: {category_description}")),
+    Format(html.quote("Скидка: {category_discount}")),
     add_category_photo_button,
     category_photos_delete_button,
     to_category_update_button,

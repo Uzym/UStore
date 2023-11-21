@@ -97,13 +97,16 @@ namespace StoreAPI.Controllers
         public async Task<ActionResult<List<FirmDto>>> GetByFilters(
             string? title,
             string? description,
-            decimal? discount
+            decimal? discount,
+            long? series_id
             )
         {
             var firms = await _context.Firms
+                .Include(f => f.Series)
                 .Where(f => (title == null || f.Title == title) &&
                             (description == null || f.Description == description) &&
-                            (discount == null || f.Discount == discount))
+                            (discount == null || f.Discount == discount) &&
+                            (series_id == null || f.Series.Any(s => s.SeriesId == series_id)))
                 .Select(f => new FirmDto
                 {
                     firm_id = f.FirmId,

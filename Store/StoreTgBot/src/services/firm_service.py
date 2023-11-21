@@ -36,7 +36,8 @@ class FirmService(StoreApiService):
             data = await response.json()
             return domain.Firm.parse_obj(data)
 
-    async def firms(self, title: Optional[str] = None, description: Optional[str] = None, discount: Optional[float] = None) \
+    async def firms(self, title: Optional[str] = None, description: Optional[str] = None,
+                    discount: Optional[float] = None, series_id: Optional[int] = None) \
             -> List[domain.Firm]:
         url = self.api_key + self.controller
         params = {}
@@ -46,6 +47,8 @@ class FirmService(StoreApiService):
             params["description"] = description
         if discount is not None:
             params["discount"] = discount
+        if series_id is not None:
+            params["series_id"] = series_id
         async with self.session.get(url, params=params) as response:
             if response.status == 200:
                 data = await response.json()
