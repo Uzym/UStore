@@ -8,5 +8,7 @@ const nextConfig = {
 		],
 	},
 }
+
 // TODO: убрать лишнее
+
 module.exports = nextConfig

@@ -22,6 +22,7 @@ const FirmPage: FC<CategoryPageProps> = async ({ params }) => {
 					<MiddleCard
 						href={`${params.categoryId}/firm/${firm.firm_id}`}
 						title={firm.title}
+						firmId={firm.firm_id}
 					/>
 				</Grid>
 			))}

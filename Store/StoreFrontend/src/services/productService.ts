@@ -31,6 +31,7 @@ export const productService = {
 	},
 	async getProducts({
 		categoryId,
+		firmId,
 		cost,
 		deliveryTime,
 		description,
@@ -39,6 +40,7 @@ export const productService = {
 		title,
 	}: {
 		categoryId?: number
+		firmId?: number
 		seriesId?: number
 		title?: string
 		description?: string
@@ -52,6 +54,7 @@ export const productService = {
 					params: {
 						category_id: categoryId,
 						series_id: seriesId,
+						firm_id: firmId,
 						title,
 						description,
 						cost,

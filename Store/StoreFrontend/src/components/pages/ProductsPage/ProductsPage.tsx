@@ -26,6 +26,7 @@ const ProductsPage: FC<ProductsPageProps> = async ({ params }) => {
 						href={`${params.seriesId}/product/${product.product_id}`}
 						price={`${product.cost} ₽`}
 						descriptions={product.description || ''}
+						productId={product.product_id}
 					/>
 				</Grid>
 			))}

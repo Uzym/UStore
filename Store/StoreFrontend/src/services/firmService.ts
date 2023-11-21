@@ -31,14 +31,18 @@ export const firmService = {
 		title,
 		description,
 		discount,
+		seriesId,
 	}: {
 		title?: string
 		description?: string
 		discount?: number
+		seriesId?: number
 	}) {
 		try {
 			const data: Firm[] = await (
-				await axios.get(URL_firm, { params: { title, description, discount } })
+				await axios.get(URL_firm, {
+					params: { title, description, discount, series_id: seriesId },
+				})
 			).data
 
 			return data

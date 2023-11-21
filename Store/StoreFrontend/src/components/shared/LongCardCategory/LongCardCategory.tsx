@@ -1,8 +1,8 @@
 'use client'
 
 import { Box, Typography } from '@mui/material'
-import { FC, useState } from 'react'
-import Image, { StaticImageData } from 'next/image'
+import { FC, useEffect, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { photoService } from '@/services/photoService'
 import { fileService } from '@/services/fileService'
@@ -24,21 +24,22 @@ const LongCardCategory: FC<LongCardCategoryProps> = ({
 	const [photo, setPhoto] = useState<string>()
 
 	const { data, isSuccess } = useQuery({
-		queryKey: ['LongCardCategory'],
-		queryFn: () => photoService.getPhotos({ categoryId: categoryId }),
+		queryKey: ['LongCardCategory', categoryId],
+		queryFn: () => photoService.getPhotos({ categoryId }),
 	})
 
 	const mutationPhoto = useMutation({
 		mutationFn: (data: string) => fileService.downloadFile(data),
 	})
 
-	if (isSuccess && data.length && data[0]?.name) {
-		mutationPhoto.mutate(data[0].name)
-	}
-
-	if (mutationPhoto.isSuccess && mutationPhoto.data) {
-		setPhoto(URL.createObjectURL(mutationPhoto.data))
-	}
+	useEffect(() => {
+		if (isSuccess && categoryId && data.length && data[0]?.name) {
+			mutationPhoto.mutate(data[0].name)
+		}
+		if (mutationPhoto.isSuccess && mutationPhoto.data) {
+			setPhoto(URL.createObjectURL(mutationPhoto.data))
+		}
+	}, [categoryId, data, isSuccess, mutationPhoto])
 
 	return (
 		<Box className={styles.card}>
