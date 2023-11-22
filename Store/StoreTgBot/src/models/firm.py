@@ -3,7 +3,7 @@ from typing import List, Optional
 
 
 class RequestCreateFirm(BaseModel):
-    title: str
+    title: Optional[str] = None
     description: Optional[str] = None
     discount: Optional[float] = None
 

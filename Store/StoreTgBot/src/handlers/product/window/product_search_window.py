@@ -13,7 +13,7 @@ from aiogram_dialog.widgets.input import MessageInput
 from src.lexicon import LEXICON
 from src.services import ProductService, SeriesService, FirmService, CategoryService
 from src.states.states import Product
-# from src.handlers.series.window.series_window import get_series_button
+from src.handlers.product.window.product_window import get_product_button
 
 product_service = ProductService()
 series_service = SeriesService()
@@ -387,7 +387,7 @@ products_window = Window(
             item_id_getter=operator.itemgetter(1),
             items="products",
             id="product_i",
-            # on_click=get_product_button TODO
+            on_click=get_product_button
         ),
         id="products_group",
         width=1,

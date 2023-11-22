@@ -55,7 +55,7 @@ namespace StoreAPI.Controllers
             return await Index(id[0]);
         }
 
-        [HttpPut]
+        [HttpPut("{product_id}/update")]
         public async Task<ActionResult<ProductDto>> UpdateProduct(
             long product_id,
             RequestCreateProductDto data
@@ -63,7 +63,7 @@ namespace StoreAPI.Controllers
         {
             var product = await _context.Products
                 .FindAsync(product_id);
-
+            
             if (product == null)
             {
                 return NotFound();

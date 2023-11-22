@@ -58,8 +58,8 @@ class SeriesService(StoreApiService):
                 data = await response.json()
                 return parse_obj_as(List[domain.Series], data)
 
-    async def update_series(self, series_id: int, title: Optional[str], description: Optional[str],
-                            discount: Optional[float], firm_id: Optional[int]) -> domain.Series:
+    async def update_series(self, series_id: int, title: Optional[str] = None, description: Optional[str] = None,
+                            discount: Optional[float] = None, firm_id: Optional[int] = None) -> domain.Series:
         url = self.api_key + self.controller + f"/{series_id}/update"
         request = loads(
             series.RequestCreateSeries(title=title, description=description, discount=discount, firm_id=firm_id).json(

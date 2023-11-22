@@ -114,7 +114,7 @@ async def category_update_getter(callback: CallbackQuery, button: Button, dialog
 
 
 category_update_button = Button(
-    text=Const(LEXICON["update_category"]),
+    text=Const(LEXICON["ok"]),
     id="category_update",
     on_click=category_update_getter
 )
