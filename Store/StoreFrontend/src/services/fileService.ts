@@ -24,7 +24,7 @@ export const fileService = {
 	},
 	async downloadFile(fileName: string) {
 		try {
-			const file = await (
+			const data: Blob = await (
 				await axios.post(
 					`${URL_file}/download`,
 					{},
@@ -37,7 +37,7 @@ export const fileService = {
 				)
 			).data
 
-			return file
+			return data
 		} catch (error) {
 			if (error instanceof Error) {
 				console.log(error.message)

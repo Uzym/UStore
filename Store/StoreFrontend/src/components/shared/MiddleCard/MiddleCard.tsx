@@ -36,8 +36,6 @@ const MiddleCard: FC<MiddleCardProps> = ({
 		enabled: !!firmId || !!productId || !!seriesId,
 	})
 
-	// TODO: возможно тут придётся исправлять
-
 	const mutationPhoto = useMutation({
 		mutationFn: (name: string) => fileService.downloadFile(name),
 	})
@@ -61,9 +59,9 @@ const MiddleCard: FC<MiddleCardProps> = ({
 						src={photo}
 						className={styles.img}
 						alt={''}
-						quality={100}
 						width={170}
 						height={170}
+						quality={100}
 					/>
 				) : (
 					<Skeleton variant='rounded' width={170} height={170} />

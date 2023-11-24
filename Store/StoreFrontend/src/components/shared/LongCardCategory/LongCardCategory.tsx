@@ -28,8 +28,6 @@ const LongCardCategory: FC<LongCardCategoryProps> = ({
 		enabled: !!categoryId,
 	})
 
-	// TODO: возможно тут придётся исправлять
-
 	const mutationPhoto = useMutation({
 		mutationFn: (data: string) => fileService.downloadFile(data),
 	})

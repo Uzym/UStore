@@ -27,7 +27,7 @@ const ImageSlider: FC<ImageSliderProps> = ({ images }) => {
 
 	return (
 		<Stack component={'section'} direction={'row'}>
-			<IconButton onClick={prevImage}>
+			<IconButton disableRipple onClick={prevImage}>
 				<LeftArrow />
 			</IconButton>
 			{images.map((image, index) => (
@@ -35,16 +35,16 @@ const ImageSlider: FC<ImageSliderProps> = ({ images }) => {
 					{currentImg === index && (
 						<Image
 							src={image}
-							width={306}
-							height={442}
-							alt={'img'}
-							quality={100}
 							className={styles.image}
+							alt={''}
+							width={280}
+							height={280}
+							quality={100}
 						/>
 					)}
 				</Box>
 			))}
-			<IconButton onClick={nextImage}>
+			<IconButton disableRipple onClick={nextImage}>
 				<RightArrow />
 			</IconButton>
 		</Stack>
