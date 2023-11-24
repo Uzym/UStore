@@ -480,6 +480,11 @@
   dependencies:
     "@tanstack/query-core" "5.8.3"
 
+"@twa-dev/types@^6.9.0":
+  version "6.9.0"
+  resolved "https://registry.yarnpkg.com/@twa-dev/types/-/types-6.9.0.tgz#5f978e63dcb8ec507ae2b035774ff568c5ebb69a"
+  integrity sha512-hBkIuJgVtkLAPPhKsNfgyBpgS+15spzUScy5jgpfPJPqXPaaUVDTaWHbeEUU+lUgHmryeQjWyz+UjS7987Pyaw==
+
 "@types/hoist-non-react-statics@^3.3.1":
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/@types/hoist-non-react-statics/-/hoist-non-react-statics-3.3.4.tgz#cc477ce0283bb9d19ea0cbfa2941fe2c8493a1be"

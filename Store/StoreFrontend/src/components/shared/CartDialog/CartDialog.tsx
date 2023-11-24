@@ -7,6 +7,9 @@ import { Dispatch, FC, SetStateAction } from 'react'
 import BasketCard from '@/components/shared/BasketCard/BasketCard'
 import classNames from 'classnames'
 import CustomButton from '@/components/ui/CustomButton/CustomButton'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { orderService } from '@/services/orderService'
+import { telegramUserId } from '@/config/webApp'
 
 interface CartDialogProps {
 	isCartOpen: boolean
@@ -14,6 +17,24 @@ interface CartDialogProps {
 }
 
 const CartDialog: FC<CartDialogProps> = ({ isCartOpen, setIsCartOpen }) => {
+	const { data: orders, isSuccess } = useQuery({
+		queryKey: ['orders'],
+		queryFn: () => orderService.getOrders(telegramUserId, false),
+	})
+
+	const {
+		mutate,
+		data: products,
+		isSuccess: isSuccessProducts,
+	} = useMutation({
+		mutationFn: (orderId: number) =>
+			orderService.getOrderProducts(telegramUserId, orderId),
+	})
+
+	if (isSuccess && orders[0]?.order_id) {
+		mutate(orders[0]?.order_id)
+	}
+
 	return (
 		<Box
 			className={classNames(styles.cartDialog, {
@@ -21,30 +42,6 @@ const CartDialog: FC<CartDialogProps> = ({ isCartOpen, setIsCartOpen }) => {
 			})}
 		>
 			<List className={styles.list} disablePadding>
-				<ListItem disablePadding>
-					<BasketCard
-						text='Мужские кроссовки adidas Originals OZWEEGO'
-						cost='13 999 ₽'
-					/>
-				</ListItem>
-				<ListItem disablePadding>
-					<BasketCard
-						text='Мужские кроссовки adidas Originals OZWEEGO'
-						cost='13 999 ₽'
-					/>
-				</ListItem>
-				<ListItem disablePadding>
-					<BasketCard
-						text='Мужские кроссовки adidas Originals OZWEEGO'
-						cost='13 999 ₽'
-					/>
-				</ListItem>
-				<ListItem disablePadding>
-					<BasketCard
-						text='Мужские кроссовки adidas Originals OZWEEGO'
-						cost='13 999 ₽'
-					/>
-				</ListItem>
 				<ListItem disablePadding>
 					<BasketCard
 						text='Мужские кроссовки adidas Originals OZWEEGO'

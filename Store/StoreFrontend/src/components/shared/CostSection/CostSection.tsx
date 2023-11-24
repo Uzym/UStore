@@ -49,7 +49,7 @@ const CostSection: FC<CostSectionProps> = ({ product }) => {
 				) : (
 					<Typography>Доделать</Typography>
 				)}
-				{/* TODO: доставка и оплата */}
+				{/* TODO: добавить текст доставка и оплата */}
 			</Box>
 		</>
 	)

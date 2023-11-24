@@ -56,6 +56,7 @@ const ProductPage: FC<ProductPageProps> = async ({ params }) => {
 					...imageUrls,
 				]}
 			/>
+			{/* FIXME убрать лишние URL */}
 			<CostSection product={product} />
 		</Stack>
 	)

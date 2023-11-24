@@ -31,6 +31,6 @@ const nextConfig = {
 	//   },
 }
 
-// TODO: убрать лишнее
+// FIXME: убрать лишнее
 
 module.exports = nextConfig
