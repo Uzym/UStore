@@ -4,6 +4,13 @@ import Providers from '@/providers/Providers'
 import { roboto } from '@/theme/fonts'
 import MainLayout from '@/components/layouts/MainLayout'
 import Script from 'next/script'
+import { Telegram } from '@twa-dev/types'
+
+declare global {
+	interface Window {
+		Telegram: Telegram
+	}
+}
 
 export const metadata: Metadata = {
 	title: { template: '%s | UStore', default: 'Home | UStore' },
