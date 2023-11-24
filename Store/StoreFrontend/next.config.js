@@ -8,8 +8,8 @@ const nextConfig = {
 		remotePatterns: [
 			{ protocol: 'https', hostname: 'w.forfun.com' },
 			{ protocol: 'https', hostname: 'sun9-24.userapi.com' },
-			{ protocol: 'http', hostname: 'store_api' },
-			{ protocol: 'http', hostname: 's3_api' }
+			// { protocol: 'http', hostname: 'store_api' },
+			// { protocol: 'http', hostname: 's3_api' }
 		],
 	},
 	// env: {
