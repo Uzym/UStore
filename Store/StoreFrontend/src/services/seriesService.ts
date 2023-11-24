@@ -2,8 +2,9 @@ import { RequestCreateSeries } from '@/shared/interfaces/RequestCreateSeries'
 import { Series } from '@/shared/interfaces/Series'
 import axios from 'axios'
 
-// const URL_series = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/Series`
-const URL_series = "/store/Series"
+const URL_series = process.env.NEXT_PUBLIC_HOST
+	? `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/store/Series`
+	: '/store/Series'
 
 export const seriesService = {
 	async getOneSeries(seriesId: number) {

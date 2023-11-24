@@ -1,8 +1,8 @@
 import axios from 'axios'
 
-// const URL_file = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT_S3}`
-
-const URL_file = "/s3"
+const URL_file = process.env.NEXT_PUBLIC_HOST
+	? `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/s3`
+	: '/s3'
 
 export const fileService = {
 	async uploadFile(file: FormData) {
@@ -24,7 +24,7 @@ export const fileService = {
 	},
 	async downloadFile(fileName: string) {
 		try {
-			const file: Blob = await (
+			const file = await (
 				await axios.post(
 					`${URL_file}/download`,
 					{},

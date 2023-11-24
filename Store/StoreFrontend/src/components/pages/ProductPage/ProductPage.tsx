@@ -49,14 +49,7 @@ const ProductPage: FC<ProductPageProps> = async ({ params }) => {
 	return (
 		<Stack spacing={3}>
 			<Typography className={styles.title}>{product.title}</Typography>
-			<ImageSlider
-				images={[
-					'https://w.forfun.com/fetch/f6/f689d9dff5f1e6cc2548b7b734e4b995.jpeg',
-					'https://sun9-24.userapi.com/impg/8pmhmwpBHqp79N7lqyqQ2Q_sQt_R9nie8YXhbQ/QxV_lGLB9kA.jpg?size=1200x675&quality=96&sign=a0314c11cd371852f23329306ebeccdd&c_uniq_tag=MYLHycuBYt6n9SwNmujruLSwj080VojdDumTeX4x8us&type=album',
-					...imageUrls,
-				]}
-			/>
-			{/* FIXME убрать лишние URL */}
+			<ImageSlider images={imageUrls} />
 			<CostSection product={product} />
 		</Stack>
 	)

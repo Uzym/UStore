@@ -2,8 +2,9 @@ import { Category } from '@/shared/interfaces/Category'
 import { RequestCreateCategory } from '@/shared/interfaces/RequestCreateCategory'
 import axios from 'axios'
 
-// const URL_category = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/Category`
-const URL_category = "/store/Category"
+const URL_category = process.env.NEXT_PUBLIC_HOST
+	? `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/store/Category`
+	: '/store/Category'
 
 export const categoryService = {
 	async getCategory(categoryId: number) {

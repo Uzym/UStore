@@ -2,8 +2,9 @@ import { RequestCreateUser } from '@/shared/interfaces/RequestCreateUser'
 import { User } from '@/shared/interfaces/User'
 import axios from 'axios'
 
-// const URL_user = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/User`
-const URL_user = "/store/User"
+const URL_user = process.env.NEXT_PUBLIC_HOST
+	? `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/store/User`
+	: '/store/User'
 
 export const userService = {
 	async getUserByTgId(tgId?: number) {

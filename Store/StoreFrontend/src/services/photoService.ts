@@ -2,9 +2,9 @@ import { Photo } from '@/shared/interfaces/Photo'
 import { RequestCreatePhoto } from '@/shared/interfaces/RequestCreatePhoto'
 import axios from 'axios'
 
-// const URL_photo = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/Photo`
-
-const URL_photo = "/store/Photo"
+const URL_photo = process.env.NEXT_PUBLIC_HOST
+	? `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/store/Photo`
+	: '/store/Photo'
 
 export const photoService = {
 	async getPhoto(photoId: number) {
@@ -62,8 +62,7 @@ export const photoService = {
 					},
 				})
 			).data
-			
-			console.log(data);
+
 			return data
 		} catch (error) {
 			if (error instanceof Error) {

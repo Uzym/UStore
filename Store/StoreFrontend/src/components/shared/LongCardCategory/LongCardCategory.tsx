@@ -1,14 +1,13 @@
 'use client'
 
-import { Box, Typography } from '@mui/material'
+import { Box, Skeleton, Typography } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { photoService } from '@/services/photoService'
 import { fileService } from '@/services/fileService'
-import styles from './LongCardCategory.module.scss'
-import CardImg from '/public/image1.png'
 import { useMutation, useQuery } from '@tanstack/react-query'
+import styles from './LongCardCategory.module.scss'
 
 interface LongCardCategoryProps {
 	children: string | null
@@ -23,37 +22,51 @@ const LongCardCategory: FC<LongCardCategoryProps> = ({
 }) => {
 	const [photo, setPhoto] = useState<string>()
 
-	const { data, isSuccess } = useQuery({
+	const { data: img, isSuccess } = useQuery({
 		queryKey: ['LongCardCategory', categoryId],
 		queryFn: () => photoService.getPhotos({ categoryId }),
+		enabled: !!categoryId,
 	})
+
 	// TODO: возможно тут придётся исправлять
+
 	const mutationPhoto = useMutation({
 		mutationFn: (data: string) => fileService.downloadFile(data),
 	})
 
 	useEffect(() => {
-		if (isSuccess && categoryId && data.length && data[0]?.name) {
-			mutationPhoto.mutate(data[0].name)
+		if (isSuccess && img[0]?.name) {
+			mutationPhoto.mutate(img[0].name, {
+				onSuccess: (photo: Blob | null) => {
+					photo && setPhoto(URL.createObjectURL(photo))
+				},
+			})
 		}
-		if (mutationPhoto.isSuccess && mutationPhoto.data) {
-			setPhoto(URL.createObjectURL(mutationPhoto.data))
-		}
-	}, [categoryId, data, isSuccess, mutationPhoto])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [img])
 
 	return (
 		<Box className={styles.card}>
 			<Link href={href}>
 				<Typography className={styles.title}>{children}</Typography>
-				<Image
-					src={photo || CardImg}
-					className={styles.img}
-					alt={children || ''}
-					width={360}
-					height={170}
-					quality={100}
-					placeholder='blur'
-				/>
+				{photo ? (
+					<Image
+						src={photo}
+						className={styles.img}
+						alt={''}
+						width={360}
+						height={170}
+						quality={100}
+					/>
+				) : (
+					<>
+						{categoryId ? (
+							<Skeleton variant='rounded' width={360} height={170} />
+						) : (
+							<Box className='bg-gray-300 w-[360px] h-[170px] rounded-[20px]' />
+						)}
+					</>
+				)}
 			</Link>
 		</Box>
 	)

@@ -24,7 +24,7 @@ const CartDialog: FC<CartDialogProps> = ({ isCartOpen, setIsCartOpen }) => {
 				false
 			),
 	})
-
+	//TODO: доделать
 	const {
 		mutate,
 		data: products,
