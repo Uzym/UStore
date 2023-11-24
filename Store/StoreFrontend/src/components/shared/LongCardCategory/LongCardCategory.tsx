@@ -27,7 +27,7 @@ const LongCardCategory: FC<LongCardCategoryProps> = ({
 		queryKey: ['LongCardCategory', categoryId],
 		queryFn: () => photoService.getPhotos({ categoryId }),
 	})
-
+	// TODO: возможно тут придётся исправлять
 	const mutationPhoto = useMutation({
 		mutationFn: (data: string) => fileService.downloadFile(data),
 	})
