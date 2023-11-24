@@ -15,10 +15,15 @@ SERIES_COMMAND = "series"
 NEW_SERIES_COMMAND = "new_series"
 PRODUCTS_COMMAND = "products"
 NEW_PRODUCT_COMMAND = "new_product"
+USERS_COMMAND = "users"
+ORDERS_HISTORY_COMMAND = "history"
+ORDER_COMMAND = "order"
 
 COMMANDS = [
     BotCommand(command=START_COMMAND, description="перейти в главное меню"),
     BotCommand(command=HELP_COMMAND, description="открыть справку"),
+    BotCommand(command=ORDER_COMMAND, description="текущий заказ"),
+    BotCommand(command=ORDERS_HISTORY_COMMAND, description="история заказов"),
     BotCommand(command=FIRMS_COMMAND, description="управление фирмами"),
     BotCommand(command=NEW_FIRM_COMMAND, description="создать фирму"),
     BotCommand(command=CATEGORIES_COMMAND, description="управление категориями"),
@@ -26,7 +31,8 @@ COMMANDS = [
     BotCommand(command=SERIES_COMMAND, description="управление сериями"),
     BotCommand(command=NEW_SERIES_COMMAND, description="создать серию"),
     BotCommand(command=PRODUCTS_COMMAND, description="управление продуктами"),
-    BotCommand(command=NEW_PRODUCT_COMMAND, description="создать продукт")
+    BotCommand(command=NEW_PRODUCT_COMMAND, description="создать продукт"),
+    BotCommand(command=USERS_COMMAND, description="управление пользователями")
 ]
 
 LEXICON: dict[str, str] = {

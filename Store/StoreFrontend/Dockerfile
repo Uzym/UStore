@@ -4,6 +4,12 @@ COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 FROM node:lts as builder
+
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_S3_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_S3_API_URL=$NEXT_PUBLIC_S3_API_URL
+
 WORKDIR /app
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
@@ -19,5 +25,5 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 
 EXPOSE 3000
-# CMD ["yarn", "start"]
-CMD ["node", ".next/standalone/server.js"]
+CMD ["yarn", "start"]
+# CMD ["node", ".next/standalone/server.js"]

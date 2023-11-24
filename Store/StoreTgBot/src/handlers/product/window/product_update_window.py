@@ -43,7 +43,7 @@ product_update_filter_categories_list_button = Button(
 
 
 async def product_update_category_id_button(callback: CallbackQuery, widget: Any, dialog_manager: DialogManager,
-                                                  item_id: str):
+                                            item_id: str):
     await callback.answer(text=LEXICON["loading"])
     dialog_manager.start_data['category_id'] = int(item_id)
     dialog_manager.dialog_data['category_id'] = int(item_id)

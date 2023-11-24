@@ -2,7 +2,8 @@ import { Firm } from '@/shared/interfaces/Firm'
 import { RequestCreateFirm } from '@/shared/interfaces/RequestCreateFirm'
 import axios from 'axios'
 
-const URL_firm = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/Firm`
+// const URL_firm = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/Firm`
+const URL_firm = "/store/Firm"
 
 export const firmService = {
 	async getFirm(firmId: string) {

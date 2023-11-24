@@ -5,6 +5,9 @@ class Main(StatesGroup):
     main = State()
     get_me = State()
     help = State()
+    update_address = State()
+    update_telephone = State()
+    update_email = State()
 
 
 class Firm(StatesGroup):
@@ -98,3 +101,18 @@ class Product(StatesGroup):
     product_delete_photo = State()
     products = State()
     product = State()
+
+
+class User(StatesGroup):
+    users_search = State()
+    users_search_tg_id_filter = State()
+    user_update_admin = State()
+    users = State()
+    user = State()
+
+
+class Order(StatesGroup):
+    orders_history = State()
+    order = State()
+    order_card = State()
+    add_comment = State()

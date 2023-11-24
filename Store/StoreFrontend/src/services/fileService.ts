@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-const URL_file = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT_S3}`
+// const URL_file = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT_S3}`
+
+const URL_file = "/s3"
 
 export const fileService = {
 	async uploadFile(file: FormData) {

@@ -4,7 +4,9 @@ import { OrderProduct } from '@/shared/interfaces/OrderProduct'
 import { RequestCreateOrder } from '@/shared/interfaces/RequestCreateOrder'
 import axios from 'axios'
 
-const URL_order = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/Order`
+// const URL_order = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/Order`
+
+const URL_order = "/store/Order"
 
 export const orderService = {
 	async getOrders(telegramId: number, finished?: boolean) {

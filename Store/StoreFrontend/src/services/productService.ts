@@ -2,7 +2,8 @@ import { Product } from '@/shared/interfaces/Product'
 import { RequestCreateProduct } from '@/shared/interfaces/RequestCreateProduct'
 import axios from 'axios'
 
-const URL_product = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/Product`
+// const URL_product = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/Product`
+const URL_product = "/store/Prosuct"
 
 export const productService = {
 	async getProduct(productId: number) {
