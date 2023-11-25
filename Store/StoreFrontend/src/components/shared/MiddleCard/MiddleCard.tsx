@@ -64,7 +64,7 @@ const MiddleCard: FC<MiddleCardProps> = ({
 						quality={100}
 					/>
 				) : (
-					<Skeleton variant='rounded' width={170} height={170} />
+					<Skeleton variant='rounded' className={styles.img} />
 				)}
 				{title && <Typography className={styles.title}>{title}</Typography>}
 				{price && <Typography className={styles.price}>{price}</Typography>}

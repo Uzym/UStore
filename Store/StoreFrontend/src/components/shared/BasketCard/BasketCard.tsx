@@ -12,7 +12,12 @@ interface BasketCardProps {
 const BasketCard: FC<BasketCardProps> = ({ cost, text }) => {
 	return (
 		<Box className={styles.card}>
-			<Skeleton variant='rounded' height={100} width={100} />
+			<Skeleton
+				variant='rounded'
+				height={100}
+				width={100}
+				className={styles.img}
+			/>
 			{/* <Image
 				src={''}
 				className={styles.img}
