@@ -59,7 +59,7 @@ const LongCardCategory: FC<LongCardCategoryProps> = ({
 				) : (
 					<>
 						{categoryId ? (
-							<Skeleton variant='rounded' width={360} height={170} />
+							<Skeleton variant='rounded' className={styles.img} />
 						) : (
 							<Box className='bg-gray-300 w-[360px] h-[170px] rounded-[20px]' />
 						)}
