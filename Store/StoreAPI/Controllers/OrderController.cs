@@ -225,8 +225,8 @@ namespace StoreAPI.Controllers
 
         [HttpPatch("{order_id}/confirm")]
         public async Task<ActionResult<ResponseGetCardDto>> ConfirmOrder(
-            long order_id, 
-            long section_id,
+            long order_id,
+            //long section_id,
             //[FromHeader(Name = "Telegram-Id")] 
             string tg_id)
         {
@@ -284,11 +284,11 @@ namespace StoreAPI.Controllers
 
                 discount = Math.Min(discount, categoryDiscount);
 
-                sum += (op.Quantity - 1) * op.Product.Cost + op.Product.Cost * discount;
+                sum += op.Quantity * op.Product.Cost * discount;
 
                 description += iter.ToString() + "): " + op.Product.Title + " - " + op.Quantity.ToString() + "шт\n\t";
                 description += op.Product.Description + "\n\t";
-                description += "Цена: " + (op.Product.Cost * discount).ToString() + "\n\t";
+                description += "Цена: " + (op.Product.Cost).ToString() + "\n\t";
                 description += "Скидка: " + (1 - discount) * 100 + "%\n";
 
                 if (DateTime.Now.AddHours(3) + op.Product.DeliveryTime > due)
@@ -316,7 +316,7 @@ namespace StoreAPI.Controllers
             };
 
             var adminTgId = await _context.Users
-                .Where(u => u.Admin == true)
+                .Where(u => u.Admin == true && u.Name.ToLower() == "иван павлов")
                 .Select(u => u.TgId)
                 .FirstOrDefaultAsync();
 
@@ -324,6 +324,8 @@ namespace StoreAPI.Controllers
             {
                 return NotFound();
             }
+
+            var section_id = await _taskMgrClient.GetSection(adminTgId);
 
             var cardResponse = await _taskMgrClient.CreateCard(
                 section_id,

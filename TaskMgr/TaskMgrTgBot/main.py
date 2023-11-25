@@ -64,12 +64,13 @@ async def main():
 
     init_services(dp=dp, config=config)
     setup_routers(dp=dp)
-
-    await bot.set_my_name(BOT_NAME)
-    await bot.set_my_description(BOT_DESCRIPTION)
-    await bot.set_my_short_description(BOT_SHORT_DESCRIPTION)
-    await bot.set_my_commands(COMMANDS)
-
+    try:
+        await bot.set_my_name(BOT_NAME)
+        await bot.set_my_description(BOT_DESCRIPTION)
+        await bot.set_my_short_description(BOT_SHORT_DESCRIPTION)
+        await bot.set_my_commands(COMMANDS)
+    except:
+        pass
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 

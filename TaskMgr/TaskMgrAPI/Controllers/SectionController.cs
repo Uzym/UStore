@@ -160,5 +160,12 @@ namespace TaskMgrAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<ActionResult<int>> GetSectionId(string telegramId)
+        {
+            var id = await _sectionService.GetSectionId(telegramId);
+            return Ok(id);
+        }
     }
 }

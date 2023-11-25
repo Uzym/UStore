@@ -38,13 +38,13 @@ async def tg_id_filter(message: Message, message_input: MessageInput, dialog_man
 
 
 tg_id_filter_button = Button(
-    text=Const("Задать Telegram Id"),
+    text=Const(LEXICON["select_tg_id"]),
     id="tg_id_filter",
     on_click=tg_id_filter_button
 )
 
 tg_id_filter_window = Window(
-    Const("Введите Telegram Id"),
+    Const(LEXICON["input_tg_id"]),
     MessageInput(tg_id_filter),
     Row(go_back_button, Cancel(Const(LEXICON["cancel"]))),
     state=User.users_search_tg_id_filter
@@ -63,7 +63,7 @@ users_search_button = Button(
 
 
 users_search_window = Window(
-    Const("Поиск людей"),
+    Const(LEXICON["search_users"]),
     Group(
         tg_id_filter_button,
         users_search_button,
@@ -97,10 +97,10 @@ async def get_user_button(callback: CallbackQuery, widget: Any, dialog_manager: 
 
 
 users_window = Window(
-    Const("Сделать пользователя админом (удалить из админов)"),
+    Const(LEXICON["user_admin"]),
     ScrollingGroup(
         Select(
-            text=Format(html.quote("{item[1]} | {item[2]} | {item[3]} | {item[4]} - {item[5]}")),
+            text=Format(html.quote("{item[1]} - {item[5]} \n {item[2]} \n {item[3]} \n {item[4]}")),
             item_id_getter=operator.itemgetter(0),
             items="users",
             id="user_i",

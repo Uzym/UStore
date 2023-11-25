@@ -11,7 +11,7 @@ from src.lexicon.lexicon import BOT_NAME, BOT_DESCRIPTION, BOT_SHORT_DESCRIPTION
 from src.services import (FirmService, PhotoService, ProductService, CategoryService, SeriesService, UserService,
                           OrderService)
 from src.services import S3Service
-from src.handlers import main_setup, firm_setup, category_setup, series_setup, product_setup, user_setup
+from src.handlers import main_setup, firm_setup, category_setup, series_setup, product_setup, user_setup, order_setup
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +42,7 @@ def setup_routers(dp: Dispatcher):
     series_router, series_dialog = series_setup()
     product_router, product_dialog = product_setup()
     user_router, user_dialog = user_setup()
+    order_router, order_dialog = order_setup()
 
     dp.include_router(main_router)
     dp.include_router(firm_router)
@@ -49,6 +50,7 @@ def setup_routers(dp: Dispatcher):
     dp.include_router(series_router)
     dp.include_router(product_router)
     dp.include_router(user_router)
+    dp.include_router(order_router)
 
     dp.include_router(main_dialog)
     dp.include_router(firm_dialog)
@@ -56,6 +58,7 @@ def setup_routers(dp: Dispatcher):
     dp.include_router(series_dialog)
     dp.include_router(product_dialog)
     dp.include_router(user_dialog)
+    dp.include_router(order_dialog)
 
     setup_dialogs(dp)
 

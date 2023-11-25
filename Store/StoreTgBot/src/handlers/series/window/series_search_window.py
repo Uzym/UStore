@@ -37,7 +37,7 @@ async def series_search_filter_firms_list_button(callback: CallbackQuery, button
 
 
 series_search_filter_firms_list_button = Button(
-    text=Const("Задать фирму"),
+    text=Const(LEXICON["select_firm"]),
     id="series_search_filter_firms_list",
     on_click=series_search_filter_firms_list_button
 )
@@ -88,7 +88,7 @@ async def series_search_filter_categories_list_button(callback: CallbackQuery, b
 
 
 series_search_filter_categories_list_button = Button(
-    text=Const("Задать категорию"),
+    text=Const(LEXICON["select_category"]),
     id="series_search_filter_firms_list",
     on_click=series_search_filter_categories_list_button
 )

@@ -104,4 +104,28 @@ public class SectionService : ISectionService
         await _context.SaveChangesAsync();
         return TranslateIntoDto(section);
     }
+
+    public async Task<long> GetSectionId(string telegramId)
+    {
+        var user = await _context.Users
+            .Where(u => u.TelegramId == telegramId)
+            .FirstOrDefaultAsync();
+
+
+        if (user is null)
+        {
+            throw new NotFoundException("user not found");
+        }
+
+        var projectId = await _context.UserProjects
+            .Include(up => up.Project)
+            .Where(up => up.UserId == user.UserId && up.Project.Title.ToLower() == "ustore")
+            .Select(up => up.ProjectId)
+            .FirstOrDefaultAsync();
+
+        return await _context.Sections
+            .Where(s => s.ProjectId == projectId)
+            .Select(s => s.SectionId)
+            .FirstOrDefaultAsync();
+    }
 }

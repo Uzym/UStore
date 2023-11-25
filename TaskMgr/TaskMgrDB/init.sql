@@ -130,3 +130,34 @@ SELECT public.right.right_id, role.role_id
 FROM public.right CROSS JOIN role
 WHERE role.title = 'Создатель карточки'
   AND public.right.title IN ('view_card', 'update_card', 'update_card_complete', 'delete_card', 'add_comment', 'view_comment', 'delete_comment', 'add_user', 'delete_user', 'view_user');
+
+insert into public."user" (name, telegram_id) values ('Иван Павлов', '634266559');
+insert into public.project (title, description) values ('UStore', 'Telegram Store App');
+insert into public."section" (title, project_id) values ('Заказы на рассмотрении', (select project_id from public.project where LOWER(title) = 'ustore'));
+insert
+	into
+	public.user_project (user_id,
+	project_id,
+	role_id)
+values ((
+select
+	user_id
+from
+	public."user"
+where
+	lower(name) = 'иван павлов'),
+(
+select
+	project_id
+from
+	public.project
+where
+	lower(title) = 'ustore'),
+(
+select
+	role_id
+from
+	public."role"
+where
+	lower(title) = 'создатель проекта'
+	));

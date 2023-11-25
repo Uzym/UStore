@@ -29,7 +29,7 @@ async def help_getter(dialog_manager: DialogManager, **kwargs):
                 (com.command, com.description) for com in COMMANDS
         ]
     else:
-        COMMON_COMMANDS = COMMANDS[0:2]
+        COMMON_COMMANDS = COMMANDS[0:4]
         data = [
             (com.command, com.description) for com in COMMON_COMMANDS
         ]

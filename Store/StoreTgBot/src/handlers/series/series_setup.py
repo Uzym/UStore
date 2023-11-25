@@ -19,8 +19,8 @@ async def series(message: Message, dialog_manager: DialogManager):
     except:
         pass
     await dialog_manager.start(Series.series_search,
-                        mode=StartMode.RESET_STACK,
-                        data={"telegram_id": str(message.from_user.id)})
+                               mode=StartMode.RESET_STACK,
+                               data={"telegram_id": str(message.from_user.id)})
 
 
 async def series_create(message: Message, dialog_manager: DialogManager):
@@ -29,8 +29,8 @@ async def series_create(message: Message, dialog_manager: DialogManager):
     except:
         pass
     await dialog_manager.start(Series.series_create,
-                        mode=StartMode.RESET_STACK,
-                        data={"telegram_id": str(message.from_user.id)})
+                               mode=StartMode.RESET_STACK,
+                               data={"telegram_id": str(message.from_user.id)})
 
 dialog: Dialog = Dialog(*create_series_windows, *search_series_windows, series_window,
                         *update_series_windows, series_wait_photo_window, series_delete_photos_window)

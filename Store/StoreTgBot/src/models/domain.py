@@ -7,8 +7,8 @@ class Card(BaseModel):
     card_id: int
     title: str
     description: Optional[str] = None
-    due: Optional[datetime] = None
-    complete: Optional[datetime] = None
+    due: Optional[str] = None
+    complete: Optional[str] = None
     tags: List[str] = []
     created: datetime
     section_id: int

@@ -3,7 +3,7 @@ import logging
 from .store_api import StoreApiService
 from src.models import domain, order, card
 from typing import List, Optional
-from pydantic import parse_obj_as
+from pydantic.v1 import parse_obj_as
 from pydantic.v1 import parse_raw_as
 from json import loads
 
@@ -43,13 +43,14 @@ class OrderService(StoreApiService):
                 data = await response.json()
                 return domain.Order.parse_obj(data)
 
-    async def orders(self, tg_id: str, finished: Optional[bool]) -> List[domain.Order]:
+    async def orders(self, tg_id: str, finished: Optional[bool] = None) -> List[domain.Order]:
         url = self.api_key + self.controller
         params = {
             "tg_id": tg_id
         }
         if finished is not None:
-            params["finished"] = finished
+            params["finished"] = "true" if finished else "false"
+        self.logger.info(params)
         async with self.session.get(url, params=params) as response:
             if response.status == 200:
                 data = await response.json()
@@ -94,15 +95,16 @@ class OrderService(StoreApiService):
             data = await response.json()
             return domain.Order.parse_obj(data)
 
-    async def confirm_order(self, tg_id: str, order_id: int, section_id: int) -> card.ResponseGetCardDto:
+    async def confirm_order(self, tg_id: str, order_id: int) -> domain.Card:
         url = self.api_key + self.controller + f"/{order_id}/confirm"
         params = {
-            "tg_id": tg_id,
-            "section_id": section_id
+            "tg_id": tg_id
         }
         async with self.session.patch(url, params=params) as response:
             data = await response.json()
-            return card.ResponseGetCardDto.parse_obj(data)
+            self.logger.info(data)
+            # return card.ResponseGetCardDto.parse_obj(data)
+            return domain.Card.parse_obj(data)
 
     async def order_card(self, tg_id: str, order_id: int) -> card.ResponseGetCardDto:
         url = self.api_key + self.controller + f"/{order_id}/card"

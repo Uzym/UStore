@@ -47,7 +47,7 @@ services:
       store_db:
         condition: service_healthy
     ports:
-      - '8000:80'
+      - '8001:80'
       - '443:443'
     networks:
       - store_network
