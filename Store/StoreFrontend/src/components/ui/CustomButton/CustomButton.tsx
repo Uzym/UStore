@@ -11,7 +11,7 @@ const CustomButton: FC<CustomButton> = ({ children, className, ...props }) => {
 		<button
 			{...props}
 			className={classNames(
-				'rounded-[7px] bg-ns-dark-gray text-ns-white p-5 w-56',
+				'rounded-lg bg-ns-dark-gray text-ns-white p-5 w-56',
 				className,
 				styles.btn
 			)}

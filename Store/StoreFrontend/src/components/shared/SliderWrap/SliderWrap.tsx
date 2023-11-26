@@ -11,7 +11,7 @@ interface SliderWrapProps {
 }
 
 const SliderWrap: FC<SliderWrapProps> = ({ productId }) => {
-	const { data: photoNames, isSuccess } = useQuery({
+	const { data: imgs, isSuccess } = useQuery({
 		queryKey: ['SliderWrapImg', productId],
 		queryFn: () =>
 			photoService.getPhotos({
@@ -19,9 +19,9 @@ const SliderWrap: FC<SliderWrapProps> = ({ productId }) => {
 			}),
 	})
 
-	const photoQueries = useQueries({
+	const photos = useQueries({
 		queries:
-			photoNames?.map(photoName => ({
+			imgs?.map(photoName => ({
 				queryKey: ['photo', photoName.photo_id],
 				queryFn: () => fileService.downloadFile(photoName.name!),
 				enabled: isSuccess,
@@ -30,7 +30,7 @@ const SliderWrap: FC<SliderWrapProps> = ({ productId }) => {
 
 	return (
 		<ImageSlider
-			images={photoQueries
+			images={photos
 				.map(photo => photo.data)
 				.filter((photo): photo is Blob => photo !== undefined && photo !== null)
 				.map(photo => URL.createObjectURL(photo))}

@@ -28,11 +28,17 @@ export const orderService = {
 	},
 	async createOrder(newOrder: RequestCreateOrder, telegramId: number) {
 		try {
-			await axios.post(URL_order, newOrder, { params: { tg_id: telegramId } })
+			const data: Order = await (
+				await axios.post(URL_order, newOrder, { params: { tg_id: telegramId } })
+			).data
+
+			return data
 		} catch (error) {
 			if (error instanceof Error) {
 				console.log(error.message)
 			}
+
+			return null
 		}
 	},
 	async getOrder(telegramId: number, orderId: number) {
@@ -92,7 +98,7 @@ export const orderService = {
 				console.log(error.message)
 			}
 
-			return null
+			return []
 		}
 	},
 	async removeOrderProduct(
@@ -112,12 +118,12 @@ export const orderService = {
 			}
 		}
 	},
-	async confirmOrder(telegramId: number, orderId: number, sectionId: number) {
+	async confirmOrder(telegramId: number, orderId: number) {
 		try {
 			await axios.patch(
 				`${URL_order}/${orderId}/confirm`,
 				{},
-				{ params: { section_id: sectionId, tg_id: telegramId } }
+				{ params: { tg_id: telegramId } }
 			)
 		} catch (error) {
 			if (error instanceof Error) {

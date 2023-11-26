@@ -5,9 +5,9 @@ import CartIcon from '../ui/СartIcon/CartIcon'
 import classNames from 'classnames'
 import { montserrat } from '@/theme/fonts'
 import { useState } from 'react'
-import styles from './MainLayout.module.scss'
 import Link from 'next/link'
 import CartDialog from '../shared/CartDialog/CartDialog'
+import styles from './MainLayout.module.scss'
 
 const MainLayout = () => {
 	const [isCartOpen, setIsCartOpen] = useState(false)

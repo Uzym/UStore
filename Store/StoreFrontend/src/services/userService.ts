@@ -9,7 +9,7 @@ const URL_user = process.env.NEXT_PUBLIC_HOST
 export const userService = {
 	async getUserByTgId(tgId?: number) {
 		try {
-			const data: User = await (
+			const data: User[] = await (
 				await axios.get(URL_user, { params: { tg_id: tgId } })
 			).data
 
@@ -19,7 +19,7 @@ export const userService = {
 				console.log(error.message)
 			}
 
-			return null
+			return []
 		}
 	},
 	async createUser(newUser: RequestCreateUser) {

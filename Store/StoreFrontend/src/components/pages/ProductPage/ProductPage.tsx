@@ -4,6 +4,7 @@ import { FC } from 'react'
 import NotFoundDataText from '@/components/ui/NotFoundDataText/NotFoundDataText'
 import CostSection from '@/components/shared/CostSection/CostSection'
 import SliderWrap from '@/components/shared/SliderWrap/SliderWrap'
+import { orderService } from '@/services/orderService'
 import styles from './ProductPage.module.scss'
 
 interface ProductPageProps {
