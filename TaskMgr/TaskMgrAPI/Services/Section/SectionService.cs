@@ -117,6 +117,7 @@ public class SectionService : ISectionService
             .ToListAsync();
 
         return items;
+    }
 
     public async Task<long> GetSectionId(string telegramId)
     {
@@ -139,6 +140,6 @@ public class SectionService : ISectionService
         return await _context.Sections
             .Where(s => s.ProjectId == projectId)
             .Select(s => s.SectionId)
-
+            .FirstOrDefaultAsync();
     }
 }

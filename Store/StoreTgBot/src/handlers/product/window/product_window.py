@@ -54,8 +54,11 @@ async def product_getter(dialog_manager: DialogManager, **kwargs):
         "product_description": product_data.description,
         "product_discount": product_data.discount,
         "product_cost": product_data.cost,
-        "product_delivery_days": product_data.delivery_time.split('.')[0],
-        "product_delivery_hours": product_data.delivery_time.split('.')[1].split(':')[0],
+        "product_delivery_days":
+            product_data.delivery_time.split('.')[0] if len(product_data.delivery_time.split('.')) else 0,
+        "product_delivery_hours":
+            product_data.delivery_time.split('.')[1].split(':')[0]
+            if len(product_data.delivery_time.split('.')) > 1 else 0,
         "product_delivery_minutes": product_data.delivery_time.split('.')[1].split(':')[1],
         "product_delivery_seconds": product_data.delivery_time.split('.')[1].split(':')[2],
     }
@@ -168,8 +171,8 @@ product_delete_photos_window = Window(
 
 product_window = Window(
     Const(LEXICON["product"]),
-    Format(html.bold(html.quote("Название: {product_title}"))),
-    Format(html.quote("Описание: {product_description}")),
+    Format(html.bold(html.quote("{product_title}"))),
+    Format(html.quote("{product_description}")),
     Format(html.quote("Скидка: {product_discount}")),
     Format(html.quote("Цена: {product_cost} руб")),
     Format(html.quote("Время доставки: {product_delivery_days} дней {product_delivery_hours} "

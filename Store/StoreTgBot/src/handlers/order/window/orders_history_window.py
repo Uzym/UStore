@@ -45,14 +45,16 @@ async def card_getter(dialog_manager: DialogManager, **kwargs):
         "title": card_data.card.title,
         "description": card_data.card.description,
         "due": card_data.card.due,
-        "complete": card_data.card.complete,
+        "complete": "Завершено" if card_data.card.complete is not None else "В процессе",
         "created": card_data.card.created,
     }
 
 
-order_card_window = Window( # TODO
+order_card_window = Window(     # TODO
     Format(html.bold(html.quote("{title}"))),
     Format(html.quote("{description}")),
+    Format(html.quote("Статус: {complete}")),
+    Format(html.quote("")),
     Cancel(Const(LEXICON["complete"])),
     state=Order.order_card,
     getter=card_getter

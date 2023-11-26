@@ -1,7 +1,7 @@
 import logging
 
 from .store_api import StoreApiService
-from src.models import domain, order, card
+from src.models import domain, order, card, comment
 from typing import List, Optional
 from pydantic.v1 import parse_obj_as
 from pydantic.v1 import parse_raw_as
@@ -114,3 +114,17 @@ class OrderService(StoreApiService):
         async with self.session.get(url, params=params) as response:
             data = await response.json()
             return card.ResponseGetCardDto.parse_obj(data)
+
+    async def order_comments(self, order_id: int) -> List[domain.Comment]:
+        url = self.api_key + self.controller + f"/{order_id}/comments"
+        async with self.session.get(url) as response:
+            data = await response.json()
+            return parse_obj_as(List[domain.Comment], data)
+
+    async def add_comment(self, order_id: str, description: str) -> None:
+        url = self.api_key + self.controller + f"/{order_id}/comments"
+        request = loads(
+            comment.RequestCreateCommentDto(description=description).json(exclude_none=False))
+        async with self.session.post(url=url, json=request) as response:
+            data = await response.json()
+            return None

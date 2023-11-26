@@ -115,4 +115,6 @@ class Order(StatesGroup):
     orders_history = State()
     order = State()
     order_card = State()
+    order_comments = State()
+    order_comment = State()
     add_comment = State()

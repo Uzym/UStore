@@ -136,7 +136,7 @@ namespace TaskMgrAPI.Controllers
 
         [HttpGet("{cardId:long}/comment")]
         [RightTaskMgr("view_card")]
-        public async Task<ActionResult<List<long>>> GetComments(long cardId)
+        public async Task<ActionResult<List<CommentDto>>> GetComments(long cardId)
         {
             try
             {

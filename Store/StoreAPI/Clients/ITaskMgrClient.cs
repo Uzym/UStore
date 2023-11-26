@@ -1,4 +1,5 @@
 ﻿using StoreAPI.Dtos.Card;
+using StoreAPI.Dtos.Comment;
 
 namespace StoreAPI.Clients
 {
@@ -9,5 +10,9 @@ namespace StoreAPI.Clients
         Task<CardDto> CreateCard(long section_id, string tg_id, RequestCreateCardDto data);
 
         Task<long> GetSection(string telegramId);
+
+        Task<CardDto> AddComment(string telegramId, long cardId, RequestCreateCommentDto data);
+
+        Task<List<CommentDto>> GetComments(long cardId);
     }
 }

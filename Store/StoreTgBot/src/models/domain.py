@@ -26,6 +26,13 @@ class Card(BaseModel):
         )
 
 
+class Comment(BaseModel):
+    comment_id: int
+    description: str
+    user_id: int
+    card_id: int
+
+
 class Category(BaseModel):
     category_id: int
     title: str

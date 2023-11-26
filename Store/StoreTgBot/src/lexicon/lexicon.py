@@ -95,6 +95,7 @@ LEXICON: dict[str, str] = {
     "delete_series": emojize(":wastebasket: Удалить серию"),
     "search_products": emojize(":magnifying_glass_tilted_right: Поиск продуктов"),
     "products_list": emojize(":memo: Список продуктов"),
+    "order_products_list": emojize(":memo: Список продуктов (при нажатии удалит продкут из заказа)"),
     "product": emojize(":shopping_bags: Продукт"),
     "create_product": emojize(":plus: Создать продукт"),
     "update_product": emojize(":pencil: Изменить продукт"),
@@ -102,7 +103,11 @@ LEXICON: dict[str, str] = {
     "search_users": emojize(":bust_in_silhouette: Поиск людей"),
     "user_admin": emojize(":man_technologist: Сделать пользователя админом (удалить из админов)"),
     "orders_history": emojize(":globe_with_meridians: История заказов"),
-    "order": emojize(":shopping_card: Заказ"),
+    "order": emojize(":shopping_cart: Заказ"),
     "cancel_order": emojize(":wastebasket: Отменить заказ"),
     "confirm_order": emojize(":green_circle: Подтвердить заказ"),
+    "order_comments": emojize(":open_mailbox_with_raised_flag: Комментарии продавца"),
+    "comment": emojize(":speech_balloon: Комментарий"),
+    "add_comment": emojize(":pencil: Оставить комментарий"),
+    "input_comment": emojize(":pencil: Введите комментарий")
 }

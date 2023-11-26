@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using StoreAPI.Dtos.Card;
+using StoreAPI.Dtos.Comment;
 using System;
 using System.Text;
 
@@ -12,6 +13,27 @@ namespace StoreAPI.Clients
         public TaskMgrClient(HttpClient client)
         {
             _client = client;        
+        }
+
+        public async Task<CardDto> AddComment(string telegramId, long cardId, RequestCreateCommentDto data)
+        {
+            _client.DefaultRequestHeaders.Add("Telegram-Id", telegramId);
+            var content = new StringContent(
+                System.Text.Json.JsonSerializer.Serialize(data),
+                Encoding.UTF8,
+                "application/json");
+            var res = await _client.PostAsync(
+                $"{Environment.GetEnvironmentVariable("TASKMGR_API_URL")}/card/{cardId}/comment", 
+                content);
+            var resJson = await res.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<CardDto>(resJson);
+        }
+
+        public async Task<List<CommentDto>> GetComments(long cardId)
+        {
+            var res = await _client.GetAsync($"{Environment.GetEnvironmentVariable("TASKMGR_API_URL")}/card/{cardId}/comment");
+            var resJson = await res.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<CommentDto>>(resJson);
         }
 
         public async Task<CardDto> CreateCard(long section_id, string tg_id, RequestCreateCardDto data)

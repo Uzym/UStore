@@ -9,6 +9,7 @@ using StoreAPI.Dtos.Order;
 using StoreAPI.Dtos.Product;
 using StoreAPI.Models;
 using System;
+using StoreAPI.Dtos.Comment;
 
 namespace StoreAPI.Controllers
 {
@@ -122,6 +123,23 @@ namespace StoreAPI.Controllers
             OrderProductDto data)
         {
             var userId = await AuthUser(tg_id);
+            
+            var orderProduct = await _context.OrderProducts
+                .Where(op => op.OrderId == order_id && op.ProductId == data.product_id)
+                .FirstOrDefaultAsync();
+
+            if (orderProduct != null)
+            {
+                orderProduct.Quantity += data.quantity;
+                await _context.SaveChangesAsync();
+                return Ok(new OrderProductDto
+                {
+                    order_id = orderProduct.OrderId,
+                    product_id = orderProduct.ProductId,
+                    quantity = orderProduct.Quantity,
+                });
+            }
+            
             var order = await _context.Orders
                 .Include(o => o.OrderProducts)
                 .Where(o => o.OrderId == order_id && o.UserId == userId)
@@ -286,8 +304,8 @@ namespace StoreAPI.Controllers
 
                 sum += op.Quantity * op.Product.Cost * discount;
 
-                description += iter.ToString() + "): " + op.Product.Title + " - " + op.Quantity.ToString() + "шт\n\t";
-                description += op.Product.Description + "\n\t";
+                description += iter.ToString() + "): " + op.Product.Title + " - " + op.Quantity.ToString() + " шт\n\t";
+                //description += op.Product.Description + "\n\t";
                 description += "Цена: " + (op.Product.Cost).ToString() + "\n\t";
                 description += "Скидка: " + (1 - discount) * 100 + "%\n";
 
@@ -356,6 +374,38 @@ namespace StoreAPI.Controllers
                 .FirstOrDefaultAsync();
 
             return await _taskMgrClient.GetCardById(tg_id, cardId);
+        }
+
+        [HttpGet("{order_id}/comments")]
+        public async Task<ActionResult<List<CommentDto>>> GetComments(long order_id)
+        {
+            var cardId = await _context.Orders
+                .Where(o => o.OrderId == order_id)
+                .Select(o => o.CardId)
+                .FirstOrDefaultAsync();
+
+            return await _taskMgrClient.GetComments(cardId);
+        }
+
+        [HttpPost("{order_id}/comments")]
+        public async Task<ActionResult<CardDto>> AddComment(long order_id, RequestCreateCommentDto data)
+        {
+            var adminTgId = await _context.Users
+                .Where(u => u.Admin == true && u.Name.ToLower() == "иван павлов")
+                .Select(u => u.TgId)
+                .FirstOrDefaultAsync();
+
+            if (adminTgId == null)
+            {
+                return NotFound();
+            }
+
+            var cardId = await _context.Orders
+                .Where(o => o.OrderId == order_id)
+                .Select(o => o.CardId)
+                .FirstOrDefaultAsync();
+
+            return await _taskMgrClient.AddComment(adminTgId, cardId, data);
         }
     }
 }
