@@ -45,15 +45,18 @@ public class CardService : ICardService
         return rights;
     }
 
-    public async Task<List<Models.Card>> GetModels(long? id = null)
+    public async Task<List<Models.Card>> GetModels(long? id = null, string? telegramId = null)
     {
         var idCheck = id is null;
+        var telegramCheck = telegramId is null;
         var cards = await _context.Cards
             .Where(c => 
                 (c.CardId == id || idCheck)
             )
             .Include(c => c.Comments)
             .Include(c => c.Section)
+            .ThenInclude(c => c.Project)
+            .ThenInclude(c => c.UserProjects)
             .Include(c => c.UserCards)
             .ToListAsync();
 
@@ -182,5 +185,16 @@ public class CardService : ICardService
             )
             .ToListAsync();
         return await UserCard(cardId);
+    }
+
+    public Task<CardDto> Cards(string? title = null, string? description = null, long? sectionId = null, DateTime? due = null,
+        DateTime? complete = null, string? tag = null, long? userId = null)
+    {
+        // var cards = await _context.Cards
+        //     .Include(c => c.UserCards)
+        //     .Where(c => c.UserCards.Any(uc => uc.UserId == userId) || userId == null)
+        //     .Where(c => 
+        //         (c.Title) || )
+        throw new NotImplementedException();
     }
 }

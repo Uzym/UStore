@@ -24,6 +24,7 @@ class Section(StatesGroup):
 
 
 class Card(StatesGroup):
+    cards = State()
     card = State()
     update_title = State()
     update_description = State()

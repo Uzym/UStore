@@ -30,18 +30,18 @@ def parse_link_project(link: domain.Link):
 
 
 class ProjectService(TaskMgrApiService):
-    __instance = None
+    instance = None
 
     def __new__(cls, *args, **kwargs):
-        if cls.__instance is None:
-            cls.__instance = super().__new__(cls)
+        if cls.instance is None:
+            cls.instance = super().__new__(cls)
 
-        return cls.__instance
+        return cls.instance
 
     def __init__(self, api_key: str = None, logger: logging.Logger = None):
         super().__init__(api_key=api_key)
         self.logger = logger
-        self.controller = "/project"
+        self.controller = "/Project"
 
     async def get_project(self, project_id: int, telegram_id: str = None) -> project.ResponseGetProjectDto:
         headers = {

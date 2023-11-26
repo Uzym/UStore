@@ -25,9 +25,10 @@ public class CardsController : ODataController
     }
     
     [EnableQuery]
-    public async Task<ActionResult<IEnumerable<Card>>> Get()
+    public async Task<ActionResult<IEnumerable<Card>>> Get([FromHeader] string? telegramId)
     {
-        var items = await _cardService.GetModels();
+        
+        var items = await _cardService.GetModels(telegramId: telegramId);
         return Ok(items);
     }
 

@@ -34,13 +34,13 @@ def parse_link_card(link: domain.Link):
 
 
 class CardService(TaskMgrApiService):
-    __instance = None
+    instance = None
 
     def __new__(cls, *args, **kwargs):
-        if cls.__instance is None:
-            cls.__instance = super().__new__(cls)
+        if cls.instance is None:
+            cls.instance = super().__new__(cls)
 
-        return cls.__instance
+        return cls.instance
 
     controller = "/card"
 

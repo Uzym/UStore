@@ -3,13 +3,16 @@ import logging
 
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.types import BotCommandScopeDefault
 from aiogram_dialog import setup_dialogs
 
 from config import Config, load_config
-from src.lexicon import COMMANDS
-from src.lexicon.lexicon import BOT_NAME, BOT_DESCRIPTION, BOT_SHORT_DESCRIPTION
+from src.lexicon.lexicon import bot_lexicon, bot_description_lexicon, bot_short_description_lexicon
 from src.services import UserService, SectionService, CardService, ProjectService, RoleService
-from src.handlers import main_setup, project_setup, section_setup, card_setup
+from src.handlers import window_commands_router
+from src.components import help_dialog, main_dialog, project_dialog, select_object_dialog, input_dialog, section_dialog
+from src.services.odata_service import MyODataService
+from src.utils.window_builder import WindowBuilder
 
 logger = logging.getLogger(__name__)
 
@@ -25,25 +28,32 @@ def init_services(dp: Dispatcher, config: Config):
     dp["user_service"] = user_service
     project_service = ProjectService(api_key=config.api_key, logger=logger)
     dp["project_service"] = project_service
+    odata_service = MyODataService(api_key=config.api_key, logger=logger)
+    dp["odata_service"] = odata_service
 
 
 def setup_routers(dp: Dispatcher):
-    main_router, main_dialog = main_setup()
-    project_router, project_dialog = project_setup()
-    section_router, section_dialog = section_setup()
-    card_router, card_dialog = card_setup()
-
-    dp.include_router(main_router)
-    dp.include_router(project_router)
-    dp.include_router(section_router)
-    dp.include_router(card_router)
+    dp.include_router(window_commands_router)
 
     dp.include_router(main_dialog)
+    dp.include_router(help_dialog)
+    dp.include_router(select_object_dialog)
+    dp.include_router(input_dialog)
     dp.include_router(project_dialog)
     dp.include_router(section_dialog)
-    dp.include_router(card_dialog)
 
     setup_dialogs(dp)
+
+
+async def setup_bot_commands(bot: Bot, logger: logging.Logger):
+    commands = []
+    for builder in WindowBuilder.instances:
+        if builder.command is None:
+            continue
+        logger.info(str(builder.command))
+        commands.append(builder.command)
+
+    await bot.set_my_commands(commands)
 
 
 async def main():
@@ -64,11 +74,12 @@ async def main():
 
     init_services(dp=dp, config=config)
     setup_routers(dp=dp)
+
     try:
-        await bot.set_my_name(BOT_NAME)
-        await bot.set_my_description(BOT_DESCRIPTION)
-        await bot.set_my_short_description(BOT_SHORT_DESCRIPTION)
-        await bot.set_my_commands(COMMANDS)
+        await setup_bot_commands(bot, logger)
+        await bot.set_my_name(str(bot_lexicon))
+        await bot.set_my_description(str(bot_description_lexicon))
+        await bot.set_my_short_description(str(bot_short_description_lexicon))
     except:
         logger.info("Don't init bot")
 

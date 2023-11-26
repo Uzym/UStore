@@ -1,24 +1,33 @@
-from aiogram.types import BotCommand
 from emoji import emojize
 
-BOT_NAME = "Telegram Tasks Manager"
-BOT_DESCRIPTION = ("Данный бот помогает в работе с совместной работе над проектами, он основан на подходе к управлению "
-                   "задачами Kanban")
-BOT_SHORT_DESCRIPTION = "Telegram Task Manager"
+from src.utils.lexicon_generator import Lexicon, EntityLexicon
 
-START_COMMAND = "start"
-HELP_COMMAND = "help"
-PROJECTS_COMMAND = "projects"
-NEW_PROJECT_COMMAND = "new_project"
+cancel_lexicon = Lexicon(emojize("Выйти"), prefix=emojize(":up_arrow:"), suffix=emojize(":up_arrow:"))
+back_lexicon = Lexicon(emojize("Назад"), prefix=emojize(":left_arrow:"))
+next_lexicon = Lexicon(emojize("Далее"), suffix=emojize(":right_arrow:"))
+menu_lexicon = Lexicon(emojize("Меню"), prefix=emojize(":file_cabinet:"))
+calendar_lexicon = Lexicon(emojize("Календарь"), prefix=emojize(":calendar:"))
+list_lexicon = Lexicon(emojize("Список"), prefix=emojize(":level_slider:"))
+main_lexicon = Lexicon(emojize("Общее"), prefix=emojize(":placard:"))
+view_lexicon = Lexicon(emojize("Просмотр"))
+down_lexicon = Lexicon(emojize("Опуститься"), prefix=emojize(":down_arrow:"), suffix=emojize(":down_arrow:"))
+include_lexicon = Lexicon(emojize("Включить"), prefix=emojize(":check_mark_button:"))
+un_include_lexicon = Lexicon(emojize("Отключить"), prefix=emojize(":no_entry:"))
 
-COMMANDS = [
-    BotCommand(command=START_COMMAND, description="перейти в главное меню"),
-    BotCommand(command=HELP_COMMAND, description="открыть справку"),
-    BotCommand(command=PROJECTS_COMMAND, description="открыть проекты"),
-    BotCommand(command=NEW_PROJECT_COMMAND, description="создать проект"),
-]
+title_lexicon = EntityLexicon(emojize("Название"))
+description_lexicon = EntityLexicon(emojize(":receipt:Описание"))
 
-LEXICON: dict[str, str] = {
+project_lexicon = EntityLexicon(emojize(":file_folder:Проект"))
+section_lexicon = EntityLexicon(emojize(":bookmark_tabs:Дорожки"))
+card_lexicon = EntityLexicon(emojize(":credit_card:Задача"))
+
+
+bot_lexicon = Lexicon("Telegram Tasks Manager")
+bot_description_lexicon = Lexicon("Данный бот помогает в работе с совместной работе над проектами, он основан на "
+                                  "подходе к управлению задачами Kanban")
+bot_short_description_lexicon = Lexicon("Telegram Task Manager")
+
+LEXICON: dict[str, str] = { # удалить потом
     "main_window": emojize(":up_arrow:Главное меню"),
     "get_me": emojize(":factory_worker:Мой аккаунт"),
     "projects": emojize(":file_folder:Ваши проекты"),

@@ -19,6 +19,8 @@ using TaskMgrAPI.Services.Project;
 using TaskMgrAPI.Services.Role;
 using TaskMgrAPI.Services.Section;
 using TaskMgrAPI.Services.User;
+using TaskMgrAPI.Services.UserCard;
+using TaskMgrAPI.Services.UserProject;
 
 namespace TaskMgrAPI
 {
@@ -62,7 +64,8 @@ namespace TaskMgrAPI
             builder.Services.AddScoped<ICardService, CardService>();
             builder.Services.AddScoped<ISectionService, SectionService>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
-            
+            builder.Services.AddScoped<IUserCardService, UserCardService>();
+            builder.Services.AddScoped<IUserProjectService, UserProjectService>();
 
             var app = builder.Build();
 
@@ -90,6 +93,8 @@ namespace TaskMgrAPI
             odataBuilder.EntitySet<Role>("Roles");
             odataBuilder.EntitySet<Section>("Sections");
             odataBuilder.EntitySet<Project>("Projects");
+            odataBuilder.EntitySet<UserCard>("UserCards");
+            odataBuilder.EntitySet<UserProject>("UserProjects");
 
             return odataBuilder.GetEdmModel();
         }
