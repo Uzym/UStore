@@ -27,13 +27,13 @@ def parse_link_section(link: domain.Link):
 
 
 class SectionService(TaskMgrApiService):
-    __instance = None
+    instance = None
 
     def __new__(cls, *args, **kwargs):
-        if cls.__instance is None:
-            cls.__instance = super().__new__(cls)
+        if cls.instance is None:
+            cls.instance = super().__new__(cls)
 
-        return cls.__instance
+        return cls.instance
 
     def __init__(self, api_key: str = None, card_service: CardService = None, logger: Logger = None):
         super().__init__(api_key)

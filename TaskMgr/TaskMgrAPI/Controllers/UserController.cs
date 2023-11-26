@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Xml.Linq;
 using TaskMgrAPI.Context;
+using TaskMgrAPI.Dtos.Card;
 using TaskMgrAPI.Models;
 
 using TaskMgrAPI.Dtos.User;
+using TaskMgrAPI.Services.Card;
 using TaskMgrAPI.Services.User;
 
 namespace TaskMgrAPI.Controllers
@@ -15,10 +17,12 @@ namespace TaskMgrAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly ICardService _cardService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, ICardService cardService)
         {
             _userService = userService;
+            _cardService = cardService;
         }
 
         [Route("{userId:long}")]
@@ -63,6 +67,26 @@ namespace TaskMgrAPI.Controllers
             {
                 var user = await _userService.Get(telegramId: telegramId, name: name);
                 return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("{userId:long}/card")]
+        public async Task<ActionResult<List<CardDto>>> GetUserCards(
+            long userId,
+            [FromQuery(Name="title")] string? title,
+            [FromQuery(Name="due")] DateTime? due,
+            [FromQuery(Name="complete")] DateTime? complete,
+            [FromQuery(Name="tag")] string? tag
+        )
+        {
+            try
+            {
+                
+                return Ok();
             }
             catch (Exception ex)
             {

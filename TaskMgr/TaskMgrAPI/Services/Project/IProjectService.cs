@@ -12,4 +12,7 @@ public interface IProjectService
     public Task<List<UserRoleDto>> UserProject(long projectId);
     public Task<List<UserRoleDto>> AddUser(long userId, long projectId, long roleId);
     public Task<List<UserRoleDto>> RemoveUser(long userId, long projectId);
+    public Task<List<Models.Project>> GetModels(
+        long? id = null
+    );
 }

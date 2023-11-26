@@ -73,4 +73,18 @@ public class CommentService : ICommentService
             
         return TranslateIntoDto(model);
     }
+
+    public async Task<List<Models.Comment>> GetModels(long? id = null)
+    {
+        var idCheck = id is null;
+        var items = await _context.Comments
+            .Where(c => 
+                (c.CommentId == id || idCheck)
+            )
+            .Include(c => c.User)
+            .Include(c => c.Card)
+            .ToListAsync();
+
+        return items;
+    }
 }

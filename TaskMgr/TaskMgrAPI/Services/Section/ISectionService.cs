@@ -8,5 +8,8 @@ public interface ISectionService
     Task<List<SectionDto>> Get(long? id = null, string? title = null, long? projectId = null);
     Task<SectionDto> Create(string title, long projectId);
     Task<SectionDto> Update(long id, string? title = null, long? projectId = null);
+    public Task<List<Models.Section>> GetModels(
+        long? id = null
+    );
     Task<long> GetSectionId(string telegramId);
 }

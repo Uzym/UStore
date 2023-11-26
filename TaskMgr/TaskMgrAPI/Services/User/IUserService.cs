@@ -5,4 +5,7 @@ public interface IUserService
 {
     public Task<List<UserDto>> Get(long? id = null, string? telegramId = null, string? name = null);
     public Task<UserDto> Create(string telegramId, string name);
+    public Task<List<Models.User>> GetModels(
+        long? id = null
+    );
 }

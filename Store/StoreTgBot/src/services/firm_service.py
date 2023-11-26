@@ -35,7 +35,6 @@ class FirmService(StoreApiService):
         async with self.session.post(url, json=request) as response:
             data = await response.json()
             return domain.Firm.parse_obj(data)
-
     async def firms(self, title: Optional[str] = None, description: Optional[str] = None,
                     discount: Optional[float] = None, series_id: Optional[int] = None) \
             -> List[domain.Firm]:

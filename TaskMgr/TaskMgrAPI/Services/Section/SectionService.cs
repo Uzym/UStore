@@ -105,6 +105,19 @@ public class SectionService : ISectionService
         return TranslateIntoDto(section);
     }
 
+    public async Task<List<Models.Section>> GetModels(long? id = null)
+    {
+        var idCheck = id is null;
+        var items = await _context.Sections
+            .Where(c => 
+                (c.SectionId == id || idCheck)
+            )
+            .Include(c => c.Project)
+            .Include(c => c.Cards)
+            .ToListAsync();
+
+        return items;
+
     public async Task<long> GetSectionId(string telegramId)
     {
         var user = await _context.Users
@@ -126,6 +139,6 @@ public class SectionService : ISectionService
         return await _context.Sections
             .Where(s => s.ProjectId == projectId)
             .Select(s => s.SectionId)
-            .FirstOrDefaultAsync();
+
     }
 }
