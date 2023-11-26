@@ -30,26 +30,26 @@ const MiddleCard: FC<MiddleCardProps> = ({
 }) => {
 	const [photo, setPhoto] = useState<string>()
 
-	const { data: img, isSuccess } = useQuery({
+	const { data: imgs, isSuccess } = useQuery({
 		queryKey: ['MiddleCard', firmId, productId, seriesId, href],
 		queryFn: () => photoService.getPhotos({ firmId, productId, seriesId }),
 		enabled: !!firmId || !!productId || !!seriesId,
 	})
 
-	const mutationPhoto = useMutation({
+	const { mutate: mutationPhoto } = useMutation({
 		mutationFn: (name: string) => fileService.downloadFile(name),
 	})
 
 	useEffect(() => {
-		if (isSuccess && img[0]?.name) {
-			mutationPhoto.mutate(img[0].name, {
+		if (isSuccess && imgs[0]?.name) {
+			mutationPhoto(imgs[0].name, {
 				onSuccess: (photo: Blob | null) => {
 					photo && setPhoto(URL.createObjectURL(photo))
 				},
 			})
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [img])
+	}, [imgs])
 
 	return (
 		<Box className={styles.card}>

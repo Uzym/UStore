@@ -1,11 +1,11 @@
 .card {
-	@apply relative w-[360px] h-[170px] rounded-[20px];
+	@apply relative w-[22.5rem] h-[10.625rem] rounded-[20px];
 
 	.title {
 		@apply text-[2rem] font-semibold absolute z-10 top-2 left-4;
 	}
 
 	.img {
-		@apply rounded-[20px] w-[360px] h-[170px];
+		@apply w-[22.5rem] h-[10.625rem] rounded-[20px];
 	}
 }

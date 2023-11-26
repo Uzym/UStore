@@ -5,10 +5,6 @@
 		@apply opacity-0 invisible -translate-y-[120%];
 	}
 
-	.list {
-		@apply max-h-[60%] flex flex-col gap-8 overflow-auto;
-	}
-
 	.costContainer {
 		@apply mt-6 flex justify-between;
 

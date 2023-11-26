@@ -1,14 +1,17 @@
 'use client'
 
-import { Box, IconButton, List, ListItem, Typography } from '@mui/material'
-import styles from './CartDialog.module.scss'
+import { Box, IconButton, LinearProgress, Typography } from '@mui/material'
 import CloseCartDialogIcon from '@/components/ui/CloseCartDialogIcon/CloseCartDialogIcon'
-import { Dispatch, FC, SetStateAction } from 'react'
-import BasketCard from '@/components/shared/BasketCard/BasketCard'
+import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import classNames from 'classnames'
 import CustomButton from '@/components/ui/CustomButton/CustomButton'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { orderService } from '@/services/orderService'
+import { OrderProduct } from '@/shared/interfaces/OrderProduct'
+import ProductsListSection from '../ProductsListSection/ProductsListSection'
+import NotFoundDataText from '@/components/ui/NotFoundDataText/NotFoundDataText'
+import styles from './CartDialog.module.scss'
+import Link from 'next/link'
 
 interface CartDialogProps {
 	isCartOpen: boolean
@@ -16,20 +19,23 @@ interface CartDialogProps {
 }
 
 const CartDialog: FC<CartDialogProps> = ({ isCartOpen, setIsCartOpen }) => {
+	const [orderProducts, setOrderProducts] = useState<OrderProduct[]>()
+
 	const { data: orders, isSuccess } = useQuery({
 		queryKey: ['orders'],
 		queryFn: () =>
-			orderService.getOrders(
-				window.Telegram.WebApp.initDataUnsafe.user!.id,
-				false
+			orderService.createOrder(
+				{
+					user_id: 0,
+					card_id: null,
+					finished: null,
+					price: null,
+				},
+				window.Telegram.WebApp.initDataUnsafe.user!.id
 			),
 	})
-	//TODO: доделать
-	const {
-		mutate,
-		data: products,
-		isSuccess: isSuccessProducts,
-	} = useMutation({
+
+	const { mutate: mutateOrderProducts } = useMutation({
 		mutationFn: (orderId: number) =>
 			orderService.getOrderProducts(
 				window.Telegram.WebApp.initDataUnsafe.user!.id,
@@ -37,9 +43,16 @@ const CartDialog: FC<CartDialogProps> = ({ isCartOpen, setIsCartOpen }) => {
 			),
 	})
 
-	if (isSuccess && orders[0]?.order_id) {
-		mutate(orders[0]?.order_id)
-	}
+	useEffect(() => {
+		if (isSuccess && orders?.card_id) {
+			mutateOrderProducts(orders.card_id, {
+				onSuccess: orderProducts => {
+					setOrderProducts(orderProducts)
+				},
+			})
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [orders])
 
 	return (
 		<Box
@@ -47,16 +60,19 @@ const CartDialog: FC<CartDialogProps> = ({ isCartOpen, setIsCartOpen }) => {
 				[styles.hiddenCart]: !isCartOpen,
 			})}
 		>
-			<List className={styles.list} disablePadding>
-				<ListItem disablePadding>
-					<BasketCard
-						text='Мужские кроссовки adidas Originals OZWEEGO'
-						cost='13 999 ₽'
-					/>
-				</ListItem>
-			</List>
+			{orderProducts?.length ? (
+				<>
+					<ProductsListSection orderProducts={orderProducts} />
+				</>
+			) : (
+				<NotFoundDataText />
+			)}
 			<Box className={styles.costContainer}>
-				<CustomButton>перейти к оформлению</CustomButton>
+				<CustomButton>
+					<Link href={'/confirm'} onClick={() => setIsCartOpen(false)}>
+						перейти к оформлению
+					</Link>
+				</CustomButton>
 				<Typography className={styles.cost}>41 997 ₽</Typography>
 			</Box>
 			<IconButton

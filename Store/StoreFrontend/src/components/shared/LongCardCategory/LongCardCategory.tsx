@@ -22,26 +22,26 @@ const LongCardCategory: FC<LongCardCategoryProps> = ({
 }) => {
 	const [photo, setPhoto] = useState<string>()
 
-	const { data: img, isSuccess } = useQuery({
+	const { data: imgs, isSuccess } = useQuery({
 		queryKey: ['LongCardCategory', categoryId],
 		queryFn: () => photoService.getPhotos({ categoryId }),
 		enabled: !!categoryId,
 	})
 
-	const mutationPhoto = useMutation({
+	const { mutate: mutationPhoto } = useMutation({
 		mutationFn: (data: string) => fileService.downloadFile(data),
 	})
 
 	useEffect(() => {
-		if (isSuccess && img[0]?.name) {
-			mutationPhoto.mutate(img[0].name, {
+		if (isSuccess && imgs[0]?.name) {
+			mutationPhoto(imgs[0].name, {
 				onSuccess: (photo: Blob | null) => {
 					photo && setPhoto(URL.createObjectURL(photo))
 				},
 			})
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [img])
+	}, [imgs])
 
 	return (
 		<Box className={styles.card}>
@@ -61,7 +61,7 @@ const LongCardCategory: FC<LongCardCategoryProps> = ({
 						{categoryId ? (
 							<Skeleton variant='rounded' className={styles.img} />
 						) : (
-							<Box className='bg-gray-300 w-[360px] h-[170px] rounded-[20px]' />
+							<Box className='bg-gray-300 w-[22.5rem] h-[10.625rem] rounded-[20px]' />
 						)}
 					</>
 				)}

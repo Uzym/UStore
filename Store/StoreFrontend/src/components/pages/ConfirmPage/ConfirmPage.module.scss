@@ -1,0 +1,13 @@
+.titleWrap {
+	.title {
+		@apply w-24 font-semibold;
+	}
+}
+
+.textField {
+	@apply rounded-lg bg-[#d9d9d9];
+}
+
+.inputProps {
+	@apply rounded-lg;
+}
