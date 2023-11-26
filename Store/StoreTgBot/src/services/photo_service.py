@@ -3,15 +3,22 @@ import logging
 from .store_api import StoreApiService
 from src.models import domain, photo
 from typing import List, Optional
-from pydantic import parse_raw_as
+from pydantic.v1 import parse_raw_as
 from json import loads
 
 from ..models.domain import Photo
 
 
 class PhotoService(StoreApiService):
+    __instance = None
 
-    def __init__(self, api_key: str, logger: logging.Logger):
+    def __new__(cls, *args, **kwargs):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+
+        return cls.__instance
+
+    def __init__(self, api_key: str = None, logger: logging.Logger = None):
         super().__init__(api_key=api_key)
         self.logger = logger
         self.controller = "/photo"
@@ -54,5 +61,4 @@ class PhotoService(StoreApiService):
         async with self.session.get(url, params=params) as response:
             if response.status == 200:
                 data = await response.read()
-                self.logger.info(data)
                 return parse_raw_as(List[Photo], data)

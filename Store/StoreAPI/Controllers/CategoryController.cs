@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cors;
 using StoreAPI.Context;
 using StoreAPI.Dtos.Category;
 
@@ -8,6 +9,7 @@ namespace StoreAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [EnableCors]
     public class CategoryController : ControllerBase
     {
         private readonly StoreContext _context;
@@ -70,6 +72,25 @@ namespace StoreAPI.Controllers
             await _context.SaveChangesAsync();
 
             return await Index(category_id);
+        }
+
+        [HttpDelete("{category_id}/delete")]
+        public async Task<ActionResult<bool>> DeleteCategory(
+            long category_id
+            )
+        {
+            var category = await _context.Categories
+                .FindAsync(category_id);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            _context.Categories.Remove(category);
+            await _context.SaveChangesAsync();
+
+            return Ok(true);
         }
 
         [HttpGet]

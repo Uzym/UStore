@@ -1,3 +1,4 @@
+
 ## Комманды
 ### Создать
 - `/new_product title; description; cost; category_title; series_title; delivery_time; discount + прикрепленные фото`
@@ -26,3 +27,4 @@
   - удалить объект серии
 - `/update_firm firm_id`
   - удалить объект фирмы
+

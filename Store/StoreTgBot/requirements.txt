@@ -1,6 +1,7 @@
-pydantic==1.10.4
+pydantic==2.3.0
 nest-asyncio==1.5.5
-aiogram==3.0.0b7
+aiogram==3.1.1
+aiogram_dialog==2.0.0
 requests==2.28.1
 emoji==2.2.0
 python-dotenv==1.0.0

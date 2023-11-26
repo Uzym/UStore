@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cors;
 using StoreAPI.Context;
 using StoreAPI.Dtos.Product;
 
@@ -8,6 +9,7 @@ namespace StoreAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [EnableCors]
     public class ProductController : ControllerBase
     {
         private readonly StoreContext _context;
@@ -53,7 +55,7 @@ namespace StoreAPI.Controllers
             return await Index(id[0]);
         }
 
-        [HttpPut]
+        [HttpPut("{product_id}/update")]
         public async Task<ActionResult<ProductDto>> UpdateProduct(
             long product_id,
             RequestCreateProductDto data
@@ -61,7 +63,7 @@ namespace StoreAPI.Controllers
         {
             var product = await _context.Products
                 .FindAsync(product_id);
-
+            
             if (product == null)
             {
                 return NotFound();
@@ -80,10 +82,30 @@ namespace StoreAPI.Controllers
             return await Index(product.ProductId);
         }
 
+        [HttpDelete("{product_id}/delete")]
+        public async Task<ActionResult<bool>> DeleteFirm(
+            long product_id
+            )
+        {
+            var product = await _context.Products
+                .FindAsync(product_id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+
+            return Ok(true);
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<ProductDto>>> GetByFilters(
             long? category_id,
             long? series_id,
+            long? firm_id,
             string? title,
             string? description,
             decimal? cost,
@@ -92,13 +114,15 @@ namespace StoreAPI.Controllers
             )
         {
             var products = await _context.Products
+                .Include(p => p.Series)
                 .Where(p => (category_id == null || p.CategoryId == category_id) &&
                             (series_id == null || p.SeriesId == series_id) &&
                             (title ==  null || p.Title == title) &&
                             (description == null || p.Description == description) &&
                             (cost == null ||  p.Cost == cost) &&
                             (discount == null || p.Discount == discount) &&
-                            (delivery_time == null ||  p.DeliveryTime == delivery_time))
+                            (delivery_time == null ||  p.DeliveryTime == delivery_time) &&
+                            (firm_id == null || (p.Series != null && p.Series.FirmId == firm_id)))
                 .Select(p => new ProductDto
                 {
                     product_id = p.ProductId,

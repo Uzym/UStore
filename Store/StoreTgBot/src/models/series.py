@@ -1,9 +1,9 @@
-from pydantic import BaseModel
+from pydantic.v1 import BaseModel
 from typing import List, Optional
 
 
 class RequestCreateSeries(BaseModel):
-    title: str
+    title: Optional[str] = None
     description: Optional[str] = None
     discount: Optional[float] = None
     firm_id: Optional[int] = None

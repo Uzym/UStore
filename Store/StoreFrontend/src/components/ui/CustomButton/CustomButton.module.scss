@@ -1,0 +1,7 @@
+.btn {
+	@apply transition-all;
+
+	&:active {
+		@apply -translate-y-[-0.125rem] shadow-lg;
+	}
+}

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.StaticFiles;
 using Minio;
 using System.Text.RegularExpressions;
@@ -7,7 +8,7 @@ namespace S3_Service.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    // [EnableCors]
+    [EnableCors]
     public class FilesController : ControllerBase
     {
         private const string BucketName = "store";

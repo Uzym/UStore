@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cors;
 using StoreAPI.Clients;
 using StoreAPI.Context;
 using StoreAPI.Dtos.Card;
@@ -11,8 +12,9 @@ using System;
 
 namespace StoreAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
+    [EnableCors]
     public class OrderController : ControllerBase
     {
         private readonly StoreContext _context;
@@ -34,7 +36,9 @@ namespace StoreAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<OrderDto>>> Get([FromHeader(Name = "Telegram-Id")] string tg_id, bool? finished)
+        public async Task<ActionResult<List<OrderDto>>> Get(
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id, bool? finished)
         {
             var userId = await AuthUser(tg_id);
             var orders = await _context.Orders
@@ -54,7 +58,9 @@ namespace StoreAPI.Controllers
         }
 
         [HttpGet("{order_id}")]
-        public async Task<ActionResult<OrderDto>> Index([FromHeader(Name = "Telegram-Id")] string tg_id, long order_id)
+        public async Task<ActionResult<OrderDto>> Index(
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id, long order_id)
         {
             var userId = await AuthUser(tg_id);
             var order = await _context.Orders
@@ -78,7 +84,8 @@ namespace StoreAPI.Controllers
 
         [HttpPost]
         public async Task<ActionResult<OrderDto>> CreateOrder(
-            [FromHeader(Name = "Telegram-Id")] string tg_id,
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id,
             RequestCreateOrderDto data)
         {
             var userId = await AuthUser(tg_id);
@@ -109,7 +116,8 @@ namespace StoreAPI.Controllers
 
         [HttpPost("{order_id}/products")]
         public async Task<ActionResult<OrderProductDto>> AddOrderProduct(
-            [FromHeader(Name = "Telegram-Id")] string tg_id,
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id,
             long order_id,
             OrderProductDto data)
         {
@@ -146,7 +154,8 @@ namespace StoreAPI.Controllers
 
         [HttpGet("{order_id}/products")]
         public async Task<ActionResult<List<OrderProductDto>>> GetOrderProducts(
-            [FromHeader(Name = "Telegram-Id")] string tg_id,
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id,
             long order_id)
         {
             await AuthUser(tg_id);
@@ -164,7 +173,8 @@ namespace StoreAPI.Controllers
 
         [HttpPatch("{order_id}/product/{product_id}/delete")]
         public async Task<ActionResult<OrderDto>> DeleteOrderProduct(
-            [FromHeader(Name = "Telegram-Id")] string tg_id,
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id,
             long order_id,
             long product_id)
         {
@@ -194,7 +204,8 @@ namespace StoreAPI.Controllers
 
         [HttpDelete("{order_id}")]
         public async Task<ActionResult<bool>> DeleteOrder(
-            [FromHeader(Name = "Telegram-Id")] string tg_id,
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id,
             long order_id)
         {
             var userId = await AuthUser(tg_id);
@@ -214,9 +225,10 @@ namespace StoreAPI.Controllers
 
         [HttpPatch("{order_id}/confirm")]
         public async Task<ActionResult<ResponseGetCardDto>> ConfirmOrder(
-            long order_id, 
-            long section_id,
-            [FromHeader(Name = "Telegram-Id")] string tg_id)
+            long order_id,
+            //long section_id,
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id)
         {
             var userId = await AuthUser(tg_id);
             var user = await _context.Users
@@ -272,11 +284,11 @@ namespace StoreAPI.Controllers
 
                 discount = Math.Min(discount, categoryDiscount);
 
-                sum += (op.Quantity - 1) * op.Product.Cost + op.Product.Cost * discount;
+                sum += op.Quantity * op.Product.Cost * discount;
 
                 description += iter.ToString() + "): " + op.Product.Title + " - " + op.Quantity.ToString() + "шт\n\t";
                 description += op.Product.Description + "\n\t";
-                description += "Цена: " + (op.Product.Cost * discount).ToString() + "\n\t";
+                description += "Цена: " + (op.Product.Cost).ToString() + "\n\t";
                 description += "Скидка: " + (1 - discount) * 100 + "%\n";
 
                 if (DateTime.Now.AddHours(3) + op.Product.DeliveryTime > due)
@@ -304,7 +316,7 @@ namespace StoreAPI.Controllers
             };
 
             var adminTgId = await _context.Users
-                .Where(u => u.Admin == true)
+                .Where(u => u.Admin == true && u.Name.ToLower() == "иван павлов")
                 .Select(u => u.TgId)
                 .FirstOrDefaultAsync();
 
@@ -312,6 +324,8 @@ namespace StoreAPI.Controllers
             {
                 return NotFound();
             }
+
+            var section_id = await _taskMgrClient.GetSection(adminTgId);
 
             var cardResponse = await _taskMgrClient.CreateCard(
                 section_id,
@@ -328,7 +342,8 @@ namespace StoreAPI.Controllers
 
         [HttpGet("{order_id}/card")]
         public async Task<ActionResult<ResponseGetCardDto>> GetTaskMgrCard(
-            [FromHeader(Name = "Telegram-Id")] string tg_id,
+            //[FromHeader(Name = "Telegram-Id")] 
+            string tg_id,
             long order_id)
         {
             var userId = await AuthUser(tg_id);

@@ -1,9 +1,9 @@
-from pydantic import BaseModel
+from pydantic.v1 import BaseModel
 from typing import List, Optional
 
 
 class RequestCreateProduct(BaseModel):
-    category_id: int
+    category_id: Optional[int] = None
     series_id: Optional[int] = None
     title: Optional[str] = None
     description: Optional[str] = None

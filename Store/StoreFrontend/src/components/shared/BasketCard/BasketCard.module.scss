@@ -1,0 +1,23 @@
+.card {
+	@apply w-full min-h-[6.25rem] flex justify-between;
+
+	.img {
+		@apply rounded-[20px] w-[100px] h-[100px];
+	}
+
+	.content {
+		@apply max-w-[10.625rem] mt-2;
+
+		.cost {
+			@apply text-sm font-semibold;
+		}
+
+		.text {
+			@apply text-xs;
+		}
+	}
+
+	.iconButton {
+		@apply self-start;
+	}
+}

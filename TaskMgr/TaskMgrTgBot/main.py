@@ -82,7 +82,6 @@ async def main():
         await bot.set_my_short_description(str(bot_short_description_lexicon))
     except:
         logger.info("Don't init bot")
-
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 

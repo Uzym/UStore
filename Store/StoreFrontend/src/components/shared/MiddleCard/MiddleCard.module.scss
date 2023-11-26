@@ -1,0 +1,19 @@
+.card {
+	@apply w-[10.625rem];
+
+	.img {
+		@apply rounded-[20px] w-[170px] h-[170px];
+	}
+
+	.title {
+		@apply text-center text-xl font-semibold pt-1;
+	}
+
+	.price {
+		@apply text-center text-sm font-semibold pt-1;
+	}
+
+	.descriptions {
+		@apply text-center text-xs;
+	}
+}
