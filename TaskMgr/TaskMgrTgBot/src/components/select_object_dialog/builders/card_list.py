@@ -9,6 +9,7 @@ from odata.query import Query
 
 from generated import taskmgr
 from generated.taskmgr import Sections, Cards
+from src.components.card_dialog.state import CardDialog
 from src.components.input_dialog.dialog import start_variable, input_variable, to_variable
 from src.components.input_dialog.state import InputDialog
 from src.components.select_object_dialog.filter import CardFilter, get_filter_buttons
@@ -22,13 +23,12 @@ from src.utils.window_builder import WindowBuilder
 
 async def on_click_item_card(callback: CallbackQuery, widget: Any, manager: DialogManager, item_id: str):
     if manager.start_data[start_variable]:
-        print(item_id)
-        # await manager.start(
-        #     state=SectionDialog.item,
-        #     data={
-        #         str(VariableGenerator(str(taskmgr.Section.SectionId))): int(item_id)
-        #     }
-        # )
+        await manager.start(
+            state=CardDialog.item,
+            data={
+                str(VariableGenerator(str(taskmgr.Card.CardId))): int(item_id)
+            }
+        )
     else:
         await manager.done(
             result={

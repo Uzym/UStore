@@ -10,7 +10,8 @@ from config import Config, load_config
 from src.lexicon.lexicon import bot_lexicon, bot_description_lexicon, bot_short_description_lexicon
 from src.services import UserService, SectionService, CardService, ProjectService, RoleService
 from src.handlers import window_commands_router
-from src.components import help_dialog, main_dialog, project_dialog, select_object_dialog, input_dialog, section_dialog
+from src.components import help_dialog, main_dialog, project_dialog, select_object_dialog, input_dialog, section_dialog, \
+    card_dialog
 from src.services.odata_service import MyODataService
 from src.utils.window_builder import WindowBuilder
 
@@ -41,6 +42,7 @@ def setup_routers(dp: Dispatcher):
     dp.include_router(input_dialog)
     dp.include_router(project_dialog)
     dp.include_router(section_dialog)
+    dp.include_router(card_dialog)
 
     setup_dialogs(dp)
 

@@ -30,3 +30,6 @@ class VariableGenerator:
 
     def format_description(self):
         return Format(html.italic(self.format_variable()))
+
+    def format_item(self, prefix: str = ""):
+        return Format(prefix + self.format_variable())

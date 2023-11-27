@@ -29,7 +29,9 @@ async def on_click_select_section(callback: CallbackQuery, button_local: Button,
         state=SelectObjectDialog.section_list,
         data={
             to_variable: button_local.widget_id,
-            start_variable: True
+            start_variable: True,
+            str(VariableGenerator(str(taskmgr.Project.ProjectId))):
+                manager.start_data[str(VariableGenerator(str(taskmgr.Project.ProjectId)))]
         }
     )
 
