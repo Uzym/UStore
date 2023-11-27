@@ -13,13 +13,20 @@ view_lexicon = Lexicon(emojize("Просмотр"))
 down_lexicon = Lexicon(emojize("Опуститься"), prefix=emojize(":down_arrow:"), suffix=emojize(":down_arrow:"))
 include_lexicon = Lexicon(emojize("Включить"), prefix=emojize(":check_mark_button:"))
 un_include_lexicon = Lexicon(emojize("Отключить"), prefix=emojize(":no_entry:"))
+created_lexicon = Lexicon("Создано", prefix=emojize(":information:"))
+due_lexicon = Lexicon("Срок", prefix=emojize(":spiral_calendar:"))
+complete_lexicon = Lexicon("Завершено", prefix=emojize(":check_mark_button:"))
+un_complete_lexicon = Lexicon("Отменить", prefix=emojize(":no_entry:"))
 
 title_lexicon = EntityLexicon(emojize("Название"))
 description_lexicon = EntityLexicon(emojize(":receipt:Описание"))
+tags_lexicon = EntityLexicon("#Теги")
+due_prop_lexicon = EntityLexicon(str(due_lexicon))
 
 project_lexicon = EntityLexicon(emojize(":file_folder:Проект"))
 section_lexicon = EntityLexicon(emojize(":bookmark_tabs:Дорожки"))
 card_lexicon = EntityLexicon(emojize(":credit_card:Задача"))
+comment_lexicon = EntityLexicon(emojize(":credit_card:Комментарий"), many=emojize(":credit_card:Комментарии"))
 
 
 bot_lexicon = Lexicon("Telegram Tasks Manager")

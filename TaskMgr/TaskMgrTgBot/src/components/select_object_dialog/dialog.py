@@ -41,4 +41,5 @@ dialog_b = DialogBuilder(
 ).apply_configuration()
 
 project_button = dialog_b.get_button(SelectObjectDialog.project_list)
+section_button = dialog_b.get_button(SelectObjectDialog.section_list)
 dialog = dialog_b.get_dialog()

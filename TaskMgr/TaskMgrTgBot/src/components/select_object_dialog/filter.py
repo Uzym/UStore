@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Type
+from typing import Type, Any
 
 from aiogram import F
 from aiogram.types import CallbackQuery
@@ -10,10 +10,11 @@ from odata.query import Query
 
 from generated import taskmgr
 from generated.taskmgr import Cards
+from src.components.card_dialog.state import CardDialog
 from src.components.input_dialog.dialog import to_variable, start_variable
 from src.components.select_object_dialog.state import SelectObjectDialog
-from src.lexicon.lexicon import section_lexicon, project_lexicon, include_lexicon, un_include_lexicon
-from src.services import UserService
+from src.lexicon.lexicon import section_lexicon, project_lexicon, include_lexicon, un_include_lexicon, card_lexicon
+from src.services import UserService, SectionService
 from src.services.odata_service import MyODataService
 from src.utils.variable_generator import VariableGenerator
 
@@ -58,8 +59,31 @@ select_section_button = Button(
 )
 
 
+async def on_click_card_create(callback: CallbackQuery, widget: Any, manager: DialogManager):
+    section_service: SectionService = SectionService.instance
+    item = await section_service.create_card(
+        section_id=manager.start_data[str(VariableGenerator(str(taskmgr.Section.SectionId)))],
+        title="Без названия",
+        telegram_id=str(manager.event.from_user.id)
+    )
+    await manager.start(
+        state=CardDialog.update,
+        data={
+            str(VariableGenerator(str(taskmgr.Card.CardId))): item.card_id
+        }
+    )
+
+create_card_button = Button(
+    id="create_card_button",
+    text=Const(str(card_lexicon.create)),
+    on_click=on_click_card_create,
+    when=F["start_data"][str(VariableGenerator(str(taskmgr.Section.SectionId)))].is_not(None)
+)
+
+
 def get_filter_buttons():
     return Group(
+        create_card_button,
         Row(
             select_project_button,
             select_section_button,
