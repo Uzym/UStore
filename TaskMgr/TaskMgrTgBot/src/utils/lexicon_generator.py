@@ -36,6 +36,7 @@ class EntityLexicon(Lexicon):
     def __init__(self, title: str, one: str = None, many: str = None,
                  update: str = None, create: str = None, delete: str = None):
         super().__init__(title=title)
+
         self.update = ActionLexicon(emojize(":pencil:Изменить"), self, update)
         self.create = ActionLexicon(emojize(":droplet:Создать"), self, create)
         self.delete = ActionLexicon(emojize(":fire:Удалить"), self, delete)
