@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cors;
 using StoreAPI.Context;
 using StoreAPI.Dtos.Firm;
 
@@ -8,6 +9,7 @@ namespace StoreAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [EnableCors]
     public class FirmController : ControllerBase
     {
         private readonly StoreContext _context;
@@ -72,17 +74,39 @@ namespace StoreAPI.Controllers
             return await Index(firm_id);
         }
 
+        [HttpDelete("{firm_id}/delete")]
+        public async Task<ActionResult<bool>> DeleteFirm(
+            long firm_id
+            )
+        {
+            var firm = await _context.Firms
+                .FindAsync(firm_id);
+
+            if (firm == null)
+            {
+                return NotFound();
+            }
+
+            _context.Firms.Remove(firm);
+            await _context.SaveChangesAsync();
+
+            return Ok(true);
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<FirmDto>>> GetByFilters(
             string? title,
             string? description,
-            decimal? discount
+            decimal? discount,
+            long? series_id
             )
         {
             var firms = await _context.Firms
+                .Include(f => f.Series)
                 .Where(f => (title == null || f.Title == title) &&
                             (description == null || f.Description == description) &&
-                            (discount == null || f.Discount == discount))
+                            (discount == null || f.Discount == discount) &&
+                            (series_id == null || f.Series.Any(s => s.SeriesId == series_id)))
                 .Select(f => new FirmDto
                 {
                     firm_id = f.FirmId,

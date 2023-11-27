@@ -3,13 +3,20 @@ import logging
 from .store_api import StoreApiService
 from src.models import domain, firm
 from typing import List, Optional
-from pydantic import parse_obj_as
+from pydantic.v1 import parse_obj_as, parse_raw_as
 from json import loads
 
 
 class FirmService(StoreApiService):
+    __instance = None
 
-    def __init__(self, api_key: str, logger: logging.Logger):
+    def __new__(cls, *args, **kwargs):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+
+        return cls.__instance
+
+    def __init__(self, api_key: str = None, logger: logging.Logger = None):
         super().__init__(api_key=api_key)
         self.logger = logger
         self.controller = "/firm"
@@ -28,8 +35,8 @@ class FirmService(StoreApiService):
         async with self.session.post(url, json=request) as response:
             data = await response.json()
             return domain.Firm.parse_obj(data)
-
-    async def firms(self, title: Optional[str], description: Optional[str] = None, discount: Optional[float] = None) \
+    async def firms(self, title: Optional[str] = None, description: Optional[str] = None,
+                    discount: Optional[float] = None, series_id: Optional[int] = None) \
             -> List[domain.Firm]:
         url = self.api_key + self.controller
         params = {}
@@ -39,13 +46,15 @@ class FirmService(StoreApiService):
             params["description"] = description
         if discount is not None:
             params["discount"] = discount
+        if series_id is not None:
+            params["series_id"] = series_id
         async with self.session.get(url, params=params) as response:
             if response.status == 200:
                 data = await response.json()
                 return parse_obj_as(List[domain.Firm], data)
 
-    async def update_firm(self, firm_id: int, title: Optional[str], description: Optional[str],
-                          discount: Optional[float]) -> domain.Firm:
+    async def update_firm(self, firm_id: int, title: Optional[str] = None, description: Optional[str] = None,
+                          discount: Optional[float] = None) -> domain.Firm:
         url = self.api_key + self.controller + f"/{firm_id}/update"
         request = loads(
             firm.RequestCreateFirm(title=title, description=description, discount=discount).json(exclude_none=False))
@@ -53,3 +62,12 @@ class FirmService(StoreApiService):
             if response.status == 200:
                 data = await response.json()
                 return domain.Firm.parse_obj(data)
+
+    async def delete_firm(self, firm_id: int) -> bool:
+        url = self.api_key + self.controller + f"/{firm_id}/delete"
+        self.logger.info(url)
+        async with self.session.delete(url) as response:
+            if response.status == 200:
+                data = await response.read()
+                self.logger.info(data)
+                return parse_raw_as(bool, data)

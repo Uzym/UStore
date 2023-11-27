@@ -1,19 +1,34 @@
 version: '3.7'
 
 services:
+  store_proxy:
+    image: nginx:stable
+    container_name: "store_proxy"
+    ports:
+      - "7999:80"
+    volumes:
+      - "./nginx/nginx.conf:/etc/nginx/nginx.conf"
+      - "./nginx/default.conf:/etc/nginx/conf.d/default.conf"
+    depends_on:
+      - store_frontend
+      - store_api
+      - s3_api
+    networks:
+      - store_network
+
   store_db:
     image: postgres
     volumes:
       - db_volume:/var/lib/postgresql/data
       - ./storeDB/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "5433:5432"
+      - '5433:5432'
     environment:
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-      POSTGRES_DB: "store"
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_DB: 'store'
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d store" ]
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d store']
       interval: 2s
       timeout: 2s
       retries: 20
@@ -26,13 +41,13 @@ services:
       context: .
       dockerfile: storeAPI/Dockerfile
     environment:
-      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_ENVIRONMENT: 'Development'
       DB_CONNECTION_STRING: ${STORE_DB_CONNECTION_STRING}
     depends_on:
       store_db:
         condition: service_healthy
     ports:
-      - '8000:80'
+      - '8001:80'
       - '443:443'
     networks:
       - store_network
@@ -42,9 +57,12 @@ services:
     build:
       context: StoreFrontend
       dockerfile: Dockerfile
-    # environment:
+    environment:
+      NODE_ENV: "production"
+      NEXT_PUBLIC_API_URL: ${STORE_API_URL}
+      NEXT_PUBLIC_S3_API_URL: ${S3_API_URL}
     ports:
-      - "5173:5173"
+      - '5173:3000'
     volumes:
       - ./StoreFrontend:/usr/app
     networks:
@@ -66,34 +84,33 @@ services:
       - store_network
     restart: always
 
-  # minio:
-  #   container_name: minio
-  #   image: minio/minio
-  #   volumes:
-  #     - minio_volume:/data
-  #   ports:
-  #     - "9000:9000"
-  #   command: server /data
-  #   networks:
-  #     - store_network
-  #   restart: on-failure
+  minio:
+    container_name: minio
+    image: minio/minio
+    volumes:
+      - minio_volume:/data
+    ports:
+      - '9000:9000'
+    command: server /data
+    networks:
+      - store_network
+    restart: on-failure
 
-  # s3_api:
-  #   image: s3/api
-  #   depends_on:
-  #     - minio
-  #   environment:
-  #     ASPNETCORE_ENVIRONMENT: "Development"
-  #   ports:
-  #     - '8002:80'
-  #     - '443:443'
-  #   networks:
-  #     - store_network
+  s3_api:
+    image: s3/api
+    depends_on:
+      - minio
+    environment:
+      ASPNETCORE_ENVIRONMENT: 'Development'
+    ports:
+      - '8002:80'
+      - '444:443'
+    networks:
+      - store_network
 
 volumes:
   db_volume:
   minio_volume:
-  # staticbuild:
 
 networks:
   store_network:

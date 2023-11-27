@@ -31,6 +31,8 @@ namespace StoreAPI
                 )
             );
 
+            builder.Services.AddCors();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -44,6 +46,11 @@ namespace StoreAPI
 
             // app.UseAuthorization();
 
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true)
+                .AllowCredentials());
 
             app.MapControllers();
 

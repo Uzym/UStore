@@ -36,5 +36,20 @@ namespace StoreAPI.Clients
             var resJson = await res.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<ResponseGetCardDto>(resJson);
         }
+
+        public async Task<long> GetSection(string telegramId)
+        {
+            Console.WriteLine($"{Environment.GetEnvironmentVariable("TASKMGR_API_URL")}?telegramId={telegramId}");
+            var res = await _client.GetAsync($"{Environment.GetEnvironmentVariable("TASKMGR_API_URL")}/Section?telegramId={telegramId}");
+            var content = await res.Content.ReadAsStringAsync();
+            if (long.TryParse(content, out long result))
+            {
+                return result;
+            }
+            else
+            {
+                throw new InvalidCastException("API response is not a valid long value");
+            }
+        }
     }
 }

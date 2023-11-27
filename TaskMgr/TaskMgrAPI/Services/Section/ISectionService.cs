@@ -11,4 +11,5 @@ public interface ISectionService
     public Task<List<Models.Section>> GetModels(
         long? id = null
     );
+    Task<long> GetSectionId(string telegramId);
 }

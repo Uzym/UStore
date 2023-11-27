@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cors;
 using StoreAPI.Context;
 using StoreAPI.Dtos.Series;
 
@@ -8,6 +9,7 @@ namespace StoreAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [EnableCors]
     public class SeriesController : ControllerBase
     {
         private readonly StoreContext _context;
@@ -74,19 +76,41 @@ namespace StoreAPI.Controllers
             return await Index(series.SeriesId);
         }
 
+        [HttpDelete("{series_id}/delete")]
+        public async Task<ActionResult<bool>> DeleteSeries(
+            long series_id
+            )
+        {
+            var series = await _context.Series
+                .FindAsync(series_id);
+
+            if (series == null)
+            {
+                return NotFound();
+            }
+
+            _context.Series.Remove(series);
+            await _context.SaveChangesAsync();
+
+            return Ok(true);
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<SeriesDto>>> GetByFilters(
             string? title,
             string? description,
             decimal? discount,
-            long? firm_id
+            long? firm_id,
+            long? category_id
             )
         {
             var series = await _context.Series
+                .Include(s => s.Products)
                 .Where(s => (title == null || s.Title == title) &&
                             (description == null || s.Description == description) &&
                             (discount == null || s.Discount == discount) &&
-                            (firm_id == null || s.FirmId == firm_id))
+                            (firm_id == null || s.FirmId == firm_id) &&
+                            (category_id == null || s.Products.Any(p => p.CategoryId == category_id)))
                 .Select(s => new SeriesDto
                 {
                     series_id = s.SeriesId,
