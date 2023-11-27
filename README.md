@@ -1,3 +1,3 @@
 # UStore
 ## Архитектура
-![UStore](/docs/UStore-Общая архитектура.drawio.png)
+![UStore](docs/UStore-architect.drawio.png)
